@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/smart_kitchen
     username: root
-    password:
+    password: root
   jpa:
     show-sql: true
     hibernate:
