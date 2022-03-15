@@ -1,6 +1,5 @@
 package com.epam.smartkitchen.models;
 
-import com.google.inject.multibindings.StringMapKey;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
