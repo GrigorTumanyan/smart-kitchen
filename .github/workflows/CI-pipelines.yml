@@ -1,13 +1,11 @@
 
 
-name: Java CI-develop
+name: Java CI-pipelines
 
 on:
   push:
-    branches: [ develop ]
-  pull_request:
-    branches: [ develop ]
-
+    branches: [ develop, main ]
+    
 jobs:
   build:
 
@@ -23,4 +21,4 @@ jobs:
         distribution: 'adopt'
         cache: maven
     - name: Build with Maven
-      run: mvn clean test
+      run: mvn clean install
