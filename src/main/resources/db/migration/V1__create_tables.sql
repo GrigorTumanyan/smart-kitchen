@@ -92,13 +92,14 @@ create table user
     modified_on datetime(6),
     active      bit,
     address     varchar(255),
-    email       varchar(255),
+    email       varchar(255) unique,
     image       varchar(255),
     name        varchar(255),
     password    varchar(255),
     phone       varchar(255),
     surname     varchar(255),
     user_type   varchar(255),
+    refresh_token varchar(255),
     primary key (id)
 ) engine = InnoDB
   DEFAULT CHARSET = utf8
