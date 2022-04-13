@@ -1,4 +1,4 @@
-package com.epam.smartkitchen.repo;
+package com.epam.smartkitchen.repository;
 
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;

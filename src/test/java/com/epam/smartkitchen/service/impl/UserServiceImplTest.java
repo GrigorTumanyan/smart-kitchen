@@ -3,7 +3,7 @@ package com.epam.smartkitchen.service.impl;
 import com.epam.smartkitchen.dto.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
-import com.epam.smartkitchen.repo.UserRepository;
+import com.epam.smartkitchen.repository.UserRepository;
 import com.epam.smartkitchen.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
