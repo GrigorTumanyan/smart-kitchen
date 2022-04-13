@@ -89,15 +89,16 @@ create table user
     created_by  varchar(255),
     created_on  datetime(6),
     modified_on datetime(6),
-    active      bit,
+    active      bit default false,
     address     varchar(255),
-    email       varchar(255),
+    email       varchar(255) not null unique,
     image       varchar(255),
     name        varchar(255),
     password    varchar(255),
     phone       varchar(255),
     surname     varchar(255),
     user_type   varchar(255),
+    removed      bit default false,
     primary key (id)
 ) engine = InnoDB
   DEFAULT CHARSET = utf8
