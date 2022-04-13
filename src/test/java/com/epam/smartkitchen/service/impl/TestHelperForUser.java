@@ -5,16 +5,12 @@ import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.geo.GeoPage;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class TestHelper {
+public class TestHelperForUser {
     protected static Page<User> usersPageable() {
         List<User> userList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -68,7 +64,7 @@ public class TestHelper {
         return user;
     }
 
-    protected static UserDto toUserDtoFromOptionalUser(){
+    protected static UserDto toUserDtoFromOptionalUser() {
         return new UserDto(toUser());
     }
 }
