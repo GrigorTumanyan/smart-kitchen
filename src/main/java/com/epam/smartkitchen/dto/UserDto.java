@@ -1,51 +1,45 @@
-package com.epam.smartkitchen.models;
+package com.epam.smartkitchen.dto;
 
 import com.epam.smartkitchen.enums.UserType;
+import com.epam.smartkitchen.models.User;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.util.Objects;
 
-@Entity
-public class User extends BaseEntity {
-    @Column
+public class UserDto {
     String name;
-    @Column
     String surname;
-    @Column
     String email;
-    @Column
-    String password;
-    @Column
     String image;
-    @Column
     String phone;
-    @Column
     String address;
-    @Column
-    @Enumerated(EnumType.STRING)
     UserType userType;
-    @Column
     Boolean active;
-    @Column
-    Boolean removed;
 
-    public User(String name, String surname, String email, String password, String image, String phone, String address, UserType userType, Boolean active, Boolean removed) {
-        this.name = name;
-        this.surname = surname;
-        this.email = email;
-        this.password = password;
-        this.image = image;
-        this.phone = phone;
-        this.address = address;
-        this.userType = userType;
-        this.active = active;
-        this.removed = removed;
+    public UserDto() {
     }
 
-    public User() {
+    public UserDto(User user) {
+        this.name = user.getName();
+        this.surname = user.getSurname();
+        this.email = user.getEmail();
+        this.image = user.getImage();
+        this.phone = user.getPhone();
+        this.address = user.getAddress();
+        this.userType = user.getUserType();
+        this.active = user.getActive();
+    }
+
+    public static User toUser(UserDto userDto) {
+        User user = new User();
+        user.setName(userDto.name);
+        user.setSurname(userDto.surname);
+        user.setEmail(userDto.email);
+        user.setImage(userDto.image);
+        user.setPhone(userDto.phone);
+        user.setAddress(userDto.address);
+        user.setUserType(user.getUserType());
+        user.setActive(userDto.getActive());
+        return user;
     }
 
     public String getName() {
@@ -70,14 +64,6 @@ public class User extends BaseEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getImage() {
@@ -120,41 +106,30 @@ public class User extends BaseEntity {
         this.active = active;
     }
 
-    public Boolean getRemoved() {
-        return removed;
-    }
-
-    public void setRemoved(Boolean removed) {
-        this.removed = removed;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        User user = (User) o;
-        return Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(image, user.image) && Objects.equals(phone, user.phone) && Objects.equals(address, user.address) && userType == user.userType && Objects.equals(active, user.active) && Objects.equals(removed, user.removed);
+        UserDto userDto = (UserDto) o;
+        return Objects.equals(name, userDto.name) && Objects.equals(surname, userDto.surname) && Objects.equals(email, userDto.email) && Objects.equals(image, userDto.image) && Objects.equals(phone, userDto.phone) && Objects.equals(address, userDto.address) && userType == userDto.userType && Objects.equals(active, userDto.active);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, surname, email, password, image, phone, address, userType, active, removed);
+        return Objects.hash(name, surname, email, image, phone, address, userType, active);
     }
 
     @Override
     public String toString() {
-        return "User{" +
+        return "UserDto{" +
                 "name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", image='" + image + '\'' +
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +
                 ", userType=" + userType +
                 ", active=" + active +
-                ", removed=" + removed +
                 '}';
     }
 }
