@@ -1,6 +1,7 @@
 package com.epam.smartkitchen.service.impl;
 
-import com.epam.smartkitchen.dto.UserDto;
+import com.epam.smartkitchen.dto.manager.UpdateUserDto;
+import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
@@ -43,12 +44,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addUser(UserDto userDto) {
-        User user = UserDto.toUser(userDto);
-        if (userRepository.existsById(user.getId())) {
+        if (userRepository.existsByEmail(userDto.getEmail())) {
             return null;
         }
+        User user = UserDto.toUser(userDto);
         User savedUser = userRepository.save(user);
         return new UserDto(savedUser);
+    }
+
+    @Override
+    public UserDto updateUser(UpdateUserDto updateUserDto) {
+        if (!userRepository.existsByEmail(updateUserDto.getEmail())){
+            return null;
+        }
+        User user = userRepository.findByEmail(updateUserDto.getEmail());
+        User updatedUser = changeUserFields(updateUserDto, user);
+        User save = userRepository.save(updatedUser);
+        return new UserDto(save);
     }
 
     @Override
@@ -67,5 +79,12 @@ public class UserServiceImpl implements UserService {
             allUserDto.add(userDto);
         }
         return allUserDto;
+    }
+
+    private User changeUserFields(UpdateUserDto updateUserDto, User user){
+        user.setUserType(updateUserDto.getUserType());
+        user.setActive(updateUserDto.getActive());
+        user.setRemoved(updateUserDto.getRemoved());
+        return user;
     }
 }

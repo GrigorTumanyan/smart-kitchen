@@ -1,8 +1,8 @@
 package com.epam.smartkitchen.controller;
 
-import com.epam.smartkitchen.dto.UserDto;
+import com.epam.smartkitchen.dto.manager.UpdateUserDto;
+import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
-import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.service.UserService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -54,13 +54,22 @@ public class ManagerRestController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/adduser")
+    @PostMapping("/add/user")
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
         UserDto savedUserDto = userService.addUser(userDto);
         if (savedUserDto == null) {
             return ResponseEntity.notFound().eTag(userDto.getEmail() + " Email already exists").build();
         }
         return ResponseEntity.ok(savedUserDto);
+    }
+
+    @PostMapping("/update/user")
+    public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserDto updateUserDto){
+        UserDto userDto = userService.updateUser(updateUserDto);
+        if (userDto == null){
+            return ResponseEntity.notFound().eTag(updateUserDto.getEmail() + " Email is not exist").build();
+        }
+        return ResponseEntity.ok(userDto);
     }
 
 
