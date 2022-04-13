@@ -63,11 +63,11 @@ public class ManagerRestController {
         return ResponseEntity.ok(savedUserDto);
     }
 
-    @PostMapping("/update/user")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserDto updateUserDto){
-        UserDto userDto = userService.updateUser(updateUserDto);
+    @PatchMapping("/user/{id}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable(name = "id") String id ,@RequestBody UpdateUserDto updateUserDto){
+        UserDto userDto = userService.updateUser(id,updateUserDto);
         if (userDto == null){
-            return ResponseEntity.notFound().eTag(updateUserDto.getEmail() + " Email is not exist").build();
+            return ResponseEntity.notFound().eTag(id + " Email is not exist").build();
         }
         return ResponseEntity.ok(userDto);
     }

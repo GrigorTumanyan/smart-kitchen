@@ -53,11 +53,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(UpdateUserDto updateUserDto) {
-        if (!userRepository.existsByEmail(updateUserDto.getEmail())){
+    public UserDto updateUser(String id, UpdateUserDto updateUserDto) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null){
             return null;
         }
-        User user = userRepository.findByEmail(updateUserDto.getEmail());
         User updatedUser = changeUserFields(updateUserDto, user);
         User save = userRepository.save(updatedUser);
         return new UserDto(save);
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
         return allUserDto;
     }
 
-    private User changeUserFields(UpdateUserDto updateUserDto, User user){
+    private User changeUserFields(UpdateUserDto updateUserDto, User user) {
         user.setUserType(updateUserDto.getUserType());
         user.setActive(updateUserDto.getActive());
         user.setRemoved(updateUserDto.getRemoved());

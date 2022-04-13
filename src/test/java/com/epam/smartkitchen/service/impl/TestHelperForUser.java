@@ -64,7 +64,7 @@ public class TestHelperForUser {
 
     protected static UpdateUserDto managerEditUserDto(){
         User user = toOptionalUser().get();
-        return new UpdateUserDto(user.getEmail(),user.getUserType(),user.getRemoved(),user.getActive());
+        return new UpdateUserDto(user.getUserType(),user.getRemoved(),user.getActive());
 
     }
 }

@@ -19,6 +19,6 @@ public interface UserService {
 
     UserDto addUser(UserDto userDto);
 
-    UserDto updateUser(UpdateUserDto updateUserDto);
+    UserDto updateUser(String id,UpdateUserDto updateUserDto);
 
 }
