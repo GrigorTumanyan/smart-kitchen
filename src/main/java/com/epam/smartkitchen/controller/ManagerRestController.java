@@ -1,5 +1,6 @@
 package com.epam.smartkitchen.controller;
 
+import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
 import com.epam.smartkitchen.dto.manager.UpdateUserDto;
 import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
@@ -67,9 +68,18 @@ public class ManagerRestController {
     public ResponseEntity<UserDto> updateUser(@PathVariable(name = "id") String id ,@RequestBody UpdateUserDto updateUserDto){
         UserDto userDto = userService.updateUser(id,updateUserDto);
         if (userDto == null){
-            return ResponseEntity.notFound().eTag(id + " Email is not exist").build();
+            return ResponseEntity.notFound().eTag(id + " id is not exist").build();
         }
         return ResponseEntity.ok(userDto);
+    }
+
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<ResponseDeleteUserDto> deleteUser(@PathVariable(name = "id") String id){
+        ResponseDeleteUserDto responseDeleteUserDto = userService.deleteUser(id);
+        if (responseDeleteUserDto == null){
+            return ResponseEntity.notFound().eTag(id + " id is not exist").build();
+        }
+        return ResponseEntity.ok(responseDeleteUserDto);
     }
 
 

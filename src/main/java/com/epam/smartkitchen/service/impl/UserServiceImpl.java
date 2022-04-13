@@ -1,5 +1,6 @@
 package com.epam.smartkitchen.service.impl;
 
+import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
 import com.epam.smartkitchen.dto.manager.UpdateUserDto;
 import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
@@ -64,6 +65,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResponseDeleteUserDto deleteUser(String id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null){
+            return null;
+        }
+        user.setRemoved(true);
+        User savedUser = userRepository.save(user);
+        return new ResponseDeleteUserDto(savedUser.getRemoved());
+    }
+
+    @Override
     public UserDto findById(String id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
@@ -71,6 +83,7 @@ public class UserServiceImpl implements UserService {
         }
         return new UserDto(user);
     }
+
 
     private List<UserDto> toUserDto(Page<User> userList) {
         List<UserDto> allUserDto = new ArrayList<>();
