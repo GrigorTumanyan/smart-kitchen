@@ -128,11 +128,10 @@ public class UserServiceImplTest {
 
     @Test
     void updateUser() {
-        when(userRepository.existsByEmail(any())).thenReturn(true);
-        when(userRepository.findByEmail(any())).thenReturn(user);
+        when(userRepository.findById(any())).thenReturn(toOptionalUser());
         when(userRepository.save(user)).thenReturn(user);
 
-        UserDto userDto = userService.updateUser(managerEditUserDto());
+        UserDto userDto = userService.updateUser(id,managerEditUserDto());
 
         assertEquals(userDto,this.userDto);
 
@@ -141,9 +140,9 @@ public class UserServiceImplTest {
 
     @Test
     void updateUserNegativeCase(){
-        when(userRepository.existsByEmail(any())).thenReturn(false);
+        when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        UserDto userDto = userService.updateUser(managerEditUserDto());
+        UserDto userDto = userService.updateUser(id,managerEditUserDto());
 
         assertNull(userDto);
     }
