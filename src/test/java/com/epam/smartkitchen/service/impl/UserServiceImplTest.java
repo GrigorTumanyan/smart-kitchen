@@ -1,6 +1,6 @@
 package com.epam.smartkitchen.service.impl;
 
-import com.epam.smartkitchen.dto.UserDto;
+import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
@@ -119,9 +119,31 @@ public class UserServiceImplTest {
 
     @Test
     void addUserNegativeCase(){
-        when(userRepository.existsById(any())).thenReturn(true);
+        when(userRepository.existsByEmail(any())).thenReturn(true);
 
         UserDto userDto = userService.addUser(this.userDto);
+
+        assertNull(userDto);
+    }
+
+    @Test
+    void updateUser() {
+        when(userRepository.existsByEmail(any())).thenReturn(true);
+        when(userRepository.findByEmail(any())).thenReturn(user);
+        when(userRepository.save(user)).thenReturn(user);
+
+        UserDto userDto = userService.updateUser(managerEditUserDto());
+
+        assertEquals(userDto,this.userDto);
+
+
+    }
+
+    @Test
+    void updateUserNegativeCase(){
+        when(userRepository.existsByEmail(any())).thenReturn(false);
+
+        UserDto userDto = userService.updateUser(managerEditUserDto());
 
         assertNull(userDto);
     }
