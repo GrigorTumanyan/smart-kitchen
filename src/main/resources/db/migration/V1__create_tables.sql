@@ -1,3 +1,4 @@
+USE smart_kitchen;
 create table category
 (
     id          varchar(255) not null,
