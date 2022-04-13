@@ -45,20 +45,45 @@
             </exclusions>
         </dependency>
         <!--        https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin-->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-maven-plugin</artifactId>
-            <version>8.5.2</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.flywaydb</groupId>-->
+<!--            <artifactId>flyway-maven-plugin</artifactId>-->
+<!--            <version>8.5.2</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>r05</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>mysql</groupId>-->
+<!--            <artifactId>mysql-connector-java</artifactId>-->
+<!--            <scope>runtime</scope>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>1.6.3</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.6.0</version>
         </dependency>
 
         <dependency>
@@ -76,11 +101,11 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>com.h2database</groupId>-->
-        <!--            <artifactId>h2</artifactId>-->
-        <!--            <scope>runtime</scope>-->
-        <!--        </dependency>-->
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                    <scope>runtime</scope>
+                </dependency>
 
     </dependencies>
 
@@ -90,9 +115,6 @@
             <properties>
                 <spring.profiles.active>dev</spring.profiles.active>
             </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
         </profile>
         <profile>
             <id>prod</id>
@@ -105,7 +127,9 @@
             <properties>
                 <spring.profiles.active>test</spring.profiles.active>
             </properties>
-
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
         </profile>
     </profiles>
 
@@ -115,16 +139,16 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>8.5.2</version>
-                <configuration>
-                    <url>jdbc:mysql://localhost:3306/smart_kitchen</url>
-                    <user>root</user>
-                    <password>root</password>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.flywaydb</groupId>-->
+<!--                <artifactId>flyway-maven-plugin</artifactId>-->
+<!--                <version>8.5.2</version>-->
+<!--                <configuration>-->
+<!--                    <url>jdbc:mysql://localhost:3306/smart_kitchen</url>-->
+<!--                    <user>root</user>-->
+<!--                    <password>root</password>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
