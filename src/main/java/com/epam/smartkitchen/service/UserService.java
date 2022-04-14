@@ -1,5 +1,6 @@
 package com.epam.smartkitchen.service;
 
+import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
 import com.epam.smartkitchen.dto.manager.UpdateUserDto;
 import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
@@ -20,5 +21,7 @@ public interface UserService {
     UserDto addUser(UserDto userDto);
 
     UserDto updateUser(String id,UpdateUserDto updateUserDto);
+
+    ResponseDeleteUserDto deleteUser(String id);
 
 }

@@ -1,5 +1,6 @@
 package com.epam.smartkitchen.service.impl;
 
+import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
 import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
@@ -38,6 +39,7 @@ public class UserServiceImplTest {
     private Optional<User> optionalUser;
     private UserDto userDto;
     private User user;
+    private ResponseDeleteUserDto deleteUserDto;
 
 
     @BeforeEach
@@ -47,6 +49,7 @@ public class UserServiceImplTest {
         optionalUser = toOptionalUser();
         userDto = toUserDtoFromOptionalUser();
         user = toUser();
+        deleteUserDto = deleteUserDto();
     }
 
     @Test
@@ -145,5 +148,24 @@ public class UserServiceImplTest {
         UserDto userDto = userService.updateUser(id,managerEditUserDto());
 
         assertNull(userDto);
+    }
+
+    @Test
+    void deleteUser() {
+        when(userRepository.findById(id)).thenReturn(toOptionalUser());
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        ResponseDeleteUserDto responseDeleteUserDto = userService.deleteUser(id);
+
+        assertEquals(responseDeleteUserDto.isRemoved(),deleteUserDto.isRemoved());
+    }
+
+    @Test
+    void deleteUserNegativeCase(){
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+
+        ResponseDeleteUserDto responseDeleteUserDto = userService.deleteUser(id);
+
+        assertNull(responseDeleteUserDto);
     }
 }
