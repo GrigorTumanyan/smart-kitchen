@@ -15,8 +15,8 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostMapping("/category/add")
-    public CategoryDto addProduct(@RequestBody CategoryDto categoryDto){
+    @PostMapping("/category")
+    public CategoryDto addCategory(@RequestBody CategoryDto categoryDto){
         return categoryService.addCategory(categoryDto);
     }
 }

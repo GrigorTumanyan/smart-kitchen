@@ -32,7 +32,7 @@ class ProductServiceImplTest {
 
     @Test
     void addProduct() {
-        ProductDto productDto = new ProductDto("1","pizza");
+        ProductDto productDto = new ProductDto("pizza");
         Product product = new Product();
         when(mapper.map(productDto,Product.class)).thenReturn(product);
         ProductDto actualResult = productServiceTest.addProduct(productDto);

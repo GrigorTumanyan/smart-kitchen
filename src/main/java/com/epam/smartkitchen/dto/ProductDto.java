@@ -2,24 +2,14 @@ package com.epam.smartkitchen.dto;
 
 public class ProductDto {
 
-    private String id;
     private String name;
 
     public ProductDto(){
 
     }
 
-    public ProductDto(String name, String id) {
+    public ProductDto(String name) {
         this.name = name;
-        this.id = id;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {
