@@ -8,7 +8,7 @@ import com.epam.smartkitchen.service.MenuService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@RequestMapping("/menu")
 @RestController
 public class MenuController {
     private final MenuService menuService;
@@ -17,7 +17,7 @@ public class MenuController {
         this.menuService = menuService;
     }
 
-    @PostMapping("/addMenu")
+    @PostMapping("/")
     public ResponseEntity<MenuItemCreateDto> addMenuItem(@RequestBody MenuItem menuItem) {
         try {
             return new  ResponseEntity<>(menuService.addMenu(menuItem),HttpStatus.CREATED);
@@ -27,14 +27,14 @@ public class MenuController {
     }
 
     }
-    @PutMapping("/updateMenu/{id}")
-    public ResponseEntity<UpdateMenuItemDto> updateMenuItem(@PathVariable(name = "id") String id, @RequestBody MenuItem menuItem){
-        UpdateMenuItemDto updateMenuItemDto = menuService.updateMenu(id, menuItem);
+    @PutMapping("/{id}")
+    public ResponseEntity<UpdateMenuItemDto> updateMenuItem(@PathVariable(name = "id") String id, @RequestBody UpdateMenuItemDto updateMenuItemDto){
+        UpdateMenuItemDto savedUpdateMenuItemDto = menuService.updateMenu(id, updateMenuItemDto);
         if(updateMenuItemDto == null){
             return ResponseEntity.notFound().build();
         }
            try{
-        return new ResponseEntity<> (updateMenuItemDto,HttpStatus.CREATED);
+        return new ResponseEntity<> (savedUpdateMenuItemDto,HttpStatus.OK);
     }
        catch (Exception e){
            return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);

@@ -7,5 +7,5 @@ import com.epam.smartkitchen.models.MenuItem;
 
 public interface MenuService {
     MenuItemCreateDto addMenu(MenuItem menuItem);
-    UpdateMenuItemDto updateMenu(String id,MenuItem menuItem);
+    UpdateMenuItemDto updateMenu(String id,UpdateMenuItemDto updateMenuItemDto);
 }

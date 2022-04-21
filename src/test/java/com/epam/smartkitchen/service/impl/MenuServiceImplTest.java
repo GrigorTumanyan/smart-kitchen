@@ -64,7 +64,7 @@ class MenuServiceImplTest {
         when(menuRepository.findById(any())).thenReturn(optionalMenuItem());
         when(menuRepository.save(any())).thenReturn(menuItem());
 
-        UpdateMenuItemDto updateMenuItemDto = menuService.updateMenu("9", new MenuItem());
+        UpdateMenuItemDto updateMenuItemDto = menuService.updateMenu("9", new UpdateMenuItemDto());
 
         assertEquals(updateMenuItemDto, updateMenuItemDto());
 
@@ -74,7 +74,7 @@ class MenuServiceImplTest {
     void updateMenuNegativeCase(){
         when(menuRepository.findById(any())).thenReturn(Optional.empty());
 
-        UpdateMenuItemDto updateMenuItemDto = menuService.updateMenu("1", new MenuItem());
+        UpdateMenuItemDto updateMenuItemDto = menuService.updateMenu("1", new UpdateMenuItemDto());
 
         assertNull(updateMenuItemDto);
 

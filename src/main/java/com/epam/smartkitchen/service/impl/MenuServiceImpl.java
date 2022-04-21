@@ -28,18 +28,18 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public UpdateMenuItemDto updateMenu(String id,MenuItem menuItem) {
+    public UpdateMenuItemDto updateMenu(String id,UpdateMenuItemDto updateMenuItemDto) {
         Optional<MenuItem> byId =menuRepository.findById(id);
         if (byId.isEmpty()){
             return null;
         }
         MenuItem menuItemFromDb = byId.get();
-        menuItemFromDb.setName(menuItem.getName());
-        menuItemFromDb.setPrice(menuItem.getPrice());
-        menuItemFromDb.setImage(menuItem.getImage());
-        menuItemFromDb.setWeight(menuItem.getWeight());
-        menuItemFromDb.setmeasurement(menuItem.getmeasurement());
-        menuItemFromDb.setProducts(menuItem.getProducts());
+        menuItemFromDb.setName(updateMenuItemDto.getName());
+        menuItemFromDb.setPrice(updateMenuItemDto.getPrice());
+        menuItemFromDb.setImage(updateMenuItemDto.getImage());
+        menuItemFromDb.setWeight(updateMenuItemDto.getWeight());
+        menuItemFromDb.setmeasurement(updateMenuItemDto.getMeasurement());
+        menuItemFromDb.setProducts(updateMenuItemDto.getProducts());
 
         return MenuItemMapper.menuItemToUpdateMenuDto(menuRepository.save(menuItemFromDb));
     }
