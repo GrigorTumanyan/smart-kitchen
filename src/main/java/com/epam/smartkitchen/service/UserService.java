@@ -1,9 +1,9 @@
 package com.epam.smartkitchen.service;
 
-import com.epam.smartkitchen.dto.UserDto;
+import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
+import com.epam.smartkitchen.dto.manager.UpdateUserDto;
+import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
-import com.epam.smartkitchen.models.User;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -19,5 +19,9 @@ public interface UserService {
     List<UserDto> getUsersByType(UserType userType, Pageable pageable);
 
     UserDto addUser(UserDto userDto);
+
+    UserDto updateUser(String id,UpdateUserDto updateUserDto);
+
+    ResponseDeleteUserDto deleteUser(String id);
 
 }

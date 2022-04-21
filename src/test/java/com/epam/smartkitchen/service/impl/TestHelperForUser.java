@@ -1,6 +1,8 @@
 package com.epam.smartkitchen.service.impl;
 
-import com.epam.smartkitchen.dto.UserDto;
+import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
+import com.epam.smartkitchen.dto.manager.UpdateUserDto;
+import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
 import org.springframework.data.domain.Page;
@@ -37,14 +39,7 @@ public class TestHelperForUser {
 
 
     protected static Optional<UserDto> toOptionalUserDto() {
-        User user = new User();
-        user.setName("9");
-        user.setSurname("9");
-        user.setUserType(UserType.MANAGER);
-        user.setEmail("9");
-        user.setActive(true);
-        user.setPassword("9");
-        UserDto userDto = new UserDto(user);
+        UserDto userDto = new UserDto(toOptionalUser().get());
         return Optional.of(userDto);
     }
 
@@ -56,6 +51,7 @@ public class TestHelperForUser {
         user.setEmail("8");
         user.setActive(true);
         user.setPassword("8");
+        user.setRemoved(true);
         return Optional.of(user);
     }
 
@@ -66,5 +62,14 @@ public class TestHelperForUser {
 
     protected static UserDto toUserDtoFromOptionalUser() {
         return new UserDto(toUser());
+    }
+
+    protected static UpdateUserDto managerEditUserDto(){
+        User user = toOptionalUser().get();
+        return new UpdateUserDto(user.getUserType(),user.getRemoved(),user.getActive());
+    }
+    protected static ResponseDeleteUserDto deleteUserDto(){
+        User user = toUser();
+        return new ResponseDeleteUserDto(user.getRemoved());
     }
 }
