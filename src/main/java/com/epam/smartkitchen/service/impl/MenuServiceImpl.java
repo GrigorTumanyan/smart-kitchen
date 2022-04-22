@@ -43,4 +43,13 @@ public class MenuServiceImpl implements MenuService {
 
         return MenuItemMapper.menuItemToUpdateMenuDto(menuRepository.save(menuItemFromDb));
     }
+
+    @Override
+    public UpdateMenuItemDto deleteMenuItemById(String id) {
+        MenuItem menuItem = menuRepository.findById(id).orElseThrow();
+        menuItem.setDeleted(true);
+        MenuItem save = menuRepository.save(menuItem);
+        return MenuItemMapper.menuItemToUpdateMenuDto(save);
+
+    }
 }
