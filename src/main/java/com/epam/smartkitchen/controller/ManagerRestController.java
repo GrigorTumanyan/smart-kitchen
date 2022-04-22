@@ -24,10 +24,11 @@ public class ManagerRestController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserDto>> getUsersWithSort(@RequestParam int pageSize, @RequestParam int offset,
+    public ResponseEntity<List<UserDto>> getUsersWithSort(@RequestParam int pageSize, @RequestParam int pageNumber,
+                                                          @RequestParam(required = false) String deleted,
                                                           @RequestParam(required = false) String field,
                                                           @RequestParam(required = false) String direction) {
-        List<UserDto> allUser = userService.getAllUser(createPageable(offset, pageSize, field, direction));
+        List<UserDto> allUser = userService.getAllUser(createPageable(pageNumber, pageSize, field, direction), deleted);
         if (allUser == null) {
             return ResponseEntity.notFound().eTag("Users are not found").build();
         }
@@ -35,10 +36,12 @@ public class ManagerRestController {
     }
 
     @GetMapping("/users/{userType}")
-    public ResponseEntity<List<UserDto>> getUserByType(@PathVariable UserType userType, @RequestParam int offset, @RequestParam int pageSize,
+    public ResponseEntity<List<UserDto>> getUserByType(@PathVariable UserType userType, @RequestParam int pageNumber,
+                                                       @RequestParam(required = false) String deleted,
+                                                       @RequestParam int pageSize,
                                                        @RequestParam(required = false) String direction,
                                                        @RequestParam(required = false) String field) {
-        List<UserDto> usersByType = userService.getUsersByType(userType, createPageable(offset, pageSize, field, direction));
+        List<UserDto> usersByType = userService.getUsersByType(userType, createPageable(pageNumber, pageSize, field, direction), deleted);
         if (usersByType == null) {
             return ResponseEntity.notFound().eTag("You don't have " + userType + "user").build();
         }
@@ -55,7 +58,7 @@ public class ManagerRestController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/add/user")
+    @PostMapping("/user")
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
         UserDto savedUserDto = userService.addUser(userDto);
         if (savedUserDto == null) {
@@ -83,13 +86,13 @@ public class ManagerRestController {
     }
 
 
-    private PageRequest createPageable(int offset, int pageSize, String field, String direction) {
+    private PageRequest createPageable(int pageNumber, int pageSize, String field, String direction) {
         if (field == null) {
-            return PageRequest.of(offset, pageSize);
+            return PageRequest.of(pageNumber, pageSize);
         } else if (direction == null) {
-            return PageRequest.of(offset, pageSize).withSort(Sort.by(field).ascending());
+            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).ascending());
         } else {
-            return PageRequest.of(offset, pageSize).withSort(Sort.by(field).descending());
+            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).descending());
         }
     }
 }

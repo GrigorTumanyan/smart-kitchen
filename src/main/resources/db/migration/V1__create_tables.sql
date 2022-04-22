@@ -6,6 +6,7 @@ create table category
     created_on  datetime(6),
     modified_on datetime(6),
     name        varchar(255),
+    deleted     bit default false,
     primary key (id)
 ) engine = InnoDB
   DEFAULT CHARSET = utf8
@@ -34,6 +35,7 @@ create table menu_item
     name        varchar(255),
     price       double precision,
     weight      double precision,
+    deleted     bit default false,
     primary key (id)
 ) engine = InnoDB
   DEFAULT CHARSET = utf8
@@ -52,6 +54,7 @@ create table product
     created_on  datetime(6),
     modified_on datetime(6),
     name        varchar(255),
+    deleted     bit default false,
     primary key (id)
 ) engine = InnoDB
   DEFAULT CHARSET = utf8
@@ -73,6 +76,7 @@ create table restaurant_order
     total_price double precision,
     cook_id     varchar(255),
     waiter_id   varchar(255),
+    deleted     bit default false,
     primary key (id)
 ) engine = InnoDB
   DEFAULT CHARSET = utf8
@@ -99,6 +103,7 @@ create table user
     phone       varchar(255),
     surname     varchar(255),
     user_type   varchar(255),
+    deleted     bit default false,
     primary key (id)
 ) engine = InnoDB
   DEFAULT CHARSET = utf8
@@ -113,6 +118,7 @@ create table warehouse
     name        varchar(255),
     price       double precision,
     measurement varchar(255),
+    deleted     bit default false,
     primary key (id)
 ) engine = InnoDB
   DEFAULT CHARSET = utf8

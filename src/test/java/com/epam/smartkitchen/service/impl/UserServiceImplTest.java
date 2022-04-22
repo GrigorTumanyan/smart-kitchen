@@ -55,8 +55,10 @@ public class UserServiceImplTest {
     @Test
     void getAllUser() {
         when(userRepository.findAll(pageRequest)).thenReturn((usersPageable()));
+        when(userRepository.findAllByDeletedFalse(pageRequest)).thenReturn((usersPageable()));
+        when(userRepository.findAllByDeletedTrue(pageRequest)).thenReturn((usersPageable()));
 
-        List<UserDto> allUser = userService.getAllUser(pageRequest);
+        List<UserDto> allUser = userService.getAllUser(pageRequest,null);
         Page<UserDto> usersToPage = new PageImpl<>(allUser);
 
         assertEquals(usersToPage, getUserDto(usersPageable()));
@@ -65,8 +67,10 @@ public class UserServiceImplTest {
     @Test
     void GetAllUserNegativeCase() {
         when(userRepository.findAll(pageRequest)).thenReturn(null);
+        when(userRepository.findAllByDeletedTrue(pageRequest)).thenReturn(null);
+        when(userRepository.findAllByDeletedFalse(pageRequest)).thenReturn(null);
 
-        List<UserDto> allUser = userService.getAllUser(pageRequest);
+        List<UserDto> allUser = userService.getAllUser(pageRequest,"Kapchuni");
 
         assertNull(allUser);
     }
@@ -74,8 +78,10 @@ public class UserServiceImplTest {
     @Test
     void getUsersByType() {
         when(userRepository.findByUserType(UserType.MANAGER, pageRequest)).thenReturn(usersPageable());
+        when(userRepository.findByUserTypeAndDeletedFalse(UserType.MANAGER, pageRequest)).thenReturn(usersPageable());
+        when(userRepository.findByUserTypeAndDeletedTrue(UserType.MANAGER, pageRequest)).thenReturn(usersPageable());
 
-        List<UserDto> allUser = userService.getUsersByType(UserType.MANAGER, pageRequest);
+        List<UserDto> allUser = userService.getUsersByType(UserType.MANAGER, pageRequest, null);
         Page<UserDto> userDtoPage = new PageImpl<>(allUser);
 
         assertEquals(userDtoPage, getUserDto(usersPageable()));
@@ -84,8 +90,10 @@ public class UserServiceImplTest {
     @Test
     void getUsersByTypeNegativeCase() {
         when(userRepository.findByUserType(UserType.MANAGER, pageRequest)).thenReturn(null);
+        when(userRepository.findByUserTypeAndDeletedTrue(UserType.MANAGER, pageRequest)).thenReturn(null);
+        when(userRepository.findByUserTypeAndDeletedFalse(UserType.MANAGER, pageRequest)).thenReturn(null);
 
-        List<UserDto> allUser = userService.getUsersByType(UserType.MANAGER, pageRequest);
+        List<UserDto> allUser = userService.getUsersByType(UserType.MANAGER, pageRequest, null);
 
         assertNull(allUser);
     }

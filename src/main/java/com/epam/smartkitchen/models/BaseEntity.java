@@ -26,7 +26,7 @@ public abstract class BaseEntity implements Serializable {
     @CreatedBy
     private String createdBy;
     @Column(name = "deleted",columnDefinition = "boolean default false")
-    private Boolean deleted;
+    private boolean deleted;
 
     protected BaseEntity() {
     }

@@ -1,19 +1,19 @@
 package com.epam.smartkitchen.dto.manager;
 
 public class ResponseDeleteUserDto {
-    boolean removed;
+    boolean deleted;
 
-    public ResponseDeleteUserDto( boolean removed) {
+    public ResponseDeleteUserDto( boolean deleted) {
 
-        this.removed = removed;
+        this.deleted = deleted;
     }
 
     public boolean isRemoved() {
-        return removed;
+        return deleted;
     }
 
-    public void setRemoved(boolean removed) {
-        this.removed = removed;
+    public void setRemoved(boolean deleted) {
+        this.deleted = deleted;
     }
 
 
