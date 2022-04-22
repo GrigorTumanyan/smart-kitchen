@@ -25,6 +25,9 @@ public abstract class BaseEntity implements Serializable {
     private LocalDateTime modifiedOn;
     @CreatedBy
     private String createdBy;
+    @Column(name = "deleted",columnDefinition = "boolean default false")
+    private Boolean deleted;
+
     protected BaseEntity() {
     }
 
@@ -50,6 +53,14 @@ public abstract class BaseEntity implements Serializable {
 
     public void setModifiedOn(LocalDateTime modifiedOn) {
         this.modifiedOn = modifiedOn;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     @PrePersist

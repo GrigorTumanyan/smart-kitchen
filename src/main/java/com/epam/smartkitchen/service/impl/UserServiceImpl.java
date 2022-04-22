@@ -70,9 +70,9 @@ public class UserServiceImpl implements UserService {
         if (user == null){
             return null;
         }
-        user.setRemoved(true);
+        user.setDeleted(true);
         User savedUser = userRepository.save(user);
-        return new ResponseDeleteUserDto(savedUser.getRemoved());
+        return new ResponseDeleteUserDto(savedUser.getDeleted());
     }
 
     @Override
@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
     private User changeUserFields(UpdateUserDto updateUserDto, User user) {
         user.setUserType(updateUserDto.getUserType());
         user.setActive(updateUserDto.getActive());
-        user.setRemoved(updateUserDto.getRemoved());
+        user.setDeleted(updateUserDto.getRemoved());
         return user;
     }
 }

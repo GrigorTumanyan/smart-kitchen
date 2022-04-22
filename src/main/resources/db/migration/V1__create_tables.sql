@@ -99,7 +99,6 @@ create table user
     phone       varchar(255),
     surname     varchar(255),
     user_type   varchar(255),
-    removed      bit default false,
     primary key (id)
 ) engine = InnoDB
   DEFAULT CHARSET = utf8

@@ -18,7 +18,7 @@ public class UpdateUserDto {
     public static User toUser(UpdateUserDto managerEditUserDto){
         User user = new User();
         user.setUserType(managerEditUserDto.getUserType());
-        user.setRemoved(managerEditUserDto.getRemoved());
+        user.setDeleted(managerEditUserDto.getRemoved());
         user.setActive(managerEditUserDto.getActive());
         return user;
     }
