@@ -1,11 +1,14 @@
 package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.MenuItemCreateDto;
+import com.epam.smartkitchen.dto.UpdateMenuItemDto;
 import com.epam.smartkitchen.dto.mapper.MenuItemMapper;
 import com.epam.smartkitchen.models.MenuItem;
 import com.epam.smartkitchen.repository.MenuRepository;
 import com.epam.smartkitchen.service.MenuService;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class MenuServiceImpl implements MenuService {
@@ -22,5 +25,22 @@ public class MenuServiceImpl implements MenuService {
 
         return MenuItemMapper.menuItemToDto(menuRepository.save(menuItem));
 
+    }
+
+    @Override
+    public UpdateMenuItemDto updateMenu(String id,UpdateMenuItemDto updateMenuItemDto) {
+        Optional<MenuItem> byId =menuRepository.findById(id);
+        if (byId.isEmpty()){
+            return null;
+        }
+        MenuItem menuItemFromDb = byId.get();
+        menuItemFromDb.setName(updateMenuItemDto.getName());
+        menuItemFromDb.setPrice(updateMenuItemDto.getPrice());
+        menuItemFromDb.setImage(updateMenuItemDto.getImage());
+        menuItemFromDb.setWeight(updateMenuItemDto.getWeight());
+        menuItemFromDb.setmeasurement(updateMenuItemDto.getMeasurement());
+        menuItemFromDb.setProducts(updateMenuItemDto.getProducts());
+
+        return MenuItemMapper.menuItemToUpdateMenuDto(menuRepository.save(menuItemFromDb));
     }
 }

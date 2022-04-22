@@ -1,12 +1,15 @@
 package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.MenuItemCreateDto;
+import com.epam.smartkitchen.dto.UpdateMenuItemDto;
+import com.epam.smartkitchen.dto.mapper.MenuItemMapper;
 import com.epam.smartkitchen.models.Category;
 import com.epam.smartkitchen.models.MenuItem;
 import com.epam.smartkitchen.models.Product;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TestHelper {
 
@@ -45,6 +48,16 @@ public class TestHelper {
         category.setName("Meat");
         categories.add(category);
         return categories;
+    }
+    protected static Optional<MenuItem> optionalMenuItem(){
+        MenuItem menuItem = menuItem();
+       return Optional.of(menuItem);
+
+
+
+    }
+    protected static UpdateMenuItemDto updateMenuItemDto(){
+        return MenuItemMapper.menuItemToUpdateMenuDto(menuItem());
     }
 
 }
