@@ -26,8 +26,15 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<UserDto> getAllUser(Pageable pageable) {
-        Page<User> allUser = userRepository.findAll(pageable);
+    public List<UserDto> getAllUser(Pageable pageable, String deleted) {
+        Page<User> allUser = null;
+        if (deleted == null) {
+            allUser = userRepository.findAllByDeletedFalse(pageable);
+        } else if (deleted.equals("all")) {
+            allUser = userRepository.findAll(pageable);
+        } else if (deleted.equals("only")) {
+            allUser = userRepository.findAllByDeletedTrue(pageable);
+        }
         if (allUser == null) {
             return null;
         }
@@ -35,12 +42,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsersByType(UserType userType, Pageable pageable) {
-        Page<User> byUserType = userRepository.findByUserType(userType, pageable);
-        if (byUserType == null) {
+    public List<UserDto> getUsersByType(UserType userType, Pageable pageable, String deleted) {
+        Page<User> allUser = null;
+        if (deleted == null) {
+            allUser = userRepository.findByUserTypeAndDeletedFalse(userType, pageable);;
+        } else if (deleted.equals("all")) {
+            allUser = userRepository.findByUserType(userType, pageable);
+        } else if (deleted.equals("only")) {
+            allUser = userRepository.findByUserTypeAndDeletedTrue(userType,pageable);
+        }
+        if (allUser == null) {
             return null;
         }
-        return toUserDto(byUserType);
+        return toUserDto(allUser);
     }
 
     @Override
@@ -56,7 +70,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(String id, UpdateUserDto updateUserDto) {
         User user = userRepository.findById(id).orElse(null);
-        if (user == null){
+        if (user == null) {
             return null;
         }
         User updatedUser = changeUserFields(updateUserDto, user);
@@ -67,7 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseDeleteUserDto deleteUser(String id) {
         User user = userRepository.findById(id).orElse(null);
-        if (user == null){
+        if (user == null) {
             return null;
         }
         user.setDeleted(true);
@@ -97,7 +111,6 @@ public class UserServiceImpl implements UserService {
     private User changeUserFields(UpdateUserDto updateUserDto, User user) {
         user.setUserType(updateUserDto.getUserType());
         user.setActive(updateUserDto.getActive());
-        user.setDeleted(updateUserDto.getRemoved());
         return user;
     }
 }

@@ -12,11 +12,11 @@ import java.util.List;
 public interface UserService {
 
 
-    List<UserDto> getAllUser(Pageable pageable);
+    List<UserDto> getAllUser(Pageable pageable, String deleted);
 
     UserDto findById(String id);
 
-    List<UserDto> getUsersByType(UserType userType, Pageable pageable);
+    List<UserDto> getUsersByType(UserType userType, Pageable pageable, String deleted);
 
     UserDto addUser(UserDto userDto);
 
