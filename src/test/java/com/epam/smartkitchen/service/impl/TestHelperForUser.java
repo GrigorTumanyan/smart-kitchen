@@ -51,7 +51,7 @@ public class TestHelperForUser {
         user.setEmail("8");
         user.setActive(true);
         user.setPassword("8");
-        user.setRemoved(true);
+        user.setDeleted(true);
         return Optional.of(user);
     }
 
@@ -66,10 +66,10 @@ public class TestHelperForUser {
 
     protected static UpdateUserDto managerEditUserDto(){
         User user = toOptionalUser().get();
-        return new UpdateUserDto(user.getUserType(),user.getRemoved(),user.getActive());
+        return new UpdateUserDto(user.getUserType(),user.getDeleted(),user.getActive());
     }
     protected static ResponseDeleteUserDto deleteUserDto(){
         User user = toUser();
-        return new ResponseDeleteUserDto(user.getRemoved());
+        return new ResponseDeleteUserDto(user.getDeleted());
     }
 }
