@@ -29,10 +29,8 @@ public class User extends BaseEntity {
     UserType userType;
     @Column
     Boolean active;
-    @Column
-    Boolean removed;
 
-    public User(String name, String surname, String email, String password, String image, String phone, String address, UserType userType, Boolean active, Boolean removed) {
+    public User(String name, String surname, String email, String password, String image, String phone, String address, UserType userType, Boolean active) {
         this.name = name;
         this.surname = surname;
         this.email = email;
@@ -42,7 +40,6 @@ public class User extends BaseEntity {
         this.address = address;
         this.userType = userType;
         this.active = active;
-        this.removed = removed;
     }
 
     public User() {
@@ -120,13 +117,6 @@ public class User extends BaseEntity {
         this.active = active;
     }
 
-    public Boolean getRemoved() {
-        return removed;
-    }
-
-    public void setRemoved(Boolean removed) {
-        this.removed = removed;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -134,12 +124,12 @@ public class User extends BaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         User user = (User) o;
-        return Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(image, user.image) && Objects.equals(phone, user.phone) && Objects.equals(address, user.address) && userType == user.userType && Objects.equals(active, user.active) && Objects.equals(removed, user.removed);
+        return Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(image, user.image) && Objects.equals(phone, user.phone) && Objects.equals(address, user.address) && userType == user.userType && Objects.equals(active, user.active);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, surname, email, password, image, phone, address, userType, active, removed);
+        return Objects.hash(super.hashCode(), name, surname, email, password, image, phone, address, userType, active);
     }
 
     @Override
@@ -154,7 +144,6 @@ public class User extends BaseEntity {
                 ", address='" + address + '\'' +
                 ", userType=" + userType +
                 ", active=" + active +
-                ", removed=" + removed +
                 '}';
     }
 }
