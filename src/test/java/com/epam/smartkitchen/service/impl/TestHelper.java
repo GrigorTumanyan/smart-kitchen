@@ -29,6 +29,7 @@ public class TestHelper {
         menuItem.setPrice(100.0);
         menuItem.setWeight(15.0);
         menuItem.setmeasurement("piece");
+        menuItem.setDeleted(true);
         menuItem.setImage("C:\\Users\\DEll\\IdeaProjects\\smart-kitchen1\\src\\main\\java\\com\\epam\\smartkitchen\\controller");
         menuItem.setProducts(generateProductsList());
         return  menuItem;

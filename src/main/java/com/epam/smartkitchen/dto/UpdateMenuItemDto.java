@@ -2,7 +2,6 @@ package com.epam.smartkitchen.dto;
 
 import com.epam.smartkitchen.models.Product;
 
-import javax.servlet.http.HttpServlet;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,17 +12,19 @@ public class UpdateMenuItemDto {
     private Double price;
     private String measurement;
     private List<Product> products;
+    private Boolean deleted = Boolean.FALSE;
 
     public UpdateMenuItemDto() {
     }
 
-    public UpdateMenuItemDto(String name, String image, Double weight, Double price, String measurement, List<Product> products) {
+    public UpdateMenuItemDto(String name, String image, Double weight, Double price, String measurement, List<Product> products, Boolean deleted) {
         this.name = name;
         this.image = image;
         this.weight = weight;
         this.price = price;
         this.measurement = measurement;
         this.products = products;
+        this.deleted = deleted;
     }
 
     public String getName() {
@@ -74,17 +75,25 @@ public class UpdateMenuItemDto {
         this.products = products;
     }
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UpdateMenuItemDto that = (UpdateMenuItemDto) o;
-        return Objects.equals(name, that.name) && Objects.equals(image, that.image) && Objects.equals(weight, that.weight) && Objects.equals(price, that.price) && Objects.equals(measurement, that.measurement) && Objects.equals(products, that.products);
+        return Objects.equals(name, that.name) && Objects.equals(image, that.image) && Objects.equals(weight, that.weight) && Objects.equals(price, that.price) && Objects.equals(measurement, that.measurement) && Objects.equals(products, that.products) && Objects.equals(deleted, that.deleted);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, image, weight, price, measurement, products);
+        return Objects.hash(name, image, weight, price, measurement, products, deleted);
     }
 
     @Override
@@ -96,8 +105,8 @@ public class UpdateMenuItemDto {
                 ", price=" + price +
                 ", measurement='" + measurement + '\'' +
                 ", products=" + products +
+                ", deleted=" + deleted +
                 '}';
     }
-
 }
 

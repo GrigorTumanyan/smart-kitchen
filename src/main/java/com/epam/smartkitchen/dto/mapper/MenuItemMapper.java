@@ -57,6 +57,7 @@ public class MenuItemMapper {
         updateMenuItemDto.setWeight(menuItem.getWeight());
         updateMenuItemDto.setMeasurement(menuItem.getmeasurement());
         updateMenuItemDto.setProducts(menuItem.getProducts());
+        updateMenuItemDto.setDeleted(menuItem.getDeleted());
 
         return updateMenuItemDto;
     }

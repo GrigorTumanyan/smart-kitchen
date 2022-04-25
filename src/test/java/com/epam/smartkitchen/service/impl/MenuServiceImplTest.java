@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -62,6 +63,7 @@ class MenuServiceImplTest {
     @Test
     void updateMenu() {
         when(menuRepository.findById(any())).thenReturn(optionalMenuItem());
+
         when(menuRepository.save(any())).thenReturn(menuItem());
 
         UpdateMenuItemDto updateMenuItemDto = menuService.updateMenu("9", new UpdateMenuItemDto());
@@ -70,8 +72,9 @@ class MenuServiceImplTest {
 
 
     }
+
     @Test
-    void updateMenuNegativeCase(){
+    void updateMenuNegativeCase() {
         when(menuRepository.findById(any())).thenReturn(Optional.empty());
 
         UpdateMenuItemDto updateMenuItemDto = menuService.updateMenu("1", new UpdateMenuItemDto());
@@ -82,5 +85,23 @@ class MenuServiceImplTest {
     }
 
 
+    @Test
+    void deleteMenuItemById() {
+        when(menuRepository.findById(any())).thenReturn(optionalMenuItem());
 
+        when(menuRepository.save(optionalMenuItem().get())).thenReturn(optionalMenuItem().get());
+
+        UpdateMenuItemDto updateMenuItemDto = menuService.deleteMenuItemById("7");
+
+        assertEquals(optionalMenuItem().get().getDeleted(), updateMenuItemDto.getDeleted());
+    }
+
+    @Test
+    void deleteMenuItemByIdNegativeCase() {
+        when(menuRepository.findById("1")).thenThrow(new NullPointerException());
+
+
+        assertThrows(NullPointerException.class, () -> menuService.deleteMenuItemById("1"));
+
+    }
 }
