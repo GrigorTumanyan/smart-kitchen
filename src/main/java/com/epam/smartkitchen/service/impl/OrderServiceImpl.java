@@ -4,6 +4,7 @@ import com.epam.smartkitchen.dto.mapper.OrderMapper;
 import com.epam.smartkitchen.dto.order.AddOrderDto;
 import com.epam.smartkitchen.dto.order.DeleteOrderDto;
 import com.epam.smartkitchen.dto.order.OrderDto;
+import com.epam.smartkitchen.dto.order.UpdateOrderDto;
 import com.epam.smartkitchen.enums.OrderState;
 import com.epam.smartkitchen.models.MenuItem;
 import com.epam.smartkitchen.models.Order;
@@ -90,28 +91,28 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto updateOrder(String id, OrderDto orderUpdate) {
+    public OrderDto updateOrder(String id, UpdateOrderDto orderUpdate) {
         Optional<Order> order = orderRepository.findById(id);
         if (order.isEmpty()) {
-            return orderUpdate;
+            throw new RuntimeException(id + " id not found!");
         }
-        Optional<OrderDto> mapOrder = order.map(orders -> {
-            orders.setWaiter(orderUpdate.getWaiter());
-            orders.setCook(orderUpdate.getCook());
+        Optional<?> mapOrder = order.map(orders -> {
             orders.setState(orderUpdate.getOrderState());
+            orders.setItemsList(orderUpdate.getItemList());
+
             List<MenuItem> itemsList = orders.getItemsList();
             Double price = null;
             for (MenuItem menuItem : itemsList) {
                 price = +menuItem.getPrice();
             }
             Double percent = price / 10;
-            Double totalprice = price + percent;
+            Double totalAmount = price + percent;
 
-            orders.setTotalPrice(totalprice);
+            orders.setTotalPrice(totalAmount);
 
             return orderUpdate;
         });
-        Order toOrder = OrderMapper.dtoToOrder(mapOrder.get());
+        Order toOrder = OrderMapper.updateOrderDtoToOrder((UpdateOrderDto) mapOrder.get());
         Order save = orderRepository.save(toOrder);
         OrderDto orderDto = OrderMapper.orderToDto(save);
         return orderDto;

@@ -3,6 +3,7 @@ package com.epam.smartkitchen.controller;
 import com.epam.smartkitchen.dto.order.AddOrderDto;
 import com.epam.smartkitchen.dto.order.DeleteOrderDto;
 import com.epam.smartkitchen.dto.order.OrderDto;
+import com.epam.smartkitchen.dto.order.UpdateOrderDto;
 import com.epam.smartkitchen.enums.OrderState;
 import com.epam.smartkitchen.service.OrderService;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/order")
@@ -68,10 +70,10 @@ public class OrderController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<OrderDto> updateOrder(@PathVariable(name = "id") String id,
-                                                @RequestBody OrderDto updateOrderDto) {
-        OrderDto orderDto = orderService.updateOrder(id, updateOrderDto);
-        if (orderDto == null) {
+    public ResponseEntity<Optional<OrderDto>> updateOrder(@PathVariable(name = "id") String id,
+                                                          @RequestBody UpdateOrderDto updateOrderDto) {
+        Optional<OrderDto> orderDto = Optional.ofNullable(orderService.updateOrder(id, updateOrderDto));
+        if (orderDto.isEmpty()) {
             return ResponseEntity.notFound().eTag(id + " is not exist").build();
         }
         return ResponseEntity.ok(orderDto);

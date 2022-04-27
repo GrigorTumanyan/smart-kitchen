@@ -2,6 +2,7 @@ package com.epam.smartkitchen.dto.mapper;
 
 import com.epam.smartkitchen.dto.order.AddOrderDto;
 import com.epam.smartkitchen.dto.order.OrderDto;
+import com.epam.smartkitchen.dto.order.UpdateOrderDto;
 import com.epam.smartkitchen.models.Order;
 
 public class OrderMapper {
@@ -33,6 +34,14 @@ public class OrderMapper {
         order.setWaiter(addOrderDto.getWaiter());
         order.setState(addOrderDto.getOrderState());
         order.setItemsList(addOrderDto.getMenuItemList());
+
+        return order;
+    }
+
+    public static Order updateOrderDtoToOrder(UpdateOrderDto updateOrderDto) {
+        Order order = new Order();
+        order.setState(updateOrderDto.getOrderState());
+        order.setItemsList(updateOrderDto.getItemList());
 
         return order;
     }
