@@ -2,9 +2,8 @@ package com.epam.smartkitchen.controller;
 
 import com.epam.smartkitchen.dto.CategoryDto;
 import com.epam.smartkitchen.service.CategoryService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class CategoryController {
@@ -18,5 +17,16 @@ public class CategoryController {
     @PostMapping("/category")
     public CategoryDto addCategory(@RequestBody CategoryDto categoryDto){
         return categoryService.addCategory(categoryDto);
+    }
+
+    @DeleteMapping("/category/{id}")
+    public ResponseEntity<?> deleteCategory(@PathVariable("id") String id){
+        categoryService.deleteCategory(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/category")
+    public ResponseEntity<CategoryDto> updateCategory(CategoryDto categoryDto){
+        return ResponseEntity.ok(categoryService.addCategory(categoryDto));
     }
 }

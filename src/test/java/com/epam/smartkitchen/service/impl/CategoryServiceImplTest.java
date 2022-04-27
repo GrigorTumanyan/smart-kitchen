@@ -37,5 +37,20 @@ class CategoryServiceImplTest {
         verify(categoryRepository,times(1)).save(category);
     }
 
+    @Test
+    void deleteCategory() {
+        String productId = "test-id";
+        categoryServiceTest.deleteCategory(productId);
+        verify(categoryRepository,times(1)).deleteById(productId);
+    }
 
+    @Test
+    void updateCategory(){
+        CategoryDto categoryDto = new CategoryDto("pizza");
+        Category category = new Category();
+        when(mapper.map(categoryDto,Category.class)).thenReturn(category);
+        CategoryDto actualResult = categoryServiceTest.updateCategory(categoryDto,"1");
+        assertEquals(categoryDto,actualResult);
+        verify(categoryRepository,times(1)).save(category);
+    }
 }

@@ -25,4 +25,19 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryDto;
     }
 
+    @Override
+    public void deleteCategory(String id) {
+        Category category = categoryRepository.getById(id);
+        category.setDeleted(true);
+        categoryRepository.save(category);
+    }
+
+    @Override
+    public CategoryDto updateCategory(CategoryDto categoryDto, String id) {
+        Category category = categoryRepository.findById(id).orElseThrow();
+        mapper.map(categoryDto, category);
+        categoryRepository.save(category);
+        return categoryDto;
+    }
+
 }
