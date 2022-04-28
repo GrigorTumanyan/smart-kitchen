@@ -4,12 +4,16 @@ import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
 import com.epam.smartkitchen.dto.manager.UpdateUserDto;
 import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
+import com.epam.smartkitchen.models.User;
+import com.epam.smartkitchen.service.ExcelWriter;
 import com.epam.smartkitchen.service.UserService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -19,8 +23,11 @@ public class ManagerRestController {
 
     private final UserService userService;
 
-    public ManagerRestController(UserService userService) {
+    private final ExcelWriter excelWriter;
+
+    public ManagerRestController(UserService userService, ExcelWriter excelWriter) {
         this.userService = userService;
+        this.excelWriter = excelWriter;
     }
 
     @GetMapping("/users")
@@ -56,6 +63,14 @@ public class ManagerRestController {
             return ResponseEntity.notFound().eTag("Id " + id + " is not found").build();
         }
         return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/download")
+    public ResponseEntity<?> getSheet(HttpServletResponse response){
+        LinkedList<Object> objects = new LinkedList<>();
+        objects.add(new User("1", "1", "1", "1",null, null, null, UserType.COOK,true));
+        HttpServletResponse write = excelWriter.write(objects, response);
+        return ResponseEntity.ok(write);
     }
 
     @PostMapping("/user")
