@@ -100,4 +100,14 @@ class OrderServiceImplTest {
 
         assertEquals(orderDtoPage, getOrderDto(orderPageable()));
     }
+
+    @Test
+    void deleteOrder(){
+        when(orderRepository.findById(id)).thenReturn(toOptionalOrder());
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
+
+        DeleteOrderDto deletedOrderDto = orderService.deleteOrder(id);
+
+        assertEquals(deletedOrderDto.isDeleted(), deleteOrderDto.isDeleted());
+    }
 }
