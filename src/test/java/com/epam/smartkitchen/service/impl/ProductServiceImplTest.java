@@ -11,7 +11,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +39,29 @@ class ProductServiceImplTest {
         Product product = new Product();
         when(mapper.map(productDto,Product.class)).thenReturn(product);
         ProductDto actualResult = productServiceTest.addProduct(productDto);
+        assertEquals(productDto,actualResult);
+        verify(productRepository,times(1)).save(product);
+    }
+
+    @Test
+    void deleteProduct() {
+        String productId = "test-id";
+        Product product = new Product();
+
+        when(productRepository.getById(productId)).thenReturn(product);
+
+        productServiceTest.deleteProduct(productId);
+
+        verify(productRepository,times(1)).save(product);
+        assertTrue(product.getDeleted());
+    }
+
+    @Test
+    void updateProduct(){
+        ProductDto productDto = new ProductDto("pizza");
+        Product product = new Product();
+        when(productRepository.findById("1")).thenReturn(Optional.of(product));
+        ProductDto actualResult = productServiceTest.updateProduct(productDto,"1");
         assertEquals(productDto,actualResult);
         verify(productRepository,times(1)).save(product);
     }
