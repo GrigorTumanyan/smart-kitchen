@@ -73,9 +73,6 @@ public class OrderController {
     public ResponseEntity<Optional<OrderDto>> updateOrder(@PathVariable(name = "id") String id,
                                                           @RequestBody UpdateOrderDto updateOrderDto) {
         Optional<OrderDto> orderDto = Optional.ofNullable(orderService.updateOrder(id, updateOrderDto));
-        if (orderDto.isEmpty()) {
-            return ResponseEntity.notFound().eTag(id + " is not exist").build();
-        }
         return ResponseEntity.ok(orderDto);
     }
 

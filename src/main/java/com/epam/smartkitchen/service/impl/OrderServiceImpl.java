@@ -83,7 +83,8 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setTotalPrice(price);
         Order savedOrder = orderRepository.save(order);
-        return new OrderDto(savedOrder);
+        OrderDto orderDto = OrderMapper.orderToDto(savedOrder);
+        return orderDto;
     }
 
     private void decreaseMenuItem(String name, Double weight, String measurement) {
