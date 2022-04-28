@@ -26,8 +26,8 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/product")
-    public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productDto){
-        return ResponseEntity.ok(productService.addProduct(productDto));
+    @PutMapping("/product/{id}")
+    public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productDto,@PathVariable("id") String id){
+        return ResponseEntity.ok(productService.updateProduct(productDto,id));
     }
 }

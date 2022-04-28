@@ -25,8 +25,8 @@ public class CategoryController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/category")
-    public ResponseEntity<CategoryDto> updateCategory(CategoryDto categoryDto){
-        return ResponseEntity.ok(categoryService.addCategory(categoryDto));
+    @PutMapping("/category/{id}")
+    public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryDto,@PathVariable("id") String id){
+        return ResponseEntity.ok(categoryService.updateCategory(categoryDto,id));
     }
 }
