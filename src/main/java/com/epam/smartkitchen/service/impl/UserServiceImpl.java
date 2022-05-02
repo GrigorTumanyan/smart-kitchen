@@ -6,9 +6,12 @@ import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
+import com.epam.smartkitchen.requestObject.RequestParamObject;
 import com.epam.smartkitchen.service.UserService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +29,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<UserDto> getAllUser(Pageable pageable, String deleted) {
+    public List<UserDto> getAllUser(RequestParamObject param) {
+        PageRequest pageable = createPageable(param.getPageNumber(), param.getPageSize(), param.getField(), param.getDirection());
+        String deleted = param.getDeleted();
         Page<User> allUser = null;
         if (deleted == null) {
             allUser = userRepository.findAllByDeletedFalse(pageable);
@@ -42,14 +47,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsersByType(UserType userType, Pageable pageable, String deleted) {
+    public List<UserDto> getUsersByType(UserType userType, RequestParamObject param) {
+        PageRequest pageable = createPageable(param.getPageNumber(), param.getPageSize(), param.getField(), param.getDirection());
+        String deleted = param.getDeleted();
         Page<User> allUser = null;
         if (deleted == null) {
-            allUser = userRepository.findByUserTypeAndDeletedFalse(userType, pageable);;
+            allUser = userRepository.findByUserTypeAndDeletedFalse(userType, pageable);
+            ;
         } else if (deleted.equals("all")) {
             allUser = userRepository.findByUserType(userType, pageable);
         } else if (deleted.equals("only")) {
-            allUser = userRepository.findByUserTypeAndDeletedTrue(userType,pageable);
+            allUser = userRepository.findByUserTypeAndDeletedTrue(userType, pageable);
         }
         if (allUser == null) {
             return null;
@@ -98,6 +106,14 @@ public class UserServiceImpl implements UserService {
         return new UserDto(user);
     }
 
+    @Override
+    public List<UserDto> exportExcel(UserType userType, RequestParamObject requestParamObject) {
+        if (userType != null) {
+            return getUsersByType(userType, requestParamObject);
+        }
+        return getAllUser(requestParamObject);
+    }
+
 
     private List<UserDto> toUserDto(Page<User> userList) {
         List<UserDto> allUserDto = new ArrayList<>();
@@ -113,4 +129,15 @@ public class UserServiceImpl implements UserService {
         user.setActive(updateUserDto.getActive());
         return user;
     }
+
+    private PageRequest createPageable(int pageNumber, int pageSize, String field, String direction) {
+        if (field == null) {
+            return PageRequest.of(pageNumber, pageSize);
+        } else if (direction == null) {
+            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).ascending());
+        } else {
+            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).descending());
+        }
+    }
+
 }

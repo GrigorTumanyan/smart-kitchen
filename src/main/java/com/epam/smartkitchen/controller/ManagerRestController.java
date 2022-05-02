@@ -4,16 +4,15 @@ import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
 import com.epam.smartkitchen.dto.manager.UpdateUserDto;
 import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
-import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.service.ExcelWriter;
 import com.epam.smartkitchen.service.UserService;
+import com.epam.smartkitchen.requestObject.RequestParamObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -31,11 +30,8 @@ public class ManagerRestController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserDto>> getUsersWithSort(@RequestParam int pageSize, @RequestParam int pageNumber,
-                                                          @RequestParam(required = false) String deleted,
-                                                          @RequestParam(required = false) String field,
-                                                          @RequestParam(required = false) String direction) {
-        List<UserDto> allUser = userService.getAllUser(createPageable(pageNumber, pageSize, field, direction), deleted);
+    public ResponseEntity<List<UserDto>> getUsersWithSort(RequestParamObject requestParamCustom) {
+        List<UserDto> allUser = userService.getAllUser(requestParamCustom);
         if (allUser == null) {
             return ResponseEntity.notFound().eTag("Users are not found").build();
         }
@@ -43,12 +39,8 @@ public class ManagerRestController {
     }
 
     @GetMapping("/users/{userType}")
-    public ResponseEntity<List<UserDto>> getUserByType(@PathVariable UserType userType, @RequestParam int pageNumber,
-                                                       @RequestParam(required = false) String deleted,
-                                                       @RequestParam int pageSize,
-                                                       @RequestParam(required = false) String direction,
-                                                       @RequestParam(required = false) String field) {
-        List<UserDto> usersByType = userService.getUsersByType(userType, createPageable(pageNumber, pageSize, field, direction), deleted);
+    public ResponseEntity<List<UserDto>> getUserByType(@PathVariable UserType userType, RequestParamObject requestParamCustom) {
+        List<UserDto> usersByType = userService.getUsersByType(userType, requestParamCustom);
         if (usersByType == null) {
             return ResponseEntity.notFound().eTag("You don't have " + userType + "user").build();
         }
@@ -66,11 +58,11 @@ public class ManagerRestController {
     }
 
     @PostMapping("/download")
-    public ResponseEntity<?> getSheet(HttpServletResponse response){
-        LinkedList<Object> objects = new LinkedList<>();
-        objects.add(new User("1", "1", "1", "1",null, null, null, UserType.COOK,true));
-        HttpServletResponse write = excelWriter.write(objects, response);
-        return ResponseEntity.ok(write);
+    public ResponseEntity<?> exportSheet(HttpServletResponse response, RequestParamObject requestParamObject,
+                                         @RequestParam(required = false) UserType userType){
+        List<UserDto> userDto = userService.exportExcel(userType, requestParamObject);
+        excelWriter.write(userDto, response);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/user")
@@ -98,16 +90,5 @@ public class ManagerRestController {
             return ResponseEntity.notFound().eTag(id + " id is not exist").build();
         }
         return ResponseEntity.ok(responseDeleteUserDto);
-    }
-
-
-    private PageRequest createPageable(int pageNumber, int pageSize, String field, String direction) {
-        if (field == null) {
-            return PageRequest.of(pageNumber, pageSize);
-        } else if (direction == null) {
-            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).ascending());
-        } else {
-            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).descending());
-        }
     }
 }

@@ -3,6 +3,9 @@ package com.epam.smartkitchen.service.impl;
 import com.epam.smartkitchen.service.ExcelWriter;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.query.criteria.internal.expression.function.CurrentTimeFunction;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletOutputStream;
@@ -11,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -18,38 +22,20 @@ import java.util.*;
 @Service
 public class ExcelWriterImpl implements ExcelWriter {
 
-    private final Workbook workbook;
-
-    public ExcelWriterImpl() {
-        this.workbook = new XSSFWorkbook();
-    }
-
-
     @Override
     public HttpServletResponse write(List<?> data, HttpServletResponse response) {
-        Sheet sheetContent = createSheetContent(data);
+        Workbook workbook = new XSSFWorkbook();
+        String simpleName = data.get(0).getClass().getSimpleName();
+        Sheet sheetContent = createSheetContent(workbook, simpleName);
         writeSheetData(sheetContent, data);
-        response.setContentType("application/octet-stream");
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=user";
-        response.setHeader(headerKey,headerValue);
+        setResponseHeader(response, simpleName.concat(".xlsx"));
         try {
             ServletOutputStream outputStream = response.getOutputStream();
             workbook.write(outputStream);
-            workbook.close();
-            outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return response;
-    }
-
-    private void writeExcelToFile(String outputPath) {
-        try (OutputStream out = new FileOutputStream(outputPath)) {
-            workbook.write(out);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void writeSheetData(Sheet sheet, List<?> data) {
@@ -86,12 +72,11 @@ public class ExcelWriterImpl implements ExcelWriter {
         return headers;
     }
 
-    private Sheet createSheetContent(List<?> data) {
-        if (data.size() == 0){
+    private Sheet createSheetContent(Workbook workbook, String sheetName) {
+        if (sheetName == null) {
             throw new RuntimeException("List is Empty");
         }
-        return workbook.createSheet(data.get(0).getClass().getSimpleName().toLowerCase());
-
+        return workbook.createSheet(sheetName.toLowerCase());
     }
 
     private void writeRow(List<?> data, Row row) {
@@ -99,11 +84,6 @@ public class ExcelWriterImpl implements ExcelWriter {
             Object cellValue = data.get(i);
             if (cellValue != null) {
                 Cell cell = row.createCell(i);
-//                switch (cell.getCellType()){
-//                    case STRING: cell.setCellValue(cellValue.toString()); break;
-//                    case BOOLEAN: cell.setCellValue((Boolean) cellValue); break;
-//                    case NUMERIC: cell.setCellValue((Double) cellValue); break;
-//                }
                 if (cellValue instanceof Number) {
                     cell.setCellValue(((Double) cellValue));
                 } else if (cellValue instanceof Boolean) {
@@ -123,5 +103,14 @@ public class ExcelWriterImpl implements ExcelWriter {
                 }
             }
         }
+    }
+
+    private void setResponseHeader(HttpServletResponse response, String sheetName) {
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+        String fileName = sheetName + " " + timeStamp + ".xlsx";
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename= " + fileName;
+        response.setHeader(headerKey, headerValue);
     }
 }
