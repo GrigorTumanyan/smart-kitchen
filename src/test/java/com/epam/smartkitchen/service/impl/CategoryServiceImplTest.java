@@ -9,7 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class CategoryServiceImplTest {
@@ -37,5 +40,26 @@ class CategoryServiceImplTest {
         verify(categoryRepository,times(1)).save(category);
     }
 
+    @Test
+    void deleteCategory() {
+        String categoryId = "test-id";
 
+        Category category = new Category();
+        when(categoryRepository.getById(categoryId)).thenReturn(category);
+
+        categoryServiceTest.deleteCategory(categoryId);
+
+        verify(categoryRepository,times(1)).save(category);
+        assertTrue(category.getDeleted());
+    }
+
+    @Test
+    void updateCategory(){
+        CategoryDto categoryDto = new CategoryDto("pizza");
+        Category category = new Category();
+        when(categoryRepository.findById("1")).thenReturn(Optional.of(category));
+        CategoryDto actualResult = categoryServiceTest.updateCategory(categoryDto,"1");
+        assertEquals(categoryDto,actualResult);
+        verify(categoryRepository,times(1)).save(category);
+    }
 }

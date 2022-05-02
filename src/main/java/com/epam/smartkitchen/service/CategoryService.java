@@ -7,5 +7,8 @@ public interface CategoryService {
     public CategoryDto addCategory(CategoryDto categoryDto);
 
 
+    void deleteCategory(String id);
+
+    public CategoryDto updateCategory(CategoryDto categoryDto, String id);
 
 }

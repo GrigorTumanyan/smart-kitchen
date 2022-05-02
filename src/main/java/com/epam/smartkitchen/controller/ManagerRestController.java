@@ -4,9 +4,9 @@ import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
 import com.epam.smartkitchen.dto.manager.UpdateUserDto;
 import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
+import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.service.ExcelWriter;
 import com.epam.smartkitchen.service.UserService;
-import com.epam.smartkitchen.requestObject.RequestParamObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -30,17 +30,33 @@ public class ManagerRestController {
     }
 
     @GetMapping("/users")
+    public ResponseEntity<List<UserDto>> getUsersWithSort(@RequestParam(required = false) int pageSize,
+            @RequestParam int pageNumber,
+            @RequestParam(required = false) String deleted,
+            @RequestParam(required = false) String field,
+            @RequestParam(required = false) String direction) {
+        List<UserDto> allUser = userService.getAllUser(createPageable(pageNumber, pageSize, field, direction), deleted);
+
+        if (allUser.size() < 1) {
+            throw new RecordNotFoundException("Users are not found");
     public ResponseEntity<List<UserDto>> getUsersWithSort(RequestParamObject requestParamCustom) {
         List<UserDto> allUser = userService.getAllUser(requestParamCustom);
         if (allUser == null) {
             return ResponseEntity.notFound().eTag("Users are not found").build();
         }
+
         return ResponseEntity.ok(allUser);
     }
 
     @GetMapping("/users/{userType}")
-    public ResponseEntity<List<UserDto>> getUserByType(@PathVariable UserType userType, RequestParamObject requestParamCustom) {
-        List<UserDto> usersByType = userService.getUsersByType(userType, requestParamCustom);
+    public ResponseEntity<List<UserDto>> getUserByType(@PathVariable UserType userType,
+            @RequestParam int pageNumber,
+            @RequestParam(required = false) String deleted,
+            @RequestParam int pageSize,
+            @RequestParam(required = false) String direction,
+            @RequestParam(required = false) String field) {
+        List<UserDto> usersByType = userService.getUsersByType(userType,
+                createPageable(pageNumber, pageSize, field, direction), deleted);
         if (usersByType == null) {
             return ResponseEntity.notFound().eTag("You don't have " + userType + "user").build();
         }
@@ -90,5 +106,15 @@ public class ManagerRestController {
             return ResponseEntity.notFound().eTag(id + " id is not exist").build();
         }
         return ResponseEntity.ok(responseDeleteUserDto);
+    }
+
+    private PageRequest createPageable(int pageNumber, int pageSize, String field, String direction) {
+        if (field == null) {
+            return PageRequest.of(pageNumber, pageSize);
+        } else if (direction == null) {
+            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).ascending());
+        } else {
+            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).descending());
+        }
     }
 }
