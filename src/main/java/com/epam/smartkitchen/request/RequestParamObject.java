@@ -1,4 +1,4 @@
-package com.epam.smartkitchen.requestObject;
+package com.epam.smartkitchen.request;
 
 
 import java.util.Objects;

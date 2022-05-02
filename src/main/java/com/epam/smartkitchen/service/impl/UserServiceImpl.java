@@ -6,11 +6,10 @@ import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
-import com.epam.smartkitchen.requestObject.RequestParamObject;
+import com.epam.smartkitchen.request.RequestParamObject;
 import com.epam.smartkitchen.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +52,6 @@ public class UserServiceImpl implements UserService {
         Page<User> allUser = null;
         if (deleted == null) {
             allUser = userRepository.findByUserTypeAndDeletedFalse(userType, pageable);
-            ;
         } else if (deleted.equals("all")) {
             allUser = userRepository.findByUserType(userType, pageable);
         } else if (deleted.equals("only")) {
@@ -113,7 +111,6 @@ public class UserServiceImpl implements UserService {
         }
         return getAllUser(requestParamObject);
     }
-
 
     private List<UserDto> toUserDto(Page<User> userList) {
         List<UserDto> allUserDto = new ArrayList<>();

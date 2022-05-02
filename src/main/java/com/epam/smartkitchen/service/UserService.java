@@ -4,8 +4,7 @@ import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
 import com.epam.smartkitchen.dto.manager.UpdateUserDto;
 import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
-import com.epam.smartkitchen.requestObject.RequestParamObject;
-import org.springframework.data.domain.Pageable;
+import com.epam.smartkitchen.request.RequestParamObject;
 
 import java.util.List;
 

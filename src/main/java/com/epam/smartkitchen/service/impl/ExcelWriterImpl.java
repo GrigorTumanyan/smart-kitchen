@@ -25,6 +25,9 @@ public class ExcelWriterImpl implements ExcelWriter {
     @Override
     public HttpServletResponse write(List<?> data, HttpServletResponse response) {
         Workbook workbook = new XSSFWorkbook();
+        if (data.isEmpty()){
+            return null;
+        }
         String simpleName = data.get(0).getClass().getSimpleName();
         Sheet sheetContent = createSheetContent(workbook, simpleName);
         writeSheetData(sheetContent, data);
@@ -73,9 +76,6 @@ public class ExcelWriterImpl implements ExcelWriter {
     }
 
     private Sheet createSheetContent(Workbook workbook, String sheetName) {
-        if (sheetName == null) {
-            throw new RuntimeException("List is Empty");
-        }
         return workbook.createSheet(sheetName.toLowerCase());
     }
 
