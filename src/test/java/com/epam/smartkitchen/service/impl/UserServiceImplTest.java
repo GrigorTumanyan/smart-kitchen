@@ -5,7 +5,6 @@ import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
-import com.epam.smartkitchen.request.RequestParamObject;
 import com.epam.smartkitchen.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +58,7 @@ public class UserServiceImplTest {
         when(userRepository.findAllByDeletedFalse(pageRequest)).thenReturn((usersPageable()));
         when(userRepository.findAllByDeletedTrue(pageRequest)).thenReturn((usersPageable()));
 
-        List<UserDto> allUser = userService.getAllUser(new RequestParamObject(0,10,null,null,null));
+        List<UserDto> allUser = userService.getAllUser(0,10, null, null, null);
         Page<UserDto> usersToPage = new PageImpl<>(allUser);
 
         assertEquals(usersToPage, getUserDto(usersPageable()));
@@ -71,7 +70,7 @@ public class UserServiceImplTest {
         when(userRepository.findAllByDeletedTrue(pageRequest)).thenReturn(null);
         when(userRepository.findAllByDeletedFalse(pageRequest)).thenReturn(null);
 
-        List<UserDto> allUser = userService.getAllUser(new RequestParamObject(1,1,null,null,null));
+        List<UserDto> allUser = userService.getAllUser(0,10, null, null, null);
 
         assertNull(allUser);
     }
@@ -82,7 +81,7 @@ public class UserServiceImplTest {
         when(userRepository.findByUserTypeAndDeletedFalse(UserType.MANAGER, pageRequest)).thenReturn(usersPageable());
         when(userRepository.findByUserTypeAndDeletedTrue(UserType.MANAGER, pageRequest)).thenReturn(usersPageable());
 
-        List<UserDto> allUser = userService.getUsersByType(UserType.MANAGER, new RequestParamObject(0,10,null,null,null));
+        List<UserDto> allUser = userService.getUsersByType(UserType.MANAGER, 0,10, null, null, null);
         Page<UserDto> userDtoPage = new PageImpl<>(allUser);
 
         assertEquals(userDtoPage, getUserDto(usersPageable()));
@@ -94,7 +93,7 @@ public class UserServiceImplTest {
         when(userRepository.findByUserTypeAndDeletedTrue(UserType.MANAGER, pageRequest)).thenReturn(null);
         when(userRepository.findByUserTypeAndDeletedFalse(UserType.MANAGER, pageRequest)).thenReturn(null);
 
-        List<UserDto> allUser = userService.getUsersByType(UserType.MANAGER,new RequestParamObject(1,1,null,null,null));
+        List<UserDto> allUser = userService.getUsersByType(UserType.MANAGER,0,10, null, null, null);
 
         assertNull(allUser);
     }

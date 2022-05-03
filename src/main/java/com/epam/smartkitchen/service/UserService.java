@@ -4,7 +4,6 @@ import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
 import com.epam.smartkitchen.dto.manager.UpdateUserDto;
 import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
-import com.epam.smartkitchen.request.RequestParamObject;
 
 import java.util.List;
 
@@ -12,11 +11,11 @@ import java.util.List;
 public interface UserService {
 
 
-    List<UserDto> getAllUser(RequestParamObject requestParamObject);
+    List<UserDto> getAllUser(int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
     UserDto findById(String id);
 
-    List<UserDto> getUsersByType(UserType userType, RequestParamObject param);
+    List<UserDto> getUsersByType(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
     UserDto addUser(UserDto userDto);
 
@@ -24,6 +23,6 @@ public interface UserService {
 
     ResponseDeleteUserDto deleteUser(String id);
 
-    public List<UserDto> exportExcel(UserType userType, RequestParamObject requestParamObject);
+    public List<UserDto> exportExcel(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
 }

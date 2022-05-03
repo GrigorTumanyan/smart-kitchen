@@ -6,7 +6,6 @@ import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
-import com.epam.smartkitchen.request.RequestParamObject;
 import com.epam.smartkitchen.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,9 +27,8 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<UserDto> getAllUser(RequestParamObject param) {
-        PageRequest pageable = createPageable(param.getPageNumber(), param.getPageSize(), param.getField(), param.getDirection());
-        String deleted = param.getDeleted();
+    public List<UserDto> getAllUser(int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+        PageRequest pageable = createPageable(pageNumber,pageSize, sortedField, direction);
         Page<User> allUser = null;
         if (deleted == null) {
             allUser = userRepository.findAllByDeletedFalse(pageable);
@@ -46,9 +44,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsersByType(UserType userType, RequestParamObject param) {
-        PageRequest pageable = createPageable(param.getPageNumber(), param.getPageSize(), param.getField(), param.getDirection());
-        String deleted = param.getDeleted();
+    public List<UserDto> getUsersByType(UserType userType,int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+        PageRequest pageable = createPageable(pageNumber,pageSize, sortedField, direction);
         Page<User> allUser = null;
         if (deleted == null) {
             allUser = userRepository.findByUserTypeAndDeletedFalse(userType, pageable);
@@ -105,11 +102,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> exportExcel(UserType userType, RequestParamObject requestParamObject) {
+    public List<UserDto> exportExcel(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
         if (userType != null) {
-            return getUsersByType(userType, requestParamObject);
+            return getUsersByType(userType, pageNumber, pageSize,sortedField,direction,deleted);
         }
-        return getAllUser(requestParamObject);
+        return getAllUser(pageNumber, pageSize,sortedField,direction,deleted);
     }
 
     private List<UserDto> toUserDto(Page<User> userList) {
