@@ -1,10 +1,11 @@
 package com.epam.smartkitchen.controller;
 
-import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
-import com.epam.smartkitchen.dto.manager.UpdateUserDto;
-import com.epam.smartkitchen.dto.manager.UserDto;
+import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
+import com.epam.smartkitchen.dto.user.UpdateUserDto;
+import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
-import com.epam.smartkitchen.exceptions.RecordNotFoundException;
+import com.epam.smartkitchen.exceptions.ErrorResponse;
+import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.ExcelWriter;
 import com.epam.smartkitchen.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -28,28 +29,23 @@ public class ManagerRestController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserDto>> getUsersWithSort(@RequestParam(required = false) int pageSize,
+    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getUsersWithSort(@RequestParam(required = false) int pageSize,
                                                           @RequestParam int pageNumber,
                                                           @RequestParam(required = false) String deleted,
                                                           @RequestParam(required = false) String sortedField,
                                                           @RequestParam(required = false) String direction) {
-        List<UserDto> allUser = userService.getAllUser(pageNumber, pageSize, sortedField, direction, deleted);
-        if (allUser.size() < 1) {
-            throw new RecordNotFoundException("Users are not found");
-        }
-        return ResponseEntity.ok(allUser);
+        Response<ErrorResponse, List<UserDto>> response = userService.getAllUser(pageNumber, pageSize, sortedField, direction, deleted);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/users/{userType}")
-    public ResponseEntity<List<UserDto>> getUserByType(@PathVariable UserType userType, @RequestParam(required = false) int pageSize,
+    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getUserByType(@PathVariable UserType userType, @RequestParam(required = false) int pageSize,
                                                        @RequestParam int pageNumber,
                                                        @RequestParam(required = false) String deleted,
                                                        @RequestParam(required = false) String sortedField,
                                                        @RequestParam(required = false) String direction) {
-        List<UserDto> usersByType = userService.getUsersByType(userType, pageNumber,pageSize,sortedField,direction,deleted);
-        if (usersByType == null) {
-            return ResponseEntity.notFound().eTag("You don't have " + userType + "user").build();
-        }
+        Response<ErrorResponse, List<UserDto>> usersByType = userService.getUsersByType(userType, pageNumber, pageSize, sortedField, direction, deleted);
+
         return ResponseEntity.ok(usersByType);
     }
 
@@ -64,17 +60,15 @@ public class ManagerRestController {
     }
 
     @PostMapping("/download")
-    public ResponseEntity<?> exportSheet(HttpServletResponse response, @RequestParam(required = false) int pageSize,
+    public ResponseEntity<Response<ErrorResponse, ?>> exportSheet(HttpServletResponse httpResponse, @RequestParam(required = false) int pageSize,
                                          @RequestParam int pageNumber,
                                          @RequestParam(required = false) String deleted,
                                          @RequestParam(required = false) String sortedField,
                                          @RequestParam(required = false) String direction,
                                          @RequestParam(required = false) UserType userType) {
-        List<UserDto> userDto = userService.exportExcel(userType, pageNumber, pageSize, sortedField, direction, deleted);
-        if (userDto.isEmpty()) {
-            throw new RecordNotFoundException("Schedule not found");
-        }
-        excelWriter.write(userDto, response);
+        Response<ErrorResponse, List<UserDto>> response = userService.exportExcel(userType, pageNumber, pageSize, sortedField, direction, deleted);
+
+        excelWriter.write(response.getSuccessObject(), httpResponse);
         return ResponseEntity.ok().build();
     }
 

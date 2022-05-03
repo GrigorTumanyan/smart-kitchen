@@ -1,20 +1,27 @@
 package com.epam.smartkitchen.exceptions;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 public class ErrorResponse {
 
 
     private String errorCode;
     private String errorStatus;
     private String errorMessage;
+    private List<String> errorList;
+    private LocalDateTime localDateTime;
 
 
     public ErrorResponse() {
     }
 
-    public ErrorResponse(String errorCode, String errorStatus, String errorMessage) {
+    public ErrorResponse(String errorCode, String errorStatus, String errorMessage, List<String> errorList, LocalDateTime localDateTime) {
         this.errorCode = errorCode;
         this.errorStatus = errorStatus;
         this.errorMessage = errorMessage;
+        this.errorList = errorList;
+        this.localDateTime = localDateTime;
     }
 
     public String getErrorMessage() {
@@ -35,7 +42,16 @@ public class ErrorResponse {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
-
-
-
+    public List<String> getErrorList() {
+        return errorList;
+    }
+    public void setErrorList(List<String> errorList) {
+        this.errorList = errorList;
+    }
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+    public void setLocalDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
+    }
 }

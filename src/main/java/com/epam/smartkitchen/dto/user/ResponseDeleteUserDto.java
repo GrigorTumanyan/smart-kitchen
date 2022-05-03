@@ -1,4 +1,4 @@
-package com.epam.smartkitchen.dto.manager;
+package com.epam.smartkitchen.dto.user;
 
 public class ResponseDeleteUserDto {
     boolean deleted;
