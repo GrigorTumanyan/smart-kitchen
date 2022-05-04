@@ -1,12 +1,5 @@
 package com.epam.smartkitchen.response;
 
-import com.epam.smartkitchen.exceptions.ErrorResponse;
-import com.epam.smartkitchen.models.User;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-
 public class Response<T, V> {
 
     private final T exception;

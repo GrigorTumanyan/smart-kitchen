@@ -34,13 +34,23 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ParamInvalidException.class)
-    public final ResponseEntity<Response<ErrorResponse, ?>> handleParameterInvalidException (ParamInvalidException ex, WebRequest request){
+    @ExceptionHandler(RequestParamInvalidException.class)
+    public final ResponseEntity<Response<ErrorResponse, ?>> handleParameterInvalidException (RequestParamInvalidException ex, WebRequest request){
         List<String> errorList = new ArrayList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse("400", "BAD_REQUEST", "Parameter is not correct",
                 errorList, LocalDateTime.now());
         Response<ErrorResponse, ?> response = new Response<>(errorResponse, null, ex.getClass().getSimpleName());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResourceExistException.class)
+    public final ResponseEntity<Response<ErrorResponse, ?>> handleResourceExistException(ResourceExistException ex, WebRequest request){
+        List<String> errorList = new ArrayList<>();
+        errorList.add(ex.getLocalizedMessage());
+        ErrorResponse errorResponse = new ErrorResponse("409", "CONFLICT", "Resource already exists",
+                errorList, LocalDateTime.now());
+        Response<ErrorResponse, ?> response = new Response<>(errorResponse, null, ex.getClass().getSimpleName());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 }

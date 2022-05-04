@@ -5,8 +5,9 @@ import com.epam.smartkitchen.dto.user.UpdateUserDto;
 import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
-import com.epam.smartkitchen.exceptions.ParamInvalidException;
+import com.epam.smartkitchen.exceptions.RequestParamInvalidException;
 import com.epam.smartkitchen.exceptions.RecordNotFoundException;
+import com.epam.smartkitchen.exceptions.ResourceExistException;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
 import com.epam.smartkitchen.response.Response;
@@ -41,7 +42,7 @@ public class UserServiceImpl implements UserService {
         } else if (deleted.equals("only")) {
             allUser = userRepository.findAllByDeletedTrue(pageable);
         } else {
-            throw new ParamInvalidException("Parameter deleted is not correct: " + deleted);
+            throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
         }
         if (allUser.getContent().size() < 1) {
             throw new RecordNotFoundException("Users are not found");
@@ -60,7 +61,7 @@ public class UserServiceImpl implements UserService {
         } else if (deleted.equals("only")) {
             allUser = userRepository.findByUserTypeAndDeletedTrue(userType, pageable);
         }else {
-            throw new ParamInvalidException("Parameter deleted is not correct: " + deleted);
+            throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
         }
         if (allUser.getContent().size() < 1) {
             throw new RecordNotFoundException("Users are not found by type : " + userType);
@@ -69,44 +70,45 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto addUser(UserDto userDto) {
+    public Response<ErrorResponse, UserDto> addUser(UserDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
-            return null;
+            throw new ResourceExistException(userDto.getEmail() + " Email already exists");
         }
         User user = UserDto.toUser(userDto);
         User savedUser = userRepository.save(user);
-        return new UserDto(savedUser);
+        return new Response<>(null, new UserDto(savedUser), UserDto.class.getSimpleName());
     }
 
     @Override
-    public UserDto updateUser(String id, UpdateUserDto updateUserDto) {
+    public Response<ErrorResponse, UserDto> updateUser(String id, UpdateUserDto updateUserDto) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
-            return null;
+            throw new RecordNotFoundException("User is not found with id : " + id);
         }
         User updatedUser = changeUserFields(updateUserDto, user);
         User save = userRepository.save(updatedUser);
-        return new UserDto(save);
+        return new Response<>(null, new UserDto(save), UserDto.class.getSimpleName());
     }
 
     @Override
-    public ResponseDeleteUserDto deleteUser(String id) {
+    public Response<ErrorResponse, ResponseDeleteUserDto> deleteUser(String id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
-            return null;
+            throw new RecordNotFoundException("User is not found with id : " + id);
         }
         user.setDeleted(true);
         User savedUser = userRepository.save(user);
-        return new ResponseDeleteUserDto(savedUser.getDeleted());
+        return new Response<>(null,
+                new ResponseDeleteUserDto(savedUser.getDeleted()), ResponseDeleteUserDto.class.getSimpleName());
     }
 
     @Override
-    public UserDto findById(String id) {
+    public Response<ErrorResponse, UserDto> findById(String id) {
         User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return null;
+        if (user == null){
+            throw new RecordNotFoundException("User is not found with id : " + id);
         }
-        return new UserDto(user);
+       return new Response<>(null, new UserDto(user),UserDto.class.getSimpleName());
     }
 
     @Override
