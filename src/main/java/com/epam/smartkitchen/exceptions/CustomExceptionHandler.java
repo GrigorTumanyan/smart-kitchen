@@ -11,22 +11,21 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class CustomExceptionHandler extends ResponseEntityExceptionHandler 
-{
-  @ExceptionHandler(Exception.class)
-  public final ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex, WebRequest request) {
-    List<String> details = new ArrayList<>();
-    details.add(ex.getLocalizedMessage());
-    ErrorResponse error = new ErrorResponse("500", "ServerEcveption", "Something wrong with server");
-    return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-  }
- 
-  @ExceptionHandler(RecordNotFoundException.class)
-  public final ResponseEntity<ErrorResponse> handleUserNotFoundException(RecordNotFoundException ex,
-                        WebRequest request) {
-    List<String> details = new ArrayList<>();
-    details.add(ex.getLocalizedMessage());
-    ErrorResponse error = new ErrorResponse("404", "NOT_FOUND", "Record not found");
-    return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-  }
+public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
+    @ExceptionHandler(Exception.class)
+    public final ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex, WebRequest request) {
+        List<String> details = new ArrayList<>();
+        details.add(ex.getLocalizedMessage());
+        ErrorResponse error = new ErrorResponse("500", "ServerException", "Something wrong with server");
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(RecordNotFoundException.class)
+    public final ResponseEntity<ErrorResponse> handleUserNotFoundException(RecordNotFoundException ex,
+                                                                           WebRequest request) {
+        List<String> details = new ArrayList<>();
+        details.add(ex.getLocalizedMessage());
+        ErrorResponse error = new ErrorResponse("404", "NOT_FOUND", "Record not found");
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
 }

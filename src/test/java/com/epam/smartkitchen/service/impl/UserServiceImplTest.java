@@ -58,7 +58,7 @@ public class UserServiceImplTest {
         when(userRepository.findAllByDeletedFalse(pageRequest)).thenReturn((usersPageable()));
         when(userRepository.findAllByDeletedTrue(pageRequest)).thenReturn((usersPageable()));
 
-        List<UserDto> allUser = userService.getAllUser(pageRequest,null);
+        List<UserDto> allUser = userService.getAllUser(0,10, null, null, null);
         Page<UserDto> usersToPage = new PageImpl<>(allUser);
 
         assertEquals(usersToPage, getUserDto(usersPageable()));
@@ -70,7 +70,7 @@ public class UserServiceImplTest {
         when(userRepository.findAllByDeletedTrue(pageRequest)).thenReturn(null);
         when(userRepository.findAllByDeletedFalse(pageRequest)).thenReturn(null);
 
-        List<UserDto> allUser = userService.getAllUser(pageRequest,"Kapchuni");
+        List<UserDto> allUser = userService.getAllUser(0,10, null, null, null);
 
         assertNull(allUser);
     }
@@ -81,7 +81,7 @@ public class UserServiceImplTest {
         when(userRepository.findByUserTypeAndDeletedFalse(UserType.MANAGER, pageRequest)).thenReturn(usersPageable());
         when(userRepository.findByUserTypeAndDeletedTrue(UserType.MANAGER, pageRequest)).thenReturn(usersPageable());
 
-        List<UserDto> allUser = userService.getUsersByType(UserType.MANAGER, pageRequest, null);
+        List<UserDto> allUser = userService.getUsersByType(UserType.MANAGER, 0,10, null, null, null);
         Page<UserDto> userDtoPage = new PageImpl<>(allUser);
 
         assertEquals(userDtoPage, getUserDto(usersPageable()));
@@ -93,7 +93,7 @@ public class UserServiceImplTest {
         when(userRepository.findByUserTypeAndDeletedTrue(UserType.MANAGER, pageRequest)).thenReturn(null);
         when(userRepository.findByUserTypeAndDeletedFalse(UserType.MANAGER, pageRequest)).thenReturn(null);
 
-        List<UserDto> allUser = userService.getUsersByType(UserType.MANAGER, pageRequest, null);
+        List<UserDto> allUser = userService.getUsersByType(UserType.MANAGER,0,10, null, null, null);
 
         assertNull(allUser);
     }

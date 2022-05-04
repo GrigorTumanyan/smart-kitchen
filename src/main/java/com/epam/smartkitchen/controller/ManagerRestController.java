@@ -5,13 +5,14 @@ import com.epam.smartkitchen.dto.manager.UpdateUserDto;
 import com.epam.smartkitchen.dto.manager.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.exceptions.RecordNotFoundException;
+import com.epam.smartkitchen.service.ExcelWriter;
 import com.epam.smartkitchen.service.UserService;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+
 
 @RestController
 @RequestMapping(value = "/api/v1/manager")
@@ -19,34 +20,33 @@ public class ManagerRestController {
 
     private final UserService userService;
 
-    public ManagerRestController(UserService userService) {
+    private final ExcelWriter excelWriter;
+
+    public ManagerRestController(UserService userService, ExcelWriter excelWriter) {
         this.userService = userService;
+        this.excelWriter = excelWriter;
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getUsersWithSort(@RequestParam(required = false) int pageSize,
-            @RequestParam int pageNumber,
-            @RequestParam(required = false) String deleted,
-            @RequestParam(required = false) String field,
-            @RequestParam(required = false) String direction) {
-        List<UserDto> allUser = userService.getAllUser(createPageable(pageNumber, pageSize, field, direction), deleted);
-
+                                                          @RequestParam int pageNumber,
+                                                          @RequestParam(required = false) String deleted,
+                                                          @RequestParam(required = false) String sortedField,
+                                                          @RequestParam(required = false) String direction) {
+        List<UserDto> allUser = userService.getAllUser(pageNumber, pageSize, sortedField, direction, deleted);
         if (allUser.size() < 1) {
             throw new RecordNotFoundException("Users are not found");
         }
-
         return ResponseEntity.ok(allUser);
     }
 
     @GetMapping("/users/{userType}")
-    public ResponseEntity<List<UserDto>> getUserByType(@PathVariable UserType userType,
-            @RequestParam int pageNumber,
-            @RequestParam(required = false) String deleted,
-            @RequestParam int pageSize,
-            @RequestParam(required = false) String direction,
-            @RequestParam(required = false) String field) {
-        List<UserDto> usersByType = userService.getUsersByType(userType,
-                createPageable(pageNumber, pageSize, field, direction), deleted);
+    public ResponseEntity<List<UserDto>> getUserByType(@PathVariable UserType userType, @RequestParam(required = false) int pageSize,
+                                                       @RequestParam int pageNumber,
+                                                       @RequestParam(required = false) String deleted,
+                                                       @RequestParam(required = false) String sortedField,
+                                                       @RequestParam(required = false) String direction) {
+        List<UserDto> usersByType = userService.getUsersByType(userType, pageNumber,pageSize,sortedField,direction,deleted);
         if (usersByType == null) {
             return ResponseEntity.notFound().eTag("You don't have " + userType + "user").build();
         }
@@ -63,6 +63,21 @@ public class ManagerRestController {
         return ResponseEntity.ok(user);
     }
 
+    @PostMapping("/download")
+    public ResponseEntity<?> exportSheet(HttpServletResponse response, @RequestParam(required = false) int pageSize,
+                                         @RequestParam int pageNumber,
+                                         @RequestParam(required = false) String deleted,
+                                         @RequestParam(required = false) String sortedField,
+                                         @RequestParam(required = false) String direction,
+                                         @RequestParam(required = false) UserType userType) {
+        List<UserDto> userDto = userService.exportExcel(userType, pageNumber, pageSize, sortedField, direction, deleted);
+        if (userDto.isEmpty()) {
+            throw new RecordNotFoundException("Schedule not found");
+        }
+        excelWriter.write(userDto, response);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/user")
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
         UserDto savedUserDto = userService.addUser(userDto);
@@ -73,8 +88,8 @@ public class ManagerRestController {
     }
 
     @PatchMapping("/user/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable(name = "id") String id,
-            @RequestBody UpdateUserDto updateUserDto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable(name = "id") String id, @RequestBody UpdateUserDto
+            updateUserDto) {
         UserDto userDto = userService.updateUser(id, updateUserDto);
         if (userDto == null) {
             return ResponseEntity.notFound().eTag(id + " id is not exist").build();
@@ -91,13 +106,4 @@ public class ManagerRestController {
         return ResponseEntity.ok(responseDeleteUserDto);
     }
 
-    private PageRequest createPageable(int pageNumber, int pageSize, String field, String direction) {
-        if (field == null) {
-            return PageRequest.of(pageNumber, pageSize);
-        } else if (direction == null) {
-            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).ascending());
-        } else {
-            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).descending());
-        }
-    }
 }
