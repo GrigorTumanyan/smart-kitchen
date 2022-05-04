@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
             allUser = userRepository.findByUserType(userType, pageable);
         } else if (deleted.equals("only")) {
             allUser = userRepository.findByUserTypeAndDeletedTrue(userType, pageable);
-        }else {
+        } else {
             throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
         }
         if (allUser.getContent().size() < 1) {
@@ -81,10 +81,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Response<ErrorResponse, UserDto> updateUser(String id, UpdateUserDto updateUserDto) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            throw new RecordNotFoundException("User is not found with id : " + id);
-        }
+        User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User is not found with id : " + id));
         User updatedUser = changeUserFields(updateUserDto, user);
         User save = userRepository.save(updatedUser);
         return new Response<>(null, new UserDto(save), UserDto.class.getSimpleName());
@@ -92,10 +89,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Response<ErrorResponse, ResponseDeleteUserDto> deleteUser(String id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            throw new RecordNotFoundException("User is not found with id : " + id);
-        }
+        User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User is not found with id : " + id));
         user.setDeleted(true);
         User savedUser = userRepository.save(user);
         return new Response<>(null,
@@ -104,11 +98,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Response<ErrorResponse, UserDto> findById(String id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null){
-            throw new RecordNotFoundException("User is not found with id : " + id);
-        }
-       return new Response<>(null, new UserDto(user),UserDto.class.getSimpleName());
+        User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User is not found with id : " + id));
+        return new Response<>(null, new UserDto(user), UserDto.class.getSimpleName());
     }
 
     @Override

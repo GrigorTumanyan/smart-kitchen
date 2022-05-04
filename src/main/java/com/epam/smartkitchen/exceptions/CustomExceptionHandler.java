@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
-    public final ResponseEntity<Response<ErrorResponse, ? >> handleAllExceptions(Exception ex, WebRequest request) {
+    public final ResponseEntity<Response<ErrorResponse, ? >> handleAllExceptions(Exception ex) {
         List<String> errorList = new ArrayList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse error = new ErrorResponse("500", "ServerException", "Something wrong with server",
@@ -25,7 +25,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(RecordNotFoundException.class)
-    public final ResponseEntity<Response<ErrorResponse, ?>> handleUserNotFoundException(RecordNotFoundException ex, WebRequest request) {
+    public final ResponseEntity<Response<ErrorResponse, ?>> handleUserNotFoundException(RecordNotFoundException ex) {
         List<String> errorList = new ArrayList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse error = new ErrorResponse("404", "NOT_FOUND", "Record not found",
@@ -35,7 +35,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(RequestParamInvalidException.class)
-    public final ResponseEntity<Response<ErrorResponse, ?>> handleParameterInvalidException (RequestParamInvalidException ex, WebRequest request){
+    public final ResponseEntity<Response<ErrorResponse, ?>> handleParameterInvalidException (RequestParamInvalidException ex){
         List<String> errorList = new ArrayList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse("400", "BAD_REQUEST", "Parameter is not correct",
@@ -45,7 +45,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ResourceExistException.class)
-    public final ResponseEntity<Response<ErrorResponse, ?>> handleResourceExistException(ResourceExistException ex, WebRequest request){
+    public final ResponseEntity<Response<ErrorResponse, ?>> handleResourceExistException(ResourceExistException ex){
         List<String> errorList = new ArrayList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse("409", "CONFLICT", "Resource already exists",
