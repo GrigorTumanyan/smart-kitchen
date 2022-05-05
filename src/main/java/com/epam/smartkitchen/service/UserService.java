@@ -1,9 +1,11 @@
 package com.epam.smartkitchen.service;
 
-import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
-import com.epam.smartkitchen.dto.manager.UpdateUserDto;
-import com.epam.smartkitchen.dto.manager.UserDto;
+import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
+import com.epam.smartkitchen.dto.user.UpdateUserDto;
+import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
+import com.epam.smartkitchen.exceptions.ErrorResponse;
+import com.epam.smartkitchen.response.Response;
 
 import java.util.List;
 
@@ -11,18 +13,18 @@ import java.util.List;
 public interface UserService {
 
 
-    List<UserDto> getAllUser(int pageNumber, int pageSize, String sortedField, String direction, String deleted);
+    Response<ErrorResponse, List<UserDto>> getAllUser(int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
-    UserDto findById(String id);
+    Response<ErrorResponse, UserDto> findById(String id);
 
-    List<UserDto> getUsersByType(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
+    Response<ErrorResponse, List<UserDto>> getUsersByType(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
-    UserDto addUser(UserDto userDto);
+    Response<ErrorResponse, UserDto> addUser(UserDto userDto);
 
-    UserDto updateUser(String id,UpdateUserDto updateUserDto);
+    Response<ErrorResponse, UserDto> updateUser(String id, UpdateUserDto updateUserDto);
 
-    ResponseDeleteUserDto deleteUser(String id);
+    Response<ErrorResponse, ResponseDeleteUserDto> deleteUser(String id);
 
-    public List<UserDto> exportExcel(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
+    Response<ErrorResponse, List<UserDto>> exportExcel(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
 }

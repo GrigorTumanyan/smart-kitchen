@@ -1,4 +1,4 @@
-package com.epam.smartkitchen.dto.manager;
+package com.epam.smartkitchen.dto.user;
 
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;

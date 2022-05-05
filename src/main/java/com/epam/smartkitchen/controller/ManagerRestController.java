@@ -1,10 +1,11 @@
 package com.epam.smartkitchen.controller;
 
-import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
-import com.epam.smartkitchen.dto.manager.UpdateUserDto;
-import com.epam.smartkitchen.dto.manager.UserDto;
+import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
+import com.epam.smartkitchen.dto.user.UpdateUserDto;
+import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
-import com.epam.smartkitchen.exceptions.RecordNotFoundException;
+import com.epam.smartkitchen.exceptions.ErrorResponse;
+import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.ExcelWriter;
 import com.epam.smartkitchen.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -28,81 +29,62 @@ public class ManagerRestController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserDto>> getUsersWithSort(@RequestParam(required = false) int pageSize,
-                                                          @RequestParam int pageNumber,
-                                                          @RequestParam(required = false) String deleted,
-                                                          @RequestParam(required = false) String sortedField,
-                                                          @RequestParam(required = false) String direction) {
-        List<UserDto> allUser = userService.getAllUser(pageNumber, pageSize, sortedField, direction, deleted);
-        if (allUser.size() < 1) {
-            throw new RecordNotFoundException("Users are not found");
-        }
-        return ResponseEntity.ok(allUser);
+    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getUsersWithSort(@RequestParam(required = false) int pageSize,
+                                                                                   @RequestParam int pageNumber,
+                                                                                   @RequestParam(required = false) String deleted,
+                                                                                   @RequestParam(required = false) String sortedField,
+                                                                                   @RequestParam(required = false) String direction) {
+        Response<ErrorResponse, List<UserDto>> response = userService.getAllUser(pageNumber, pageSize, sortedField, direction, deleted);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/users/{userType}")
-    public ResponseEntity<List<UserDto>> getUserByType(@PathVariable UserType userType, @RequestParam(required = false) int pageSize,
-                                                       @RequestParam int pageNumber,
-                                                       @RequestParam(required = false) String deleted,
-                                                       @RequestParam(required = false) String sortedField,
-                                                       @RequestParam(required = false) String direction) {
-        List<UserDto> usersByType = userService.getUsersByType(userType, pageNumber,pageSize,sortedField,direction,deleted);
-        if (usersByType == null) {
-            return ResponseEntity.notFound().eTag("You don't have " + userType + "user").build();
-        }
+    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getUserByType(@PathVariable UserType userType,
+                                                                                @RequestParam(required = false) int pageSize,
+                                                                                @RequestParam int pageNumber,
+                                                                                @RequestParam(required = false) String deleted,
+                                                                                @RequestParam(required = false) String sortedField,
+                                                                                @RequestParam(required = false) String direction) {
+        Response<ErrorResponse, List<UserDto>> usersByType = userService.getUsersByType(userType, pageNumber, pageSize, sortedField, direction, deleted);
         return ResponseEntity.ok(usersByType);
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") String id) {
-
-        UserDto user = userService.findById(id);
-        if (user == null) {
-            return ResponseEntity.notFound().eTag("Id " + id + " is not found").build();
-        }
-        return ResponseEntity.ok(user);
-    }
-
     @PostMapping("/download")
-    public ResponseEntity<?> exportSheet(HttpServletResponse response, @RequestParam(required = false) int pageSize,
-                                         @RequestParam int pageNumber,
-                                         @RequestParam(required = false) String deleted,
-                                         @RequestParam(required = false) String sortedField,
-                                         @RequestParam(required = false) String direction,
-                                         @RequestParam(required = false) UserType userType) {
-        List<UserDto> userDto = userService.exportExcel(userType, pageNumber, pageSize, sortedField, direction, deleted);
-        if (userDto.isEmpty()) {
-            throw new RecordNotFoundException("Schedule not found");
-        }
-        excelWriter.write(userDto, response);
+    public ResponseEntity<Response<ErrorResponse, ?>> exportSheet(HttpServletResponse httpResponse,
+                                                                  @RequestParam(required = false) int pageSize,
+                                                                  @RequestParam int pageNumber,
+                                                                  @RequestParam(required = false) String deleted,
+                                                                  @RequestParam(required = false) String sortedField,
+                                                                  @RequestParam(required = false) String direction,
+                                                                  @RequestParam(required = false) UserType userType) {
+        Response<ErrorResponse, List<UserDto>> response = userService.exportExcel(userType, pageNumber, pageSize, sortedField, direction, deleted);
+
+        excelWriter.write(response.getSuccessObject(), httpResponse);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/user")
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
-        UserDto savedUserDto = userService.addUser(userDto);
-        if (savedUserDto == null) {
-            return ResponseEntity.notFound().eTag(userDto.getEmail() + " Email already exists").build();
-        }
-        return ResponseEntity.ok(savedUserDto);
-    }
-
-    @PatchMapping("/user/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable(name = "id") String id, @RequestBody UpdateUserDto
-            updateUserDto) {
-        UserDto userDto = userService.updateUser(id, updateUserDto);
-        if (userDto == null) {
-            return ResponseEntity.notFound().eTag(id + " id is not exist").build();
-        }
+    @GetMapping("/user/{id}")
+    public ResponseEntity<Response<ErrorResponse, UserDto>> getUserById(@PathVariable(name = "id") String id) {
+        Response<ErrorResponse, UserDto> userDto = userService.findById(id);
         return ResponseEntity.ok(userDto);
     }
 
+    @PostMapping("/user")
+    public ResponseEntity<Response<ErrorResponse, UserDto>> addUser(@RequestBody UserDto userDto) {
+        Response<ErrorResponse, UserDto> userDtoResponse = userService.addUser(userDto);
+        return ResponseEntity.ok(userDtoResponse);
+    }
+
+    @PatchMapping("/user/{id}")
+    public ResponseEntity<Response<ErrorResponse, UserDto>> updateUser(@PathVariable(name = "id") String id,
+                                                                       @RequestBody UpdateUserDto updateUserDto) {
+        Response<ErrorResponse, UserDto> userDtoResponse = userService.updateUser(id, updateUserDto);
+        return ResponseEntity.ok(userDtoResponse);
+    }
+
     @DeleteMapping("/user/{id}")
-    public ResponseEntity<ResponseDeleteUserDto> deleteUser(@PathVariable(name = "id") String id) {
-        ResponseDeleteUserDto responseDeleteUserDto = userService.deleteUser(id);
-        if (responseDeleteUserDto == null) {
-            return ResponseEntity.notFound().eTag(id + " id is not exist").build();
-        }
+    public ResponseEntity<Response<ErrorResponse, ResponseDeleteUserDto>> deleteUser(@PathVariable(name = "id") String id) {
+        Response<ErrorResponse, ResponseDeleteUserDto> responseDeleteUserDto = userService.deleteUser(id);
         return ResponseEntity.ok(responseDeleteUserDto);
     }
 

@@ -1,11 +1,16 @@
 package com.epam.smartkitchen.service.impl;
 
-import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
-import com.epam.smartkitchen.dto.manager.UpdateUserDto;
-import com.epam.smartkitchen.dto.manager.UserDto;
+import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
+import com.epam.smartkitchen.dto.user.UpdateUserDto;
+import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
+import com.epam.smartkitchen.exceptions.ErrorResponse;
+import com.epam.smartkitchen.exceptions.RequestParamInvalidException;
+import com.epam.smartkitchen.exceptions.RecordNotFoundException;
+import com.epam.smartkitchen.exceptions.ResourceExistException;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
+import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,86 +32,82 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<UserDto> getAllUser(int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
-        PageRequest pageable = createPageable(pageNumber,pageSize, sortedField, direction);
-        Page<User> allUser = null;
+    public Response<ErrorResponse, List<UserDto>> getAllUser(int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+        PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
+        Page<User> allUser;
         if (deleted == null) {
             allUser = userRepository.findAllByDeletedFalse(pageable);
         } else if (deleted.equals("all")) {
             allUser = userRepository.findAll(pageable);
         } else if (deleted.equals("only")) {
             allUser = userRepository.findAllByDeletedTrue(pageable);
+        } else {
+            throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
         }
-        if (allUser == null) {
-            return null;
+        if (allUser.getContent().size() < 1) {
+            throw new RecordNotFoundException("Users are not found");
         }
-        return toUserDto(allUser);
+        return new Response<>(null, toUserDto(allUser), UserDto.class.getName());
     }
 
     @Override
-    public List<UserDto> getUsersByType(UserType userType,int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
-        PageRequest pageable = createPageable(pageNumber,pageSize, sortedField, direction);
-        Page<User> allUser = null;
+    public Response<ErrorResponse, List<UserDto>> getUsersByType(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+        PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
+        Page<User> allUser;
         if (deleted == null) {
             allUser = userRepository.findByUserTypeAndDeletedFalse(userType, pageable);
         } else if (deleted.equals("all")) {
             allUser = userRepository.findByUserType(userType, pageable);
         } else if (deleted.equals("only")) {
             allUser = userRepository.findByUserTypeAndDeletedTrue(userType, pageable);
+        } else {
+            throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
         }
-        if (allUser == null) {
-            return null;
+        if (allUser.getContent().size() < 1) {
+            throw new RecordNotFoundException("Users are not found by type : " + userType);
         }
-        return toUserDto(allUser);
+        return new Response<>(null, toUserDto(allUser), UserDto.class.getName());
     }
 
     @Override
-    public UserDto addUser(UserDto userDto) {
+    public Response<ErrorResponse, UserDto> addUser(UserDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
-            return null;
+            throw new ResourceExistException(userDto.getEmail() + " Email already exists");
         }
         User user = UserDto.toUser(userDto);
         User savedUser = userRepository.save(user);
-        return new UserDto(savedUser);
+        return new Response<>(null, new UserDto(savedUser), UserDto.class.getSimpleName());
     }
 
     @Override
-    public UserDto updateUser(String id, UpdateUserDto updateUserDto) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return null;
-        }
+    public Response<ErrorResponse, UserDto> updateUser(String id, UpdateUserDto updateUserDto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User is not found with id : " + id));
         User updatedUser = changeUserFields(updateUserDto, user);
         User save = userRepository.save(updatedUser);
-        return new UserDto(save);
+        return new Response<>(null, new UserDto(save), UserDto.class.getSimpleName());
     }
 
     @Override
-    public ResponseDeleteUserDto deleteUser(String id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return null;
-        }
+    public Response<ErrorResponse, ResponseDeleteUserDto> deleteUser(String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User is not found with id : " + id));
         user.setDeleted(true);
         User savedUser = userRepository.save(user);
-        return new ResponseDeleteUserDto(savedUser.getDeleted());
+        return new Response<>(null,
+                new ResponseDeleteUserDto(savedUser.getDeleted()), ResponseDeleteUserDto.class.getSimpleName());
     }
 
     @Override
-    public UserDto findById(String id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return null;
-        }
-        return new UserDto(user);
+    public Response<ErrorResponse, UserDto> findById(String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User is not found with id : " + id));
+        return new Response<>(null, new UserDto(user), UserDto.class.getSimpleName());
     }
 
     @Override
-    public List<UserDto> exportExcel(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+    public Response<ErrorResponse, List<UserDto>> exportExcel(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
         if (userType != null) {
-            return getUsersByType(userType, pageNumber, pageSize,sortedField,direction,deleted);
+            return getUsersByType(userType, pageNumber, pageSize, sortedField, direction, deleted);
         }
-        return getAllUser(pageNumber, pageSize,sortedField,direction,deleted);
+        return getAllUser(pageNumber, pageSize, sortedField, direction, deleted);
     }
 
     private List<UserDto> toUserDto(Page<User> userList) {
