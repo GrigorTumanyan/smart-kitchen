@@ -1,6 +1,7 @@
 package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.CategoryDto;
+import com.epam.smartkitchen.exceptions.ResourceExistException;
 import com.epam.smartkitchen.models.Category;
 import com.epam.smartkitchen.repository.CategoryRepository;
 import com.epam.smartkitchen.service.CategoryService;
@@ -38,6 +39,13 @@ public class CategoryServiceImpl implements CategoryService {
         mapper.map(categoryDto, category);
         categoryRepository.save(category);
         return categoryDto;
+    }
+
+    @Override
+    public CategoryDto getCategoryById(String id){
+        Category category = categoryRepository.findByIdAndDeleted(id, false)
+                .orElseThrow(() -> new ResourceExistException("category isn't found"));
+        return mapper.map(category, CategoryDto.class);
     }
 
 }

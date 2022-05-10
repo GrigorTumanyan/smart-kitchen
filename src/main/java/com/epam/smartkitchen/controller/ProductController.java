@@ -30,4 +30,10 @@ public class ProductController {
     public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productDto,@PathVariable("id") String id){
         return ResponseEntity.ok(productService.updateProduct(productDto,id));
     }
+
+    @GetMapping("/product/{id}")
+    public ProductDto findProductById(@PathVariable String id){
+        return productService.getProductById(id);
+    }
+
 }

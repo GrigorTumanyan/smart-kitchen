@@ -65,4 +65,16 @@ class ProductServiceImplTest {
         assertEquals(productDto,actualResult);
         verify(productRepository,times(1)).save(product);
     }
+
+    @Test
+    void getProductById() {
+        ProductDto productDto = new ProductDto();
+        Product product = new Product();
+        String productId = "test-id";
+        when(mapper.map(product, ProductDto.class)).thenReturn(productDto);
+        when(productRepository.findByIdAndDeleted(productId,false)).thenReturn(Optional.of(product));
+        ProductDto actual = productServiceTest.getProductById(productId);
+
+        assertEquals(productDto,actual);
+    }
 }

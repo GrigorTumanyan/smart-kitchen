@@ -1,6 +1,7 @@
 package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.ProductDto;
+import com.epam.smartkitchen.exceptions.ResourceExistException;
 import com.epam.smartkitchen.models.Product;
 import com.epam.smartkitchen.repository.ProductRepository;
 import com.epam.smartkitchen.service.ProductService;
@@ -38,5 +39,12 @@ public class ProductServiceImpl implements ProductService {
         mapper.map(productDto, product);
         productRepository.save(product);
         return productDto;
+    }
+
+    @Override
+    public ProductDto getProductById(String id){
+        Product product = productRepository.findByIdAndDeleted(id, false)
+                .orElseThrow(() -> new ResourceExistException("product isn't found"));
+        return mapper.map(product, ProductDto.class);
     }
 }

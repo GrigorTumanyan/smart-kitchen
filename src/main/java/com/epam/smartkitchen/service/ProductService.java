@@ -11,4 +11,7 @@ public interface ProductService {
 
     public ProductDto updateProduct(ProductDto productDto,String id);
 
+    public ProductDto getProductById(String id);
+
+
 }

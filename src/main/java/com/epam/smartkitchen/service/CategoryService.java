@@ -11,4 +11,7 @@ public interface CategoryService {
 
     public CategoryDto updateCategory(CategoryDto categoryDto, String id);
 
+    public CategoryDto getCategoryById(String id);
+
+
 }

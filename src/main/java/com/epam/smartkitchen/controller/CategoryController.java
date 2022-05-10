@@ -29,4 +29,9 @@ public class CategoryController {
     public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryDto,@PathVariable("id") String id){
         return ResponseEntity.ok(categoryService.updateCategory(categoryDto,id));
     }
+
+    @GetMapping("/category/{id}")
+    public CategoryDto findCategoryById(@PathVariable String id){
+        return categoryService.getCategoryById(id);
+    }
 }

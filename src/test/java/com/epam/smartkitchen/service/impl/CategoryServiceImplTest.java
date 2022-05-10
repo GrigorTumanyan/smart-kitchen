@@ -62,4 +62,16 @@ class CategoryServiceImplTest {
         assertEquals(categoryDto,actualResult);
         verify(categoryRepository,times(1)).save(category);
     }
+
+    @Test
+    void getProductById() {
+        CategoryDto categoryDto = new CategoryDto();
+        Category category = new Category();
+        String categoryId = "test-id";
+        when(mapper.map(category, CategoryDto.class)).thenReturn(categoryDto);
+        when(categoryRepository.findByIdAndDeleted(categoryId,false)).thenReturn(Optional.of(category));
+        CategoryDto actual = categoryServiceTest.getCategoryById(categoryId);
+
+        assertEquals(categoryDto,actual);
+    }
 }
