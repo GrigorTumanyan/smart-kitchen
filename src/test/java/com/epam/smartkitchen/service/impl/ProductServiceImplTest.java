@@ -10,7 +10,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,4 +70,23 @@ class ProductServiceImplTest {
         assertEquals(productDto,actualResult);
         verify(productRepository,times(1)).save(product);
     }
+
+    @Test
+    void getAllProducts() {
+        Pageable pageable = Pageable.ofSize(1);
+        Product product = new Product();
+        ProductDto productDto = new ProductDto();
+        List<Product> productList = Arrays.asList(product);
+        Page<Product> page = new PageImpl<>(productList,pageable,1);
+        Page<ProductDto> expectedResult = new PageImpl<>(Arrays.asList(productDto), pageable, page.getTotalElements());
+
+        when(productRepository.findAllByDeleted(pageable,true)).thenReturn(page);
+        when(mapper.map(product, ProductDto.class)).thenReturn(productDto);
+
+        Page<ProductDto> actualResult = productServiceTest.getAllProducts(pageable,true);
+
+        assertEquals(expectedResult,actualResult);
+    }
+
+
 }

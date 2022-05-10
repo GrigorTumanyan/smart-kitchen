@@ -2,6 +2,8 @@ package com.epam.smartkitchen.controller;
 
 import com.epam.smartkitchen.dto.ProductDto;
 import com.epam.smartkitchen.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,4 +32,12 @@ public class ProductController {
     public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productDto,@PathVariable("id") String id){
         return ResponseEntity.ok(productService.updateProduct(productDto,id));
     }
+
+    @GetMapping("/product")
+    public Page<ProductDto> getAllProducts(@RequestParam("deleted") boolean deleted,
+                                           Pageable pageable){
+        return productService.getAllProducts(pageable,deleted);
+    }
+
+
 }

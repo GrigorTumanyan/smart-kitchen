@@ -2,6 +2,8 @@ package com.epam.smartkitchen.controller;
 
 import com.epam.smartkitchen.dto.CategoryDto;
 import com.epam.smartkitchen.service.CategoryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,5 +30,12 @@ public class CategoryController {
     @PutMapping("/category/{id}")
     public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryDto,@PathVariable("id") String id){
         return ResponseEntity.ok(categoryService.updateCategory(categoryDto,id));
+    }
+
+
+    @GetMapping("/category")
+    public Page<CategoryDto> getAllCategories(@RequestParam("deleted") boolean deleted,
+                                           Pageable pageable){
+        return categoryService.getAllCategories(pageable,deleted);
     }
 }

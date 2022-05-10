@@ -8,7 +8,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,5 +66,22 @@ class CategoryServiceImplTest {
         CategoryDto actualResult = categoryServiceTest.updateCategory(categoryDto,"1");
         assertEquals(categoryDto,actualResult);
         verify(categoryRepository,times(1)).save(category);
+    }
+
+    @Test
+    void getAllCategories() {
+        Pageable pageable = Pageable.ofSize(1);
+        Category category = new Category();
+        CategoryDto categoryDto = new CategoryDto();
+        List<Category> categoryList = Arrays.asList(category);
+        Page<Category> page = new PageImpl<>(categoryList,pageable,1);
+        Page<CategoryDto> expectedResult = new PageImpl<>(Arrays.asList(categoryDto), pageable, page.getTotalElements());
+
+        when(categoryRepository.findAllByDeleted(pageable,true)).thenReturn(page);
+        when(mapper.map(category, CategoryDto.class)).thenReturn(categoryDto);
+
+        Page<CategoryDto> actualResult = categoryServiceTest.getAllCategories(pageable,true);
+
+        assertEquals(expectedResult,actualResult);
     }
 }

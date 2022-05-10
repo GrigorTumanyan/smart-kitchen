@@ -5,7 +5,13 @@ import com.epam.smartkitchen.models.Category;
 import com.epam.smartkitchen.repository.CategoryRepository;
 import com.epam.smartkitchen.service.CategoryService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -38,6 +44,18 @@ public class CategoryServiceImpl implements CategoryService {
         mapper.map(categoryDto, category);
         categoryRepository.save(category);
         return categoryDto;
+    }
+
+    @Override
+    public Page<CategoryDto> getAllCategories(Pageable pageable, boolean deleted) {
+        Page<Category> page = categoryRepository.findAllByDeleted(pageable,deleted);
+        List<Category> categoryList = page.getContent();
+        List<CategoryDto> categoryDtos = new ArrayList();
+        for (Category category:categoryList) {
+            CategoryDto categoryDto = mapper.map(category, CategoryDto.class);
+            categoryDtos.add(categoryDto);
+        }
+        return new PageImpl<>(categoryDtos,pageable,page.getTotalElements());
     }
 
 }

@@ -5,7 +5,13 @@ import com.epam.smartkitchen.models.Product;
 import com.epam.smartkitchen.repository.ProductRepository;
 import com.epam.smartkitchen.service.ProductService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -39,4 +45,20 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
         return productDto;
     }
+
+    @Override
+    public Page<ProductDto> getAllProducts(Pageable pageable, boolean deleted) {
+        Page<Product> page = productRepository.findAllByDeleted(pageable,deleted);
+        List<Product> productList = page.getContent();
+        List<ProductDto> productDtos = new ArrayList();
+        for (Product product:productList) {
+            ProductDto productDto = mapper.map(product, ProductDto.class);
+            productDtos.add(productDto);
+        }
+        return new PageImpl<>(productDtos,pageable,page.getTotalElements());
+    }
+
+
+
+
 }
