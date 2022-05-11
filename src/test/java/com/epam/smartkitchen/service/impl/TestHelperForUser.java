@@ -1,8 +1,8 @@
 package com.epam.smartkitchen.service.impl;
 
-import com.epam.smartkitchen.dto.manager.ResponseDeleteUserDto;
-import com.epam.smartkitchen.dto.manager.UpdateUserDto;
-import com.epam.smartkitchen.dto.manager.UserDto;
+import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
+import com.epam.smartkitchen.dto.user.UpdateUserDto;
+import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
 import org.springframework.data.domain.Page;
