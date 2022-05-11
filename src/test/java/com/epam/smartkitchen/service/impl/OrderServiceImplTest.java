@@ -3,9 +3,11 @@ package com.epam.smartkitchen.service.impl;
 import com.epam.smartkitchen.dto.order.DeleteOrderDto;
 import com.epam.smartkitchen.dto.order.OrderDto;
 import com.epam.smartkitchen.enums.OrderState;
-import com.epam.smartkitchen.models.MenuItem;
+import com.epam.smartkitchen.exceptions.ErrorResponse;
+import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.models.Order;
 import com.epam.smartkitchen.repository.OrderRepository;
+import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.OrderService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,12 +21,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static com.epam.smartkitchen.service.impl.TestHelperOrder.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -33,9 +35,6 @@ import static org.mockito.Mockito.when;
 class OrderServiceImplTest {
 
     private final OrderRepository orderRepository = Mockito.mock(OrderRepository.class);
-
-    List<MenuItem> menuItemList = new ArrayList<>();
-
     @InjectMocks
     private final OrderService orderService = Mockito.spy(new OrderServiceImpl(orderRepository));
 
@@ -45,7 +44,7 @@ class OrderServiceImplTest {
 
     private Optional<Order> optionalOrder;
 
-    private OrderDto orderDto;
+    OrderDto orderDto;
 
     private Order order;
 
@@ -56,6 +55,7 @@ class OrderServiceImplTest {
         pageRequest = PageRequest.of(0, 10);
         id = "111";
         optionalOrder = toOptionalOrder();
+        orderDto = toOrderDtoFromOptionalOrder();
         order = toOrder();
         deleteOrderDto = deleteOrderDto();
     }
@@ -65,16 +65,16 @@ class OrderServiceImplTest {
     void findById() {
         when(orderRepository.findById(id)).thenReturn(optionalOrder);
 
-        OrderDto orderById = orderService.findById(id);
+        Response<ErrorResponse, OrderDto> orderById = orderService.findById(id);
 
-        assertEquals(orderById, toOrderDto());
+        assertEquals(orderById.getSuccessObject(), orderDto);
     }
 
     @Test
-    void negativeCaseFindById(){
+    void negativeCaseFindById() {
         when(orderRepository.findById(any())).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(RuntimeException.class, () -> orderService.findById("111"));
+        Assertions.assertThrows(RecordNotFoundException.class, () -> orderService.findById(id));
     }
 
     @Test
@@ -83,8 +83,8 @@ class OrderServiceImplTest {
         when(orderRepository.findAllByDeletedFalse(pageRequest)).thenReturn(orderPageable());
         when(orderRepository.findAllByDeletedTrue(pageRequest)).thenReturn(orderPageable());
 
-        List<OrderDto> orderDtoList = orderService.getAllOrder(pageRequest,null);
-        Page<OrderDto> orderDtoPage= new PageImpl<>(orderDtoList);
+        Response<ErrorResponse, List<OrderDto>> orderDtoList = orderService.getAllOrder(0, 10, null, null, null);
+        Page<OrderDto> orderDtoPage = new PageImpl<>(orderDtoList.getSuccessObject());
 
         assertEquals(orderDtoPage, getOrderDto(orderPageable()));
     }
@@ -95,19 +95,26 @@ class OrderServiceImplTest {
         when(orderRepository.findByStateAndDeletedFalse(OrderState.ACCEPTED, pageRequest)).thenReturn(orderPageable());
         when(orderRepository.findByStateAndDeletedTrue(OrderState.ACCEPTED, pageRequest)).thenReturn(orderPageable());
 
-        List<OrderDto> orderDtoList = orderService.getOrdersByState(OrderState.ACCEPTED,pageRequest,null);
-        Page<OrderDto> orderDtoPage= new PageImpl<>(orderDtoList);
+        Response<ErrorResponse, List<OrderDto>> orderDtoList = orderService.getOrdersByState(OrderState.ACCEPTED, 0, 10, null, null, null);
+        Page<OrderDto> orderDtoPage = new PageImpl<>(orderDtoList.getSuccessObject());
 
         assertEquals(orderDtoPage, getOrderDto(orderPageable()));
     }
 
     @Test
-    void deleteOrder(){
+    void deleteOrder() {
         when(orderRepository.findById(id)).thenReturn(toOptionalOrder());
         when(orderRepository.save(any(Order.class))).thenReturn(order);
 
-        DeleteOrderDto deletedOrderDto = orderService.deleteOrder(id);
+        Response<ErrorResponse, DeleteOrderDto> deleteOrderDtoResponse = orderService.deleteOrder(id);
 
-        assertEquals(deletedOrderDto.isDeleted(), deleteOrderDto.isDeleted());
+        assertEquals(deleteOrderDtoResponse.getSuccessObject().isDeleted(), deleteOrderDto.isDeleted());
+    }
+
+    @Test
+    void negativeCaseDeleteOrder() {
+        when(orderRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> orderService.deleteOrder(id));
     }
 }
