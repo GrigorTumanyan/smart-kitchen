@@ -1,8 +1,6 @@
 package com.epam.smartkitchen.exceptions;
 
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 import com.epam.smartkitchen.response.Response;
@@ -21,25 +19,14 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers,
                                                                   HttpStatus status, WebRequest request) {
-
-        String message = ex.getMessage();
-        String message1 = ex.getCause().getMessage();
-        InputStream inputStream = null;
-        StackTraceElement[] stackTrace = ex.getRootCause().getStackTrace();
-        try {
-            inputStream = ex.getHttpInputMessage().getBody();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        List<String> stringList = new LinkedList<>();
         String simpleName = ex.getClass().getSimpleName();
-        String reasonPhrase = status.getReasonPhrase();
-        List<Object> stringList = new LinkedList<>();
-        stringList.add("Request is not correct");
-        stringList.add(inputStream);
-        ErrorResponse errorResponse = new ErrorResponse("400", reasonPhrase, message, null);
-        Response response = new Response(errorResponse, null,simpleName);
-
-        return ResponseEntity.badRequest().body(response);
+        String errorStatus = status.getReasonPhrase();
+        String message = ex.getCause().getMessage();
+        String[] split = message.split("\n");
+        stringList.add(split[0]);
+        ErrorResponse errorResponse = new ErrorResponse("400", errorStatus, "Request body is not correct", stringList);
+        return ResponseEntity.badRequest().body(new Response<>(errorResponse, null, simpleName));
     }
 
     @ExceptionHandler(Exception.class)
