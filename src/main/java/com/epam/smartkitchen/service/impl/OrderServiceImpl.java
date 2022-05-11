@@ -140,10 +140,12 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Order is not found" + id));
         if (order.getState().equals(OrderState.PENDING)) {
-            throw new ConflictException("There is conflict this request");
+            throw new ConflictException("We cannot cancel this order, as it is pending state");
         }
         order.setState(OrderState.CANCELED);
         orderRepository.save(order);
+
+        // Restore Stock
 
         return new Response<>(null, new OrderDto(order), OrderDto.class.getSimpleName());
     }

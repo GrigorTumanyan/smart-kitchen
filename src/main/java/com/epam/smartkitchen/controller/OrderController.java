@@ -27,7 +27,8 @@ public class OrderController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<Response<ErrorResponse, List<OrderDto>>> getOrders(@RequestParam int pageNumber, @RequestParam int pageSize,
+    public ResponseEntity<Response<ErrorResponse, List<OrderDto>>> getOrders(@RequestParam(required = false) int pageNumber,
+                                                                             @RequestParam(required = false) int pageSize,
                                                                              @RequestParam(required = false) String deleted,
                                                                              @RequestParam(required = false) String field,
                                                                              @RequestParam(required = false) String direction) {
@@ -42,8 +43,10 @@ public class OrderController {
     }
 
     @GetMapping("/{orderState}")
-    public ResponseEntity<Response<ErrorResponse, List<OrderDto>>> getOrderByState(@PathVariable OrderState orderState, @RequestParam int pageNumber,
-                                                                                   @RequestParam int pageSize, @RequestParam(required = false) String deleted,
+    public ResponseEntity<Response<ErrorResponse, List<OrderDto>>> getOrderByState(@PathVariable OrderState orderState,
+                                                                                   @RequestParam(required = false) int pageNumber,
+                                                                                   @RequestParam(required = false) int pageSize,
+                                                                                   @RequestParam(required = false) String deleted,
                                                                                    @RequestParam(required = false) String direction,
                                                                                    @RequestParam(required = false) String field) {
         Response<ErrorResponse, List<OrderDto>> ordersByState = orderService.getOrdersByState(orderState, pageNumber, pageSize, field, direction, deleted);
@@ -82,7 +85,7 @@ public class OrderController {
         return ResponseEntity.ok(deletedOrderDto);
     }
 
-    @DeleteMapping("/cancel/{id}")
+    @PatchMapping("/cancel/{id}")
     public ResponseEntity<Response<ErrorResponse, OrderDto>> cancel(@PathVariable(name = "id") String id) {
         Response<ErrorResponse, OrderDto> canceledOrderDto = orderService.cancelOrder(id);
         return ResponseEntity.ok(canceledOrderDto);
