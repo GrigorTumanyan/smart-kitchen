@@ -1,8 +1,11 @@
 package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.CategoryDto;
+import com.epam.smartkitchen.exceptions.ErrorResponse;
+import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.models.Category;
 import com.epam.smartkitchen.repository.CategoryRepository;
+import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -25,29 +28,29 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto addCategory(CategoryDto categoryDto) {
+    public Response<ErrorResponse, CategoryDto> add(CategoryDto categoryDto) {
         Category category = mapper.map(categoryDto,Category.class);
         categoryRepository.save(category);
-        return categoryDto;
+        return new Response<>(null,categoryDto,CategoryDto.class.getSimpleName());
     }
 
     @Override
-    public void deleteCategory(String id) {
-        Category category = categoryRepository.getById(id);
+    public void delete(String id) {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("category with " + id + " id is not found"));
         category.setDeleted(true);
         categoryRepository.save(category);
     }
 
     @Override
-    public CategoryDto updateCategory(CategoryDto categoryDto, String id) {
-        Category category = categoryRepository.findById(id).orElseThrow();
+    public Response<ErrorResponse,CategoryDto> update(CategoryDto categoryDto, String id) {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("category with " + id + " id is not found"));
         mapper.map(categoryDto, category);
         categoryRepository.save(category);
-        return categoryDto;
+        return new Response<>(null,categoryDto,CategoryDto.class.getSimpleName());
     }
 
     @Override
-    public Page<CategoryDto> getAllCategories(Pageable pageable, boolean deleted) {
+    public  Response<ErrorResponse, Page<CategoryDto>> getAll(Pageable pageable, boolean deleted) {
         Page<Category> page = categoryRepository.findAllByDeleted(pageable,deleted);
         List<Category> categoryList = page.getContent();
         List<CategoryDto> categoryDtos = new ArrayList();
@@ -55,7 +58,8 @@ public class CategoryServiceImpl implements CategoryService {
             CategoryDto categoryDto = mapper.map(category, CategoryDto.class);
             categoryDtos.add(categoryDto);
         }
-        return new PageImpl<>(categoryDtos,pageable,page.getTotalElements());
+        PageImpl<CategoryDto> categoryDtos1 = new PageImpl<>(categoryDtos, pageable, page.getTotalElements());
+        return new Response<>(null,categoryDtos1,CategoryDto.class.getSimpleName());
     }
 
 }

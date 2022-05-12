@@ -1,8 +1,10 @@
 package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.ProductDto;
+import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.models.Product;
 import com.epam.smartkitchen.repository.ProductRepository;
+import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,11 +42,14 @@ class ProductServiceImplTest {
 
     @Test
     void addProduct() {
+
         ProductDto productDto = new ProductDto("pizza");
         Product product = new Product();
         when(mapper.map(productDto,Product.class)).thenReturn(product);
-        ProductDto actualResult = productServiceTest.addProduct(productDto);
-        assertEquals(productDto,actualResult);
+
+        Response<ErrorResponse, ProductDto> actualResult = productServiceTest.add(productDto);
+
+        assertEquals(actualResult.getSuccessObject(),productDto);
         verify(productRepository,times(1)).save(product);
     }
 
@@ -53,9 +58,9 @@ class ProductServiceImplTest {
         String productId = "test-id";
         Product product = new Product();
 
-        when(productRepository.getById(productId)).thenReturn(product);
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
 
-        productServiceTest.deleteProduct(productId);
+        productServiceTest.delete(productId);
 
         verify(productRepository,times(1)).save(product);
         assertTrue(product.getDeleted());
@@ -66,8 +71,8 @@ class ProductServiceImplTest {
         ProductDto productDto = new ProductDto("pizza");
         Product product = new Product();
         when(productRepository.findById("1")).thenReturn(Optional.of(product));
-        ProductDto actualResult = productServiceTest.updateProduct(productDto,"1");
-        assertEquals(productDto,actualResult);
+        Response<ErrorResponse, ProductDto> actualResult = productServiceTest.update(productDto,"1");
+        assertEquals(productDto,actualResult.getSuccessObject());
         verify(productRepository,times(1)).save(product);
     }
 
@@ -83,9 +88,9 @@ class ProductServiceImplTest {
         when(productRepository.findAllByDeleted(pageable,true)).thenReturn(page);
         when(mapper.map(product, ProductDto.class)).thenReturn(productDto);
 
-        Page<ProductDto> actualResult = productServiceTest.getAllProducts(pageable,true);
+        Response<ErrorResponse,Page<ProductDto>> actualResult = productServiceTest.getAll(pageable,true);
 
-        assertEquals(expectedResult,actualResult);
+        assertEquals(expectedResult,actualResult.getSuccessObject());
     }
 
 

@@ -1,8 +1,10 @@
 package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.CategoryDto;
+import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.models.Category;
 import com.epam.smartkitchen.repository.CategoryRepository;
+import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.CategoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,8 +42,8 @@ class CategoryServiceImplTest {
         CategoryDto categoryDto = new CategoryDto();
         Category category = new Category();
         when(mapper.map(categoryDto,Category.class)).thenReturn(category);
-        CategoryDto actualResult = categoryServiceTest.addCategory(categoryDto);
-        assertEquals(categoryDto,actualResult);
+        Response<ErrorResponse, CategoryDto> actualResult = categoryServiceTest.add(categoryDto);
+        assertEquals(categoryDto,actualResult.getSuccessObject());
         verify(categoryRepository,times(1)).save(category);
     }
 
@@ -50,9 +52,9 @@ class CategoryServiceImplTest {
         String categoryId = "test-id";
 
         Category category = new Category();
-        when(categoryRepository.getById(categoryId)).thenReturn(category);
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
 
-        categoryServiceTest.deleteCategory(categoryId);
+        categoryServiceTest.delete(categoryId);
 
         verify(categoryRepository,times(1)).save(category);
         assertTrue(category.getDeleted());
@@ -63,8 +65,8 @@ class CategoryServiceImplTest {
         CategoryDto categoryDto = new CategoryDto("pizza");
         Category category = new Category();
         when(categoryRepository.findById("1")).thenReturn(Optional.of(category));
-        CategoryDto actualResult = categoryServiceTest.updateCategory(categoryDto,"1");
-        assertEquals(categoryDto,actualResult);
+        Response<ErrorResponse, CategoryDto> actualResult = categoryServiceTest.update(categoryDto,"1");
+        assertEquals(categoryDto,actualResult.getSuccessObject());
         verify(categoryRepository,times(1)).save(category);
     }
 
@@ -80,8 +82,8 @@ class CategoryServiceImplTest {
         when(categoryRepository.findAllByDeleted(pageable,true)).thenReturn(page);
         when(mapper.map(category, CategoryDto.class)).thenReturn(categoryDto);
 
-        Page<CategoryDto> actualResult = categoryServiceTest.getAllCategories(pageable,true);
+        Response<ErrorResponse, Page<CategoryDto>> actualResult = categoryServiceTest.getAll(pageable,true);
 
-        assertEquals(expectedResult,actualResult);
+        assertEquals(expectedResult,actualResult.getSuccessObject());
     }
 }
