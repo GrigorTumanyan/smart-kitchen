@@ -40,6 +40,7 @@ public class ProductController {
             value = "deleted",
             required = false,
             defaultValue = "false") boolean deleted,Pageable pageable){
+
         Response<ErrorResponse, Page<ProductDto>> all = productService.getAll(pageable, deleted);
         return ResponseEntity.ok(all);
     }
