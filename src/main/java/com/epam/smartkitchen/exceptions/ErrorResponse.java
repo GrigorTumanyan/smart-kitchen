@@ -13,7 +13,7 @@ public class ErrorResponse {
     private LocalDateTime localDateTime;
 
 
-    public ErrorResponse() {
+    public ErrorResponse(String s, String conflict, String there_is_conflict_this_request, List<String> errorList, LocalDateTime now) {
     }
 
     public ErrorResponse(String errorCode, String errorStatus, String errorMessage, List<String> errorList) {
