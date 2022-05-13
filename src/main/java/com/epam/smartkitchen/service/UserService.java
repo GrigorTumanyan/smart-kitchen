@@ -13,17 +13,17 @@ import java.util.List;
 public interface UserService {
 
 
-    Response<ErrorResponse, List<UserDto>> getAllUser(int pageNumber, int pageSize, String sortedField, String direction, String deleted);
+    Response<ErrorResponse, List<UserDto>> getAll(int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
     Response<ErrorResponse, UserDto> findById(String id);
 
-    Response<ErrorResponse, List<UserDto>> getUsersByType(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
+    Response<ErrorResponse, List<UserDto>> getByType(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
-    Response<ErrorResponse, UserDto> addUser(UserDto userDto);
+    Response<ErrorResponse, UserDto> add(UserDto userDto);
 
-    Response<ErrorResponse, UserDto> updateUser(String id, UpdateUserDto updateUserDto);
+    Response<ErrorResponse, UserDto> update(String id, UpdateUserDto updateUserDto);
 
-    Response<ErrorResponse, ResponseDeleteUserDto> deleteUser(String id);
+    Response<ErrorResponse, ResponseDeleteUserDto> delete(String id);
 
     Response<ErrorResponse, List<UserDto>> exportExcel(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 

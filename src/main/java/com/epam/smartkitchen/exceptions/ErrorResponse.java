@@ -16,12 +16,12 @@ public class ErrorResponse {
     public ErrorResponse() {
     }
 
-    public ErrorResponse(String errorCode, String errorStatus, String errorMessage, List<String> errorList, LocalDateTime localDateTime) {
+    public ErrorResponse(String errorCode, String errorStatus, String errorMessage, List<String> errorList) {
         this.errorCode = errorCode;
         this.errorStatus = errorStatus;
         this.errorMessage = errorMessage;
         this.errorList = errorList;
-        this.localDateTime = localDateTime;
+        this.localDateTime = LocalDateTime.now();
     }
 
     public String getErrorMessage() {

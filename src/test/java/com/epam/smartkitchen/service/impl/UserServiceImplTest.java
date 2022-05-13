@@ -6,7 +6,7 @@ import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.exceptions.RequestParamInvalidException;
-import com.epam.smartkitchen.exceptions.ResourceExistException;
+import com.epam.smartkitchen.exceptions.DuplicateException;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
 import com.epam.smartkitchen.response.Response;
@@ -58,55 +58,55 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void getAllUser() {
+    void getAll() {
         when(userRepository.findAll(pageRequest)).thenReturn((usersPageable()));
         when(userRepository.findAllByDeletedFalse(pageRequest)).thenReturn((usersPageable()));
         when(userRepository.findAllByDeletedTrue(pageRequest)).thenReturn((usersPageable()));
 
-        Response<ErrorResponse, List<UserDto>> allUser = userService.getAllUser(0, 10, null, null, null);
+        Response<ErrorResponse, List<UserDto>> allUser = userService.getAll(0, 10, null, null, null);
         Page<UserDto> usersToPage = new PageImpl<>(allUser.getSuccessObject());
 
         assertEquals(usersToPage, getUserDto(usersPageable()));
     }
 
     @Test
-    void GetAllUserRequestParamInvalidExceptionCase() {
+    void GetAllRequestParamInvalidExceptionCase() {
         when(userRepository.findAll(pageRequest)).thenThrow(new RequestParamInvalidException("Parameter deleted is not correct: null"));
 
-        assertThrows(RequestParamInvalidException.class, () -> userService.getAllUser(0, 10, null, null, "null"));
+        assertThrows(RequestParamInvalidException.class, () -> userService.getAll(0, 10, null, null, "null"));
     }
 
     @Test
-    void GetAllUserRecordNotFoundException(){
+    void GetAllRecordNotFoundException(){
         when(userRepository.findAllByDeletedFalse(pageRequest)).thenThrow(new RecordNotFoundException("Users are not found"));
 
-        assertThrows(RecordNotFoundException.class, () -> userService.getAllUser(0,10, null,null, null));
+        assertThrows(RecordNotFoundException.class, () -> userService.getAll(0,10, null,null, null));
     }
 
     @Test
-    void getUsersByType() {
+    void getByType() {
         when(userRepository.findByUserType(UserType.MANAGER, pageRequest)).thenReturn(usersPageable());
         when(userRepository.findByUserTypeAndDeletedFalse(UserType.MANAGER, pageRequest)).thenReturn(usersPageable());
         when(userRepository.findByUserTypeAndDeletedTrue(UserType.MANAGER, pageRequest)).thenReturn(usersPageable());
 
-        Response<ErrorResponse, List<UserDto>> usersByType = userService.getUsersByType(UserType.MANAGER, 0, 10, null, null, null);
+        Response<ErrorResponse, List<UserDto>> usersByType = userService.getByType(UserType.MANAGER, 0, 10, null, null, null);
         Page<UserDto> userDtoPage = new PageImpl<>(usersByType.getSuccessObject());
 
         assertEquals(userDtoPage, getUserDto(usersPageable()));
     }
 
     @Test
-    void getUsersByTypeRequestParamInvalidExceptionCase() {
+    void getByTypeRequestParamInvalidExceptionCase() {
         when(userRepository.findByUserTypeAndDeletedTrue(UserType.WAITER, pageRequest)).thenThrow(new RequestParamInvalidException("Parameter deleted is not correct: null"));
 
-        assertThrows(RequestParamInvalidException.class, () -> userService.getUsersByType(UserType.WAITER,0, 10, null, null, "only"));
+        assertThrows(RequestParamInvalidException.class, () -> userService.getByType(UserType.WAITER,0, 10, null, null, "only"));
     }
 
     @Test
-    void getUsersByTypeRecordNotFoundException(){
+    void getByTypeRecordNotFoundException(){
         when(userRepository.findByUserType(UserType.COOK, pageRequest)).thenThrow(new RecordNotFoundException("Users are not found by type "));
 
-        assertThrows(RecordNotFoundException.class, () -> userService.getUsersByType(UserType.COOK,0,10, null,null, "all"));
+        assertThrows(RecordNotFoundException.class, () -> userService.getByType(UserType.COOK,0,10, null,null, "all"));
     }
 
     @Test
@@ -127,54 +127,54 @@ public class UserServiceImplTest {
 
 
     @Test
-    void addUser() {
+    void add() {
         when(userRepository.existsById(any())).thenReturn(false);
         when(userRepository.save(any())).thenReturn(user);
 
-        Response<ErrorResponse, UserDto> userDtoResponse = userService.addUser(this.userDto);
+        Response<ErrorResponse, UserDto> userDtoResponse = userService.add(this.userDto);
 
         assertEquals(userDtoResponse.getSuccessObject(),this.userDto);
 
     }
 
     @Test
-    void addUserResourceExistExceptionCase(){
+    void addResourceExistExceptionCase(){
         when(userRepository.existsByEmail(any())).thenReturn(true);
 
-        assertThrows(ResourceExistException.class, () -> userService.addUser(userDto));
+        assertThrows(DuplicateException.class, () -> userService.add(userDto));
     }
 
     @Test
-    void updateUser() {
+    void update() {
         when(userRepository.findById(any())).thenReturn(toOptionalUser());
         when(userRepository.save(user)).thenReturn(user);
 
-        Response<ErrorResponse, UserDto> userDtoResponse = userService.updateUser(id, managerEditUserDto());
+        Response<ErrorResponse, UserDto> userDtoResponse = userService.update(id, managerEditUserDto());
 
         assertEquals(userDtoResponse.getSuccessObject(),this.userDto);
     }
 
     @Test
-    void updateUserNegativeCase(){
+    void updateNegativeCase(){
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(RecordNotFoundException.class, () -> userService.updateUser(id,managerEditUserDto()));
+        assertThrows(RecordNotFoundException.class, () -> userService.update(id,managerEditUserDto()));
     }
 
     @Test
-    void deleteUser() {
+    void delete() {
         when(userRepository.findById(id)).thenReturn(toOptionalUser());
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        Response<ErrorResponse, ResponseDeleteUserDto> responseDeleteUserDto = userService.deleteUser(id);
+        Response<ErrorResponse, ResponseDeleteUserDto> responseDeleteUserDto = userService.delete(id);
 
         assertEquals(responseDeleteUserDto.getSuccessObject().isRemoved(),deleteUserDto.isRemoved());
     }
 
     @Test
-    void deleteUserNegativeCase(){
+    void deleteNegativeCase(){
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(RecordNotFoundException.class, () -> userService.deleteUser(id));
+        assertThrows(RecordNotFoundException.class, () -> userService.delete(id));
     }
 }
