@@ -7,7 +7,7 @@ import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.exceptions.RequestParamInvalidException;
 import com.epam.smartkitchen.exceptions.RecordNotFoundException;
-import com.epam.smartkitchen.exceptions.ResourceExistException;
+import com.epam.smartkitchen.exceptions.DuplicateException;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
 import com.epam.smartkitchen.response.Response;
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Response<ErrorResponse, List<UserDto>> getAllUser(int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+    public Response<ErrorResponse, List<UserDto>> getAll(int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
         PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
         Page<User> allUser;
         if (deleted == null) {
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response<ErrorResponse, List<UserDto>> getUsersByType(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+    public Response<ErrorResponse, List<UserDto>> getByType(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
         PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
         Page<User> allUser;
         if (deleted == null) {
@@ -70,9 +70,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response<ErrorResponse, UserDto> addUser(UserDto userDto) {
+    public Response<ErrorResponse, UserDto> add(UserDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
-            throw new ResourceExistException(userDto.getEmail() + " Email already exists");
+            throw new DuplicateException(userDto.getEmail() + " Email already exists");
         }
         User user = UserDto.toUser(userDto);
         User savedUser = userRepository.save(user);
@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response<ErrorResponse, UserDto> updateUser(String id, UpdateUserDto updateUserDto) {
+    public Response<ErrorResponse, UserDto> update(String id, UpdateUserDto updateUserDto) {
         User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User is not found with id : " + id));
         User updatedUser = changeUserFields(updateUserDto, user);
         User save = userRepository.save(updatedUser);
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response<ErrorResponse, ResponseDeleteUserDto> deleteUser(String id) {
+    public Response<ErrorResponse, ResponseDeleteUserDto> delete(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User is not found with id : " + id));
         user.setDeleted(true);
         User savedUser = userRepository.save(user);
@@ -105,9 +105,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response<ErrorResponse, List<UserDto>> exportExcel(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
         if (userType != null) {
-            return getUsersByType(userType, pageNumber, pageSize, sortedField, direction, deleted);
+            return getByType(userType, pageNumber, pageSize, sortedField, direction, deleted);
         }
-        return getAllUser(pageNumber, pageSize, sortedField, direction, deleted);
+        return getAll(pageNumber, pageSize, sortedField, direction, deleted);
     }
 
     private List<UserDto> toUserDto(Page<User> userList) {

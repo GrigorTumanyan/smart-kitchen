@@ -34,7 +34,7 @@ public class ManagerRestController {
                                                                                    @RequestParam(required = false) String deleted,
                                                                                    @RequestParam(required = false) String sortedField,
                                                                                    @RequestParam(required = false) String direction) {
-        Response<ErrorResponse, List<UserDto>> response = userService.getAllUser(pageNumber, pageSize, sortedField, direction, deleted);
+        Response<ErrorResponse, List<UserDto>> response = userService.getAll(pageNumber, pageSize, sortedField, direction, deleted);
         return ResponseEntity.ok(response);
     }
 
@@ -45,7 +45,7 @@ public class ManagerRestController {
                                                                                 @RequestParam(required = false) String deleted,
                                                                                 @RequestParam(required = false) String sortedField,
                                                                                 @RequestParam(required = false) String direction) {
-        Response<ErrorResponse, List<UserDto>> usersByType = userService.getUsersByType(userType, pageNumber, pageSize, sortedField, direction, deleted);
+        Response<ErrorResponse, List<UserDto>> usersByType = userService.getByType(userType, pageNumber, pageSize, sortedField, direction, deleted);
         return ResponseEntity.ok(usersByType);
     }
 
@@ -71,20 +71,20 @@ public class ManagerRestController {
 
     @PostMapping("/user")
     public ResponseEntity<Response<ErrorResponse, UserDto>> addUser(@RequestBody UserDto userDto) {
-        Response<ErrorResponse, UserDto> userDtoResponse = userService.addUser(userDto);
+        Response<ErrorResponse, UserDto> userDtoResponse = userService.add(userDto);
         return ResponseEntity.ok(userDtoResponse);
     }
 
     @PatchMapping("/user/{id}")
     public ResponseEntity<Response<ErrorResponse, UserDto>> updateUser(@PathVariable(name = "id") String id,
                                                                        @RequestBody UpdateUserDto updateUserDto) {
-        Response<ErrorResponse, UserDto> userDtoResponse = userService.updateUser(id, updateUserDto);
+        Response<ErrorResponse, UserDto> userDtoResponse = userService.update(id, updateUserDto);
         return ResponseEntity.ok(userDtoResponse);
     }
 
     @DeleteMapping("/user/{id}")
     public ResponseEntity<Response<ErrorResponse, ResponseDeleteUserDto>> deleteUser(@PathVariable(name = "id") String id) {
-        Response<ErrorResponse, ResponseDeleteUserDto> responseDeleteUserDto = userService.deleteUser(id);
+        Response<ErrorResponse, ResponseDeleteUserDto> responseDeleteUserDto = userService.delete(id);
         return ResponseEntity.ok(responseDeleteUserDto);
     }
 
