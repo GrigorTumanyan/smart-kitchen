@@ -24,10 +24,11 @@ public class TestHelperOrder {
         order.setState(OrderState.ACCEPTED);
         order.setTotalPrice(1000D);
         order.setItemsList(menuItemList);
+        order.setDeleted(true);
         return Optional.of(order);
     }
 
-    protected static OrderDto toOrderDto (){
+    protected static OrderDto toOrderDto() {
         Order order = toOptionalOrder().get();
         OrderDto orderDto = OrderMapper.orderToDto(order);
         return orderDto;
@@ -55,7 +56,11 @@ public class TestHelperOrder {
 
     }
 
-    protected static DeleteOrderDto deleteOrderDto(){
+    protected static OrderDto toOrderDtoFromOptionalOrder() {
+        return new OrderDto(toOrder());
+    }
+
+    protected static DeleteOrderDto deleteOrderDto() {
         Order order = toOrder();
         return new DeleteOrderDto(order.getDeleted());
     }

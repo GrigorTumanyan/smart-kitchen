@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
@@ -65,6 +64,16 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse("409", "CONFLICT", "Resource already exists",
                 errorList);
+        Response<ErrorResponse, ?> response = new Response<>(errorResponse, null, ex.getClass().getSimpleName());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public final ResponseEntity<Response<ErrorResponse, ?>> handleConflictException(ConflictException ex){
+        List<String> errorList = new ArrayList<>();
+        errorList.add(ex.getLocalizedMessage());
+        ErrorResponse errorResponse = new ErrorResponse("409", "CONFLICT", "There is conflict this request",
+                errorList, LocalDateTime.now());
         Response<ErrorResponse, ?> response = new Response<>(errorResponse, null, ex.getClass().getSimpleName());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }

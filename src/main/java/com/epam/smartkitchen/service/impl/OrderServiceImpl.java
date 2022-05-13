@@ -6,12 +6,18 @@ import com.epam.smartkitchen.dto.order.DeleteOrderDto;
 import com.epam.smartkitchen.dto.order.OrderDto;
 import com.epam.smartkitchen.dto.order.UpdateOrderDto;
 import com.epam.smartkitchen.enums.OrderState;
+import com.epam.smartkitchen.exceptions.ConflictException;
+import com.epam.smartkitchen.exceptions.ErrorResponse;
+import com.epam.smartkitchen.exceptions.RecordNotFoundException;
+import com.epam.smartkitchen.exceptions.RequestParamInvalidException;
 import com.epam.smartkitchen.models.MenuItem;
 import com.epam.smartkitchen.models.Order;
 import com.epam.smartkitchen.repository.OrderRepository;
+import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.OrderService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,8 +34,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> getAllOrder(Pageable pageable, String deleted) {
-        Page<Order> allOrders = orderRepository.findAll(pageable);
+    public Response<ErrorResponse, List<OrderDto>> getAllOrder(int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+        PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
+        Page<Order> allOrders = null;
 
         if (deleted == null) {
             allOrders = orderRepository.findAllByDeletedFalse(pageable);
@@ -37,43 +44,44 @@ public class OrderServiceImpl implements OrderService {
             allOrders = orderRepository.findAllByDeletedTrue(pageable);
         } else if (deleted.equals("all")) {
             orderRepository.findAll(pageable);
-        }
-        if (allOrders == null) {
-            return null;
         } else {
-            return toOrderDto(allOrders);
+            throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
+        }
+        if (allOrders.getContent().size() < 1) {
+            throw new RecordNotFoundException("Orders are not found");
+        } else {
+            return new Response<>(null, toOrderDto(allOrders), OrderDto.class.getName());
         }
     }
 
     @Override
-    public OrderDto findById(String id) {
-        Optional<Order> orderId = orderRepository.findById(id);
-        if (orderId.isEmpty()) {
-            throw new RuntimeException(id + " id not found!");
-        }
-        Order order = orderId.get();
-        OrderDto orderDto = OrderMapper.orderToDto(order);
-        return orderDto;
+    public Response<ErrorResponse, OrderDto> findById(String id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Order is not found" + id));
+        return new Response<>(null, new OrderDto(order), OrderDto.class.getSimpleName());
     }
 
     @Override
-    public List<OrderDto> getOrdersByState(OrderState orderState, Pageable pageable, String deleted) {
-        Page<Order> stateOrder = orderRepository.findOrderByState(orderState, pageable);
+    public Response<ErrorResponse, List<OrderDto>> getOrdersByState(OrderState orderState, int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+        PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
+        Page<Order> allOrders = null;
         if (deleted == null) {
-            stateOrder = orderRepository.findByStateAndDeletedFalse(orderState, pageable);
+            allOrders = orderRepository.findByStateAndDeletedFalse(orderState, pageable);
         } else if (deleted.equals("one")) {
-            stateOrder = orderRepository.findByStateAndDeletedTrue(orderState, pageable);
+            allOrders = orderRepository.findByStateAndDeletedTrue(orderState, pageable);
         } else if (deleted.equals("all")) {
             orderRepository.findOrderByState(orderState, pageable);
+        } else {
+            throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
         }
-        if (stateOrder == null) {
-            return null;
+        if (allOrders.getContent().size() < 1) {
+            throw new RecordNotFoundException("Orders type are not found" + deleted);
         }
-        return toOrderDto(stateOrder);
+        return new Response<>(null, toOrderDto(allOrders), OrderDto.class.getSimpleName());
     }
 
     @Override
-    public OrderDto addOrder(AddOrderDto addOrderDto) {
+    public Response<ErrorResponse, OrderDto> addOrder(AddOrderDto addOrderDto) {
         Order order = OrderMapper.addOrderDtoToOrder(addOrderDto);
         List<MenuItem> itemList = order.getItemsList();
         double price = 0;
@@ -83,8 +91,8 @@ public class OrderServiceImpl implements OrderService {
         }
         order.setTotalPrice(price);
         Order savedOrder = orderRepository.save(order);
-        OrderDto orderDto = OrderMapper.orderToDto(savedOrder);
-        return orderDto;
+
+        return new Response<>(null, new OrderDto(savedOrder), OrderDto.class.getSimpleName());
     }
 
     private void decreaseMenuItem(String name, Double weight, String measurement) {
@@ -92,10 +100,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto updateOrder(String id, UpdateOrderDto orderUpdate) {
+    public Response<ErrorResponse, OrderDto> updateOrder(String id, UpdateOrderDto orderUpdate) {
         Optional<Order> order = orderRepository.findById(id);
         if (order.isEmpty()) {
-            throw new RuntimeException(id + " id not found!");
+            throw new RecordNotFoundException(id + " id not found!");
         }
         Optional<?> mapOrder = order.map(orders -> {
             orders.setState(orderUpdate.getOrderState());
@@ -115,19 +123,41 @@ public class OrderServiceImpl implements OrderService {
         });
         Order toOrder = OrderMapper.updateOrderDtoToOrder((UpdateOrderDto) mapOrder.get());
         Order save = orderRepository.save(toOrder);
-        OrderDto orderDto = OrderMapper.orderToDto(save);
-        return orderDto;
+        return new Response<>(null, new OrderDto(save), OrderDto.class.getSimpleName());
     }
 
     @Override
-    public DeleteOrderDto deleteOrder(String id) {
-        Order order = orderRepository.findById(id).orElse(null);
-        if (order == null) {
-            return null;
-        }
+    public Response<ErrorResponse, DeleteOrderDto> deleteOrder(String id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Order is not found" + id));
         order.setDeleted(true);
         Order saveOrder = orderRepository.save(order);
-        return new DeleteOrderDto(saveOrder.getDeleted());
+        return new Response<>(null, new DeleteOrderDto(saveOrder.getDeleted()), DeleteOrderDto.class.getSimpleName());
+    }
+
+    @Override
+    public Response<ErrorResponse, OrderDto> cancelOrder(String id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException("Order is not found" + id));
+        if (order.getState().equals(OrderState.PENDING)) {
+            throw new ConflictException("We cannot cancel this order, as it is pending state");
+        }
+        order.setState(OrderState.CANCELED);
+        orderRepository.save(order);
+
+        // Restore Stock
+
+        return new Response<>(null, new OrderDto(order), OrderDto.class.getSimpleName());
+    }
+
+    private PageRequest createPageable(int pageNumber, int pageSize, String field, String direction) {
+        if (field == null) {
+            return PageRequest.of(pageNumber, pageSize);
+        } else if (direction == null) {
+            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).ascending());
+        } else {
+            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).descending());
+        }
     }
 
     private List<OrderDto> toOrderDto(Page<Order> orderList) {
