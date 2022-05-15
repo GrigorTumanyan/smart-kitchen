@@ -1,6 +1,8 @@
 package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.ProductDto;
+import com.epam.smartkitchen.exceptions.ErrorResponse;
+import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.models.Product;
 import com.epam.smartkitchen.repository.ProductRepository;
 import com.epam.smartkitchen.response.Response;
@@ -52,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
     public Response<ErrorResponse, Page<ProductDto>> getAll(Pageable pageable, boolean deleted) {
         Page<Product> page = productRepository.findAllByDeleted(pageable, deleted);
         List<Product> productList = page.getContent();
-        List<ProductDto> productDtos = new ArrayList();
+        List<ProductDto> productDtos = new ArrayList<>();
         for (Product product : productList) {
             ProductDto productDto = mapper.map(product, ProductDto.class);
             productDtos.add(productDto);
@@ -67,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDto getProductById(String id){
         Product product = productRepository.findByIdAndDeleted(id, false)
-                .orElseThrow(() -> new ResourceExistException("product isn't found"));
+                .orElseThrow(() -> new RecordNotFoundException("product isn't found"));
         return mapper.map(product, ProductDto.class);
     }
 }

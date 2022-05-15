@@ -77,7 +77,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         List<String> errorList = new ArrayList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse("409", "CONFLICT", "There is conflict this request",
-                errorList, LocalDateTime.now());
+                errorList);
         Response<ErrorResponse, ?> response = new Response<>(errorResponse, null, ex.getClass().getSimpleName());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }

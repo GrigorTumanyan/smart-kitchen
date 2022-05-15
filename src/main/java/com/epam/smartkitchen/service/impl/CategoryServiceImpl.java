@@ -1,11 +1,20 @@
 package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.CategoryDto;
+import com.epam.smartkitchen.exceptions.ErrorResponse;
+import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.models.Category;
 import com.epam.smartkitchen.repository.CategoryRepository;
+import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.CategoryService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -44,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
     public  Response<ErrorResponse, Page<CategoryDto>> getAll(Pageable pageable, boolean deleted) {
         Page<Category> page = categoryRepository.findAllByDeleted(pageable,deleted);
         List<Category> categoryList = page.getContent();
-        List<CategoryDto> categoryDtos = new ArrayList();
+        List<CategoryDto> categoryDtos = new ArrayList<>();
         for (Category category:categoryList) {
             CategoryDto categoryDto = mapper.map(category, CategoryDto.class);
             categoryDtos.add(categoryDto);
@@ -56,7 +65,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto getCategoryById(String id){
         Category category = categoryRepository.findByIdAndDeleted(id, false)
-                .orElseThrow(() -> new ResourceExistException("category isn't found"));
+                .orElseThrow(() -> new RecordNotFoundException("category isn't found"));
         return mapper.map(category, CategoryDto.class);
     }
 
