@@ -27,7 +27,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         String[] split = message.split("\n");
         stringList.add(split[0]);
         ErrorResponse errorResponse = new ErrorResponse("400", errorStatus, "Request body is not correct",
-                stringList,LocalDateTime.now());
+                stringList);
         return ResponseEntity.badRequest().body(new Response<>(errorResponse, null, simpleName));
     }
 
@@ -37,7 +37,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         errorList.add(ex.getLocalizedMessage());
         errorList.add(ex.getCause().getMessage());
         ErrorResponse error = new ErrorResponse("500", "ServerException", "Something wrong with server",
-                errorList,LocalDateTime.now());
+                errorList);
         Response<ErrorResponse, ?> response = new Response<>(error, null, ex.getClass().getSimpleName());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -47,7 +47,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         List<String> errorList = new ArrayList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse error = new ErrorResponse("404", "NOT_FOUND", "Record not found",
-                errorList,LocalDateTime.now());
+                errorList);
         Response<ErrorResponse, ?> response = new Response<>(error, null, ex.getClass().getSimpleName());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -57,7 +57,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         List<String> errorList = new ArrayList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse("400", "BAD_REQUEST", "Parameter is not correct",
-                errorList,LocalDateTime.now());
+                errorList);
         Response<ErrorResponse, ?> response = new Response<>(errorResponse, null, ex.getClass().getSimpleName());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -67,7 +67,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         List<String> errorList = new ArrayList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse("409", "CONFLICT", "Resource already exists",
-                errorList,LocalDateTime.now());
+                errorList);
         Response<ErrorResponse, ?> response = new Response<>(errorResponse, null, ex.getClass().getSimpleName());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
@@ -77,7 +77,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         List<String> errorList = new ArrayList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse("409", "CONFLICT", "There is conflict this request",
-                errorList, LocalDateTime.now());
+                errorList);
         Response<ErrorResponse, ?> response = new Response<>(errorResponse, null, ex.getClass().getSimpleName());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }

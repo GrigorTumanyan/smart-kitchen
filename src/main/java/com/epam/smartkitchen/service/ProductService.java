@@ -19,4 +19,7 @@ public interface ProductService {
     public Response<ErrorResponse, Page<ProductDto>>  getAll(Pageable pageable, boolean deleted);
 
 
+    public ProductDto getProductById(String id);
+
+
 }
