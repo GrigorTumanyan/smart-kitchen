@@ -1,7 +1,7 @@
 package com.epam.smartkitchen.dto.user;
 
 public class ResponseDeleteUserDto {
-    boolean deleted;
+    private boolean deleted;
 
     public ResponseDeleteUserDto( boolean deleted) {
 

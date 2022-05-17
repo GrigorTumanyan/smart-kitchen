@@ -1,7 +1,7 @@
 package com.epam.smartkitchen.controller;
 
 import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
-import com.epam.smartkitchen.dto.user.UpdateUserDto;
+import com.epam.smartkitchen.dto.user.UpdateUserDtoByManager;
 import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
@@ -17,13 +17,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/manager")
-public class ManagerRestController {
+public class ManagerController {
 
     private final UserService userService;
 
     private final ExcelWriter excelWriter;
 
-    public ManagerRestController(UserService userService, ExcelWriter excelWriter) {
+    public ManagerController(UserService userService, ExcelWriter excelWriter) {
         this.userService = userService;
         this.excelWriter = excelWriter;
     }
@@ -65,7 +65,7 @@ public class ManagerRestController {
 
     @GetMapping("/user/{id}")
     public ResponseEntity<Response<ErrorResponse, UserDto>> getUserById(@PathVariable(name = "id") String id) {
-        Response<ErrorResponse, UserDto> userDto = userService.findById(id);
+        Response<ErrorResponse, UserDto> userDto = userService.getByID(id);
         return ResponseEntity.ok(userDto);
     }
 
@@ -77,8 +77,8 @@ public class ManagerRestController {
 
     @PatchMapping("/user/{id}")
     public ResponseEntity<Response<ErrorResponse, UserDto>> updateUser(@PathVariable(name = "id") String id,
-                                                                       @RequestBody UpdateUserDto updateUserDto) {
-        Response<ErrorResponse, UserDto> userDtoResponse = userService.update(id, updateUserDto);
+                                                                       @RequestBody UpdateUserDtoByManager updateUserDto) {
+        Response<ErrorResponse, UserDto> userDtoResponse = userService.updateByManager(id, updateUserDto);
         return ResponseEntity.ok(userDtoResponse);
     }
 

@@ -1,40 +1,68 @@
 package com.epam.smartkitchen.dto.user;
 
-import com.epam.smartkitchen.enums.UserType;
-import com.epam.smartkitchen.models.User;
-
 public class UpdateUserDto {
-    UserType userType;
-    Boolean active;
+   private String name;
+   private String surname;
+   private String email;
+   private String image;
+   private String phone;
+   private String address;
 
-
-    public UpdateUserDto(UserType userType, Boolean removed, Boolean active) {
-        this.userType = userType;
-        this.active = active;
+    public UpdateUserDto(String name, String surname, String email, String image, String phone, String address) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.image = image;
+        this.phone = phone;
+        this.address = address;
     }
 
-    public static User toUser(UpdateUserDto managerEditUserDto){
-        User user = new User();
-        user.setUserType(managerEditUserDto.getUserType());
-        user.setActive(managerEditUserDto.getActive());
-        return user;
+    public String getName() {
+        return name;
     }
 
-    public UserType getUserType() {
-        return userType;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setUserType(UserType userType) {
-        this.userType = userType;
+    public String getSurname() {
+        return surname;
     }
 
-    public Boolean getActive() {
-        return active;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public String getEmail() {
+        return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
 }

@@ -3,10 +3,10 @@ package com.epam.smartkitchen.service.impl;
 import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
 import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
+import com.epam.smartkitchen.exceptions.ConflictException;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.exceptions.RequestParamInvalidException;
-import com.epam.smartkitchen.exceptions.DuplicateException;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
 import com.epam.smartkitchen.response.Response;
@@ -113,7 +113,7 @@ public class UserServiceImplTest {
     void findById() {
         when(userRepository.findById(id)).thenReturn(optionalUser);
 
-        Response<ErrorResponse, UserDto> byId = userService.findById(id);
+        Response<ErrorResponse, UserDto> byId = userService.getByID(id);
 
         assertEquals(byId.getSuccessObject(), userDto);
     }
@@ -122,7 +122,7 @@ public class UserServiceImplTest {
     void findByIdRecordNotFoundExceptionCase(){
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(RecordNotFoundException.class, () -> userService.findById(id));
+        assertThrows(RecordNotFoundException.class, () -> userService.getByID(id));
     }
 
 
@@ -141,7 +141,7 @@ public class UserServiceImplTest {
     void addResourceExistExceptionCase(){
         when(userRepository.existsByEmail(any())).thenReturn(true);
 
-        assertThrows(DuplicateException.class, () -> userService.add(userDto));
+        assertThrows(ConflictException.class, () -> userService.add(userDto));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class UserServiceImplTest {
         when(userRepository.findById(any())).thenReturn(toOptionalUser());
         when(userRepository.save(user)).thenReturn(user);
 
-        Response<ErrorResponse, UserDto> userDtoResponse = userService.update(id, managerEditUserDto());
+        Response<ErrorResponse, UserDto> userDtoResponse = userService.updateByManager(id, managerEditUserDto());
 
         assertEquals(userDtoResponse.getSuccessObject(),this.userDto);
     }
@@ -158,7 +158,7 @@ public class UserServiceImplTest {
     void updateNegativeCase(){
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThrows(RecordNotFoundException.class, () -> userService.update(id,managerEditUserDto()));
+        assertThrows(RecordNotFoundException.class, () -> userService.updateByManager(id,managerEditUserDto()));
     }
 
     @Test
