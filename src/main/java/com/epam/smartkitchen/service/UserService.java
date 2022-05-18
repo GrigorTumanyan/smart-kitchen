@@ -5,6 +5,7 @@ import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.response.Response;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 
@@ -13,7 +14,7 @@ public interface UserService {
 
     Response<ErrorResponse, List<UserDto>> getAll(int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
-    Response<ErrorResponse, UserDto> getByID(String id);
+    Response<ErrorResponse, UserDto> getById(String id);
 
     Response<ErrorResponse, List<UserDto>> getByType(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
@@ -25,7 +26,7 @@ public interface UserService {
 
     Response<ErrorResponse, ResponseDeleteUserDto> delete(String id);
 
-    Response<ErrorResponse, List<UserDto>> exportExcel(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
+    Response<ErrorResponse, List<UserDto>> exportExcel(HttpServletResponse httpResponse, UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
-    Response<ErrorResponse,UserDto> changePassword(String id, UserChangePasswordDto userDto);
+    Response<ErrorResponse,UserDto> changePassword(String id, ChangePasswordUserDto userDto);
 }

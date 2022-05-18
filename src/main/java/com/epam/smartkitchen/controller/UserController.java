@@ -1,7 +1,7 @@
 package com.epam.smartkitchen.controller;
 
 import com.epam.smartkitchen.dto.user.UpdateUserDto;
-import com.epam.smartkitchen.dto.user.UserChangePasswordDto;
+import com.epam.smartkitchen.dto.user.ChangePasswordUserDto;
 import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.response.Response;
@@ -21,7 +21,7 @@ public class UserController {
 
     @GetMapping("{id}")
     public ResponseEntity<Response<ErrorResponse, UserDto>> myProfile(@PathVariable String id){
-        Response<ErrorResponse, UserDto> userById = userService.getByID(id);
+        Response<ErrorResponse, UserDto> userById = userService.getById(id);
         return ResponseEntity.ok(userById);
     }
 
@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PatchMapping("{id}")
-    public ResponseEntity<Response<ErrorResponse, UserDto>> changePassword(@PathVariable String id, @RequestBody UserChangePasswordDto userDto){
+    public ResponseEntity<Response<ErrorResponse, UserDto>> changePassword(@PathVariable String id, @RequestBody ChangePasswordUserDto userDto){
         Response<ErrorResponse, UserDto> userDtoResponse = userService.changePassword(id, userDto);
         return ResponseEntity.ok(userDtoResponse);
     }

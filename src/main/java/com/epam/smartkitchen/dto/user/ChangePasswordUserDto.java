@@ -2,12 +2,12 @@ package com.epam.smartkitchen.dto.user;
 
 import java.util.Objects;
 
-public class UserChangePasswordDto {
+public class ChangePasswordUserDto {
     private final String oldPassword;
     private final String newPassword;
     private final String confirmPassword;
 
-    public UserChangePasswordDto(String oldPassword, String newPassword, String confirmPassword) {
+    public ChangePasswordUserDto(String oldPassword, String newPassword, String confirmPassword) {
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
         this.confirmPassword = confirmPassword;
@@ -29,7 +29,7 @@ public class UserChangePasswordDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserChangePasswordDto that = (UserChangePasswordDto) o;
+        ChangePasswordUserDto that = (ChangePasswordUserDto) o;
         return Objects.equals(oldPassword, that.oldPassword) && Objects.equals(newPassword, that.newPassword) && Objects.equals(confirmPassword, that.confirmPassword);
     }
 

@@ -1,5 +1,6 @@
 package com.epam.smartkitchen.service.impl;
 
+import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.service.ExcelWriter;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -23,10 +24,10 @@ import java.util.*;
 public class ExcelWriterImpl implements ExcelWriter {
 
     @Override
-    public HttpServletResponse write(List<?> data, HttpServletResponse response) {
+    public void write(List<?> data, HttpServletResponse response) {
         Workbook workbook = new XSSFWorkbook();
         if (data.isEmpty()){
-            return null;
+            throw new RecordNotFoundException("Data is empty");
         }
         String simpleName = data.get(0).getClass().getSimpleName();
         Sheet sheetContent = createSheetContent(workbook, simpleName);
@@ -35,10 +36,11 @@ public class ExcelWriterImpl implements ExcelWriter {
         try {
             ServletOutputStream outputStream = response.getOutputStream();
             workbook.write(outputStream);
+            outputStream.close();
+            workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return response;
     }
 
     private void writeSheetData(Sheet sheet, List<?> data) {

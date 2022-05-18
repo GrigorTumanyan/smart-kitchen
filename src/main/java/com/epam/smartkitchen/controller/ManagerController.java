@@ -21,11 +21,9 @@ public class ManagerController {
 
     private final UserService userService;
 
-    private final ExcelWriter excelWriter;
 
-    public ManagerController(UserService userService, ExcelWriter excelWriter) {
+    public ManagerController(UserService userService) {
         this.userService = userService;
-        this.excelWriter = excelWriter;
     }
 
     @GetMapping("/users")
@@ -50,22 +48,21 @@ public class ManagerController {
     }
 
     @PostMapping("/download")
-    public ResponseEntity<Response<ErrorResponse, ?>> exportSheet(HttpServletResponse httpResponse,
+    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> exportSheet(HttpServletResponse httpResponse,
                                                                   @RequestParam(required = false) int pageSize,
                                                                   @RequestParam int pageNumber,
                                                                   @RequestParam(required = false) String deleted,
                                                                   @RequestParam(required = false) String sortedField,
                                                                   @RequestParam(required = false) String direction,
                                                                   @RequestParam(required = false) UserType userType) {
-        Response<ErrorResponse, List<UserDto>> response = userService.exportExcel(userType, pageNumber, pageSize, sortedField, direction, deleted);
-
-        excelWriter.write(response.getSuccessObject(), httpResponse);
-        return ResponseEntity.ok().build();
+        Response<ErrorResponse, List<UserDto>> response = userService.exportExcel(httpResponse,userType, pageNumber,
+                pageSize, sortedField, direction, deleted);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/user/{id}")
     public ResponseEntity<Response<ErrorResponse, UserDto>> getUserById(@PathVariable(name = "id") String id) {
-        Response<ErrorResponse, UserDto> userDto = userService.getByID(id);
+        Response<ErrorResponse, UserDto> userDto = userService.getById(id);
         return ResponseEntity.ok(userDto);
     }
 

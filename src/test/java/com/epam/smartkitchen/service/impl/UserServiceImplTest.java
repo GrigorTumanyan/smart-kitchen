@@ -1,6 +1,8 @@
 package com.epam.smartkitchen.service.impl;
 
+import com.epam.smartkitchen.dto.user.ChangePasswordUserDto;
 import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
+import com.epam.smartkitchen.dto.user.UpdateUserDto;
 import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.exceptions.ConflictException;
@@ -10,6 +12,7 @@ import com.epam.smartkitchen.exceptions.RequestParamInvalidException;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
 import com.epam.smartkitchen.response.Response;
+import com.epam.smartkitchen.service.ExcelWriter;
 import com.epam.smartkitchen.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +25,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,8 +40,10 @@ public class UserServiceImplTest {
 
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
 
+    private final ExcelWriter excelWriter = Mockito.mock(ExcelWriter.class);
+
     @InjectMocks
-    private final UserService userService = Mockito.spy(new UserServiceImpl(userRepository));
+    private final UserService userService = Mockito.spy(new UserServiceImpl(userRepository, excelWriter));
 
     private String id;
     private PageRequest pageRequest;
@@ -113,7 +119,7 @@ public class UserServiceImplTest {
     void getById() {
         when(userRepository.findById(id)).thenReturn(optionalUser);
 
-        Response<ErrorResponse, UserDto> byId = userService.getByID(id);
+        Response<ErrorResponse, UserDto> byId = userService.getById(id);
 
         assertEquals(byId.getSuccessObject(), userDto);
     }
@@ -122,7 +128,7 @@ public class UserServiceImplTest {
     void getByIdRecordNotFoundExceptionCase(){
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(RecordNotFoundException.class, () -> userService.getByID(id));
+        assertThrows(RecordNotFoundException.class, () -> userService.getById(id));
     }
 
 
@@ -145,8 +151,8 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void update() {
-        when(userRepository.findById(any())).thenReturn(toOptionalUser());
+    void updateByManager() {
+        when(userRepository.findById(any())).thenReturn(optionalUser);
         when(userRepository.save(user)).thenReturn(user);
 
         Response<ErrorResponse, UserDto> userDtoResponse = userService.updateByManager(id, managerEditUserDto());
@@ -155,15 +161,41 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void updateNegativeCase(){
+    void updateByManagerNegativeCase(){
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThrows(RecordNotFoundException.class, () -> userService.updateByManager(id,managerEditUserDto()));
     }
 
     @Test
+    void update(){
+        when(userRepository.findById(any())).thenReturn(optionalUser);
+        when(userRepository.existsByEmail(any())).thenReturn(false);
+        when(userRepository.save(any())).thenReturn(user);
+
+        Response<ErrorResponse, UserDto> update = userService.update("4", toUpdateUserDto());
+
+        assertEquals(update.getSuccessObject(), userDto);
+    }
+
+    @Test
+    void updateNegativeCaseRecordNotFoundException(){
+        when(userRepository.findById("10")).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> userService.update("10", toUpdateUserDto()));
+    }
+
+    @Test
+    void updateNegativeCaseConflictException(){
+        when(userRepository.findById(any())).thenReturn(optionalUser);
+        when(userRepository.existsByEmail(any())).thenReturn(true);
+
+        assertThrows(ConflictException.class, () -> userService.update("15", toUpdateUserDtoForNegativeCase()));
+    }
+
+    @Test
     void delete() {
-        when(userRepository.findById(id)).thenReturn(toOptionalUser());
+        when(userRepository.findById(id)).thenReturn(optionalUser);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         Response<ErrorResponse, ResponseDeleteUserDto> responseDeleteUserDto = userService.delete(id);
@@ -177,4 +209,33 @@ public class UserServiceImplTest {
 
         assertThrows(RecordNotFoundException.class, () -> userService.delete(id));
     }
+
+    @Test
+    void changePassword() {
+        when(userRepository.findById(any())).thenReturn(optionalUser);
+        when(userRepository.save(any())).thenReturn(user);
+
+        Response<ErrorResponse, UserDto> userDtoResponse = userService.changePassword("8",
+                new ChangePasswordUserDto("8", "88", "88"));
+
+        assertEquals(userDto, userDtoResponse.getSuccessObject());
+    }
+
+    @Test
+    void changePasswordNegativeCaseRecordNotFoundException(){
+        when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(RecordNotFoundException.class, () -> userService.changePassword("a",
+                new ChangePasswordUserDto("8", "88", "88")));
+    }
+
+    @Test
+    void changePasswordNegativeCaseConflictException(){
+        when(userRepository.findById(any())).thenReturn(optionalUser);
+
+        assertThrows(ConflictException.class, () -> userService.changePassword("f",
+                new ChangePasswordUserDto("8", "8", "88")));
+
+    }
+
 }

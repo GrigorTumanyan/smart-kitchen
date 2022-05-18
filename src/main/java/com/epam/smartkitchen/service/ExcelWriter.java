@@ -5,6 +5,6 @@ import java.util.List;
 
 
 public interface ExcelWriter {
-    HttpServletResponse write(List<?> data, HttpServletResponse response /* String outputPath */);
+    void write(List<?> data, HttpServletResponse response );
 }
 
