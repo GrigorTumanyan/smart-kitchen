@@ -67,9 +67,10 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public ProductDto getProductById(String id){
+    public Response<ErrorResponse,ProductDto> getById(String id){
         Product product = productRepository.findByIdAndDeleted(id, false)
-                .orElseThrow(() -> new RecordNotFoundException("product isn't found"));
-        return mapper.map(product, ProductDto.class);
+                .orElseThrow(() -> new RecordNotFoundException("product with " + id + " id is not found"));
+        ProductDto map = mapper.map(product, ProductDto.class);
+        return new Response<>(null,map,ProductDto.class.getSimpleName());
     }
 }

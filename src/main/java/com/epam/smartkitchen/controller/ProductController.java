@@ -45,9 +45,10 @@ public class ProductController {
         return ResponseEntity.ok(all);
     }
 
-    @GetMapping("/product/{id}")
-    public ProductDto findProductById(@PathVariable String id){
-        return productService.getProductById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Response<ErrorResponse,ProductDto>> findById(@PathVariable String id){
+        Response<ErrorResponse, ProductDto> byId = productService.getById(id);
+        return ResponseEntity.ok(byId);
     }
 
 }
