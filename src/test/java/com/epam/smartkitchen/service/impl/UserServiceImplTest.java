@@ -110,7 +110,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void findById() {
+    void getById() {
         when(userRepository.findById(id)).thenReturn(optionalUser);
 
         Response<ErrorResponse, UserDto> byId = userService.getByID(id);
@@ -119,7 +119,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void findByIdRecordNotFoundExceptionCase(){
+    void getByIdRecordNotFoundExceptionCase(){
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(RecordNotFoundException.class, () -> userService.getByID(id));

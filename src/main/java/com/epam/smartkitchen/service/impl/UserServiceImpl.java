@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
     public Response<ErrorResponse, UserDto> update(String id, UpdateUserDto userDto) {
         User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User is not found with id : " + id));
         if (userRepository.existsByEmail(userDto.getEmail()) && !(user.getEmail().equals(userDto.getEmail()))) {
-            throw new ConflictException(userDto.getEmail() + " Email already exists");
+            throw new ConflictException("Email : " + userDto.getEmail() + "  already exists");
         }
         User updatedUser = updateUserFields(userDto, user);
         User savedUser = userRepository.save(updatedUser);
@@ -119,6 +119,7 @@ public class UserServiceImpl implements UserService {
         return getAll(pageNumber, pageSize, sortedField, direction, deleted);
     }
 
+    @Override
     public Response<ErrorResponse,UserDto> changePassword(String id, UserChangePasswordDto userDto){
         User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User is not found with id : " + id));
         if (!userDto.getNewPassword().equals(userDto.getConfirmPassword())){

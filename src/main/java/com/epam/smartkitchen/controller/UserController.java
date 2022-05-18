@@ -31,7 +31,7 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
-    @PatchMapping("id")
+    @PatchMapping("{id}")
     public ResponseEntity<Response<ErrorResponse, UserDto>> changePassword(@PathVariable String id, @RequestBody UserChangePasswordDto userDto){
         Response<ErrorResponse, UserDto> userDtoResponse = userService.changePassword(id, userDto);
         return ResponseEntity.ok(userDtoResponse);
