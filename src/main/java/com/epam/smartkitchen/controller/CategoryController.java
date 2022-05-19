@@ -46,8 +46,9 @@ public class CategoryController {
         return ResponseEntity.ok(all);
     }
 
-    @GetMapping("/category/{id}")
-    public CategoryDto findCategoryById(@PathVariable String id){
-        return categoryService.getCategoryById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Response<ErrorResponse,CategoryDto>> findById(@PathVariable String id){
+        Response<ErrorResponse, CategoryDto> byId = categoryService.getById(id);
+        return ResponseEntity.ok(byId);
     }
 }

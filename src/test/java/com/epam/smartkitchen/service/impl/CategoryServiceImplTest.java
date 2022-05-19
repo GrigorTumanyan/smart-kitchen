@@ -94,8 +94,8 @@ class CategoryServiceImplTest {
         String categoryId = "test-id";
         when(mapper.map(category, CategoryDto.class)).thenReturn(categoryDto);
         when(categoryRepository.findByIdAndDeleted(categoryId,false)).thenReturn(Optional.of(category));
-        CategoryDto actual = categoryServiceTest.getCategoryById(categoryId);
+        Response<ErrorResponse, CategoryDto> actual = categoryServiceTest.getById(categoryId);
 
-        assertEquals(categoryDto,actual);
+        assertEquals(categoryDto,actual.getSuccessObject());
     }
 }

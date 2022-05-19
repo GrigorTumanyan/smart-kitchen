@@ -101,8 +101,8 @@ class ProductServiceImplTest {
         String productId = "test-id";
         when(mapper.map(product, ProductDto.class)).thenReturn(productDto);
         when(productRepository.findByIdAndDeleted(productId,false)).thenReturn(Optional.of(product));
-        ProductDto actual = productServiceTest.getProductById(productId);
+        Response<ErrorResponse, ProductDto> actual = productServiceTest.getById(productId);
 
-        assertEquals(productDto,actual);
+        assertEquals(productDto,actual.getSuccessObject());
     }
 }

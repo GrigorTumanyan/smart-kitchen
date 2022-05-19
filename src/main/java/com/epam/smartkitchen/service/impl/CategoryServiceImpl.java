@@ -63,10 +63,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto getCategoryById(String id){
+    public Response<ErrorResponse, CategoryDto> getById(String id){
         Category category = categoryRepository.findByIdAndDeleted(id, false)
-                .orElseThrow(() -> new RecordNotFoundException("category isn't found"));
-        return mapper.map(category, CategoryDto.class);
+                .orElseThrow(() -> new RecordNotFoundException("category with " + id + " id is not found"));
+        CategoryDto map = mapper.map(category, CategoryDto.class);
+        return new Response<>(null,map,CategoryDto.class.getSimpleName());
     }
 
 }
