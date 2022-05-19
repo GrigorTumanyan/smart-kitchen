@@ -33,14 +33,14 @@ public class TestHelperForUser {
     protected static Page<UserDto> getUserDto(Page<User> users) {
         List<UserDto> userDtoList = new ArrayList<>();
         for (User user1 : users) {
-            userDtoList.add(new UserDto(user1));
+            userDtoList.add(UserDto.toUserDto(user1));
         }
         return new PageImpl<>(userDtoList);
     }
 
 
     protected static Optional<UserDto> toOptionalUserDto() {
-        UserDto userDto = new UserDto(toOptionalUser().get());
+        UserDto userDto = UserDto.toUserDto(toOptionalUser().get());
         return Optional.of(userDto);
     }
 
@@ -70,7 +70,7 @@ public class TestHelperForUser {
     }
 
     protected static UserDto toUserDtoFromOptionalUser() {
-        return new UserDto(toUser());
+        return UserDto.toUserDto(toUser());
     }
 
     protected static UpdateUserDtoByManager managerEditUserDto(){
