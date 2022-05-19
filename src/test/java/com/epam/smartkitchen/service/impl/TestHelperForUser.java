@@ -2,6 +2,7 @@ package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
 import com.epam.smartkitchen.dto.user.UpdateUserDto;
+import com.epam.smartkitchen.dto.user.UpdateUserDtoByManager;
 import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
@@ -60,13 +61,21 @@ public class TestHelperForUser {
         return user;
     }
 
+    protected static UpdateUserDto toUpdateUserDto(){
+        return new UpdateUserDto("8", "8", "8", null, null, null);
+    }
+
+    protected static UpdateUserDto toUpdateUserDtoForNegativeCase(){
+        return new UpdateUserDto("8", "8", "50", null, null, null);
+    }
+
     protected static UserDto toUserDtoFromOptionalUser() {
         return new UserDto(toUser());
     }
 
-    protected static UpdateUserDto managerEditUserDto(){
+    protected static UpdateUserDtoByManager managerEditUserDto(){
         User user = toOptionalUser().get();
-        return new UpdateUserDto(user.getUserType(),user.getDeleted(),user.getActive());
+        return new UpdateUserDtoByManager(user.getUserType(),user.getDeleted(),user.getActive());
     }
     protected static ResponseDeleteUserDto deleteUserDto(){
         User user = toUser();

@@ -6,17 +6,14 @@ import com.epam.smartkitchen.models.User;
 import java.util.Objects;
 
 public class UserDto {
-    String name;
-    String surname;
-    String email;
-    String image;
-    String phone;
-    String address;
-    UserType userType;
-    Boolean active;
-
-    public UserDto() {
-    }
+    private String name;
+    private String surname;
+    private String email;
+    private String image;
+    private String phone;
+    private String address;
+    private UserType userType;
+    private Boolean active;
 
     public UserDto(User user) {
         this.name = user.getName();

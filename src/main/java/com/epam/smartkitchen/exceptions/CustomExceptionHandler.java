@@ -62,16 +62,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(DuplicateException.class)
-    public final ResponseEntity<Response<ErrorResponse, ?>> handleResourceExistException(DuplicateException ex) {
-        List<String> errorList = new ArrayList<>();
-        errorList.add(ex.getLocalizedMessage());
-        ErrorResponse errorResponse = new ErrorResponse("409", "CONFLICT", "Resource already exists",
-                errorList);
-        Response<ErrorResponse, ?> response = new Response<>(errorResponse, null, ex.getClass().getSimpleName());
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-    }
-
     @ExceptionHandler(ConflictException.class)
     public final ResponseEntity<Response<ErrorResponse, ?>> handleConflictException(ConflictException ex){
         List<String> errorList = new ArrayList<>();
