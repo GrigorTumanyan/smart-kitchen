@@ -13,13 +13,6 @@ public class UpdateUserDtoByManager {
         this.active = active;
     }
 
-    public static User toUser(UpdateUserDtoByManager managerEditUserDto){
-        User user = new User();
-        user.setUserType(managerEditUserDto.getUserType());
-        user.setActive(managerEditUserDto.getActive());
-        return user;
-    }
-
     public UserType getUserType() {
         return userType;
     }

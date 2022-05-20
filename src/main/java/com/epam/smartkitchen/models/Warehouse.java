@@ -3,6 +3,7 @@ package com.epam.smartkitchen.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.util.List;
 
@@ -10,33 +11,33 @@ import java.util.List;
 public class Warehouse extends BaseEntity {
 
     @Column
-    String name;
+    String description;
     @Column
     Integer count;
     @Column
     Double price;
     @Column
     String measurement;
-    @OneToMany
-    List<Product> productList;
+    @ManyToOne
+    Product product;
 
     public Warehouse() {
     }
 
-    public Warehouse(String name, Integer count, Double price, String measurement, List<Product> productList) {
-        this.name = name;
+    public Warehouse(String description, Integer count, Double price, String measurement, Product product) {
+        this.description = description;
         this.count = count;
         this.price = price;
         this.measurement = measurement;
-        this.productList = productList;
+        this.product = product;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Integer getCount() {
@@ -63,11 +64,11 @@ public class Warehouse extends BaseEntity {
         this.measurement = measurement;
     }
 
-    public List<Product> getProductList() {
-        return productList;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductList(List<Product> productList) {
-        this.productList = productList;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

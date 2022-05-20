@@ -27,7 +27,7 @@ public class ManagerController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getUsersWithSort(@RequestParam(required = false) int pageSize,
+    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getWithSort(@RequestParam(required = false) int pageSize,
                                                                                    @RequestParam int pageNumber,
                                                                                    @RequestParam(required = false) String deleted,
                                                                                    @RequestParam(required = false) String sortedField,
@@ -37,7 +37,7 @@ public class ManagerController {
     }
 
     @GetMapping("/users/{userType}")
-    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getUserByType(@PathVariable UserType userType,
+    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getByType(@PathVariable UserType userType,
                                                                                 @RequestParam(required = false) int pageSize,
                                                                                 @RequestParam int pageNumber,
                                                                                 @RequestParam(required = false) String deleted,
@@ -61,26 +61,26 @@ public class ManagerController {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<Response<ErrorResponse, UserDto>> getUserById(@PathVariable(name = "id") String id) {
+    public ResponseEntity<Response<ErrorResponse, UserDto>> getById(@PathVariable(name = "id") String id) {
         Response<ErrorResponse, UserDto> userDto = userService.getById(id);
         return ResponseEntity.ok(userDto);
     }
 
     @PostMapping("/user")
-    public ResponseEntity<Response<ErrorResponse, UserDto>> addUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<Response<ErrorResponse, UserDto>> add(@RequestBody UserDto userDto) {
         Response<ErrorResponse, UserDto> userDtoResponse = userService.add(userDto);
         return ResponseEntity.ok(userDtoResponse);
     }
 
     @PatchMapping("/user/{id}")
-    public ResponseEntity<Response<ErrorResponse, UserDto>> updateUser(@PathVariable(name = "id") String id,
+    public ResponseEntity<Response<ErrorResponse, UserDto>> update(@PathVariable(name = "id") String id,
                                                                        @RequestBody UpdateUserDtoByManager updateUserDto) {
         Response<ErrorResponse, UserDto> userDtoResponse = userService.updateByManager(id, updateUserDto);
         return ResponseEntity.ok(userDtoResponse);
     }
 
     @DeleteMapping("/user/{id}")
-    public ResponseEntity<Response<ErrorResponse, ResponseDeleteUserDto>> deleteUser(@PathVariable(name = "id") String id) {
+    public ResponseEntity<Response<ErrorResponse, ResponseDeleteUserDto>> delete(@PathVariable(name = "id") String id) {
         Response<ErrorResponse, ResponseDeleteUserDto> responseDeleteUserDto = userService.delete(id);
         return ResponseEntity.ok(responseDeleteUserDto);
     }

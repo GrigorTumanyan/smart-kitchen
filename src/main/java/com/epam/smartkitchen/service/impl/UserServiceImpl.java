@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = UserDto.toUser(userDto);
         User savedUser = userRepository.save(user);
-        return new Response<>(null, new UserDto(savedUser), UserDto.class.getSimpleName());
+        return new Response<>(null, UserDto.toUserDto(savedUser), UserDto.class.getSimpleName());
     }
 
     @Override
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User is not found with id : " + id));
         User updatedUser = updateUserFields(updateUserDto, user);
         User save = userRepository.save(updatedUser);
-        return new Response<>(null, new UserDto(save), UserDto.class.getSimpleName());
+        return new Response<>(null, UserDto.toUserDto(save), UserDto.class.getSimpleName());
     }
 
     @Override
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
         }
         User updatedUser = updateUserFields(userDto, user);
         User savedUser = userRepository.save(updatedUser);
-        return new Response<>(null, new UserDto(savedUser), UserDto.class.getSimpleName());
+        return new Response<>(null, UserDto.toUserDto(savedUser), UserDto.class.getSimpleName());
     }
 
     @Override
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response<ErrorResponse, UserDto> getById(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User is not found with id : " + id));
-        return new Response<>(null, new UserDto(user), UserDto.class.getSimpleName());
+        return new Response<>(null, UserDto.toUserDto(user), UserDto.class.getSimpleName());
     }
 
     @Override
@@ -141,14 +141,14 @@ public class UserServiceImpl implements UserService {
         }
         user.setPassword(userDto.getNewPassword());
         User save = userRepository.save(user);
-        UserDto savedUserDto = new UserDto(save);
+        UserDto savedUserDto = UserDto.toUserDto(save);
         return new Response<>(null, savedUserDto, UserDto.class.getSimpleName());
     }
 
     private List<UserDto> toUserDtoList(Page<User> userList) {
         List<UserDto> allUserDto = new ArrayList<>();
         for (User user : userList) {
-            UserDto userDto = new UserDto(user);
+            UserDto userDto = UserDto.toUserDto(user);
             allUserDto.add(userDto);
         }
         return allUserDto;
