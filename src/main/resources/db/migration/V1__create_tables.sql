@@ -119,13 +119,19 @@ create table warehouse
     price       double precision,
     measurement varchar(255),
     deleted     bit default false,
-    product_id  varchar(255),
     primary key (id)
 ) engine = InnoDB
   DEFAULT CHARSET = utf8
   DEFAULT COLLATE = utf8_general_ci;
-alter table warehouse
-    add constraint FK96sdfdfsg57892dfgdf85fds foreign key (product_id) references product (id);
+create table warehouse_product_list
+(
+    warehouse_id    varchar(255) not null,
+    product_list_id varchar(255) not null
+) engine = InnoDB
+  DEFAULT CHARSET = utf8
+  DEFAULT COLLATE = utf8_general_ci;
+alter table warehouse_product_list
+    add constraint UK_s5doo074tu2l3rcxxq27r3bgg unique (product_list_id);
 alter table menu_item_products
     add constraint FK10mtljwyghld4u2hjt8c9mhk foreign key (products_id) references product (id);
 alter table menu_item_products
@@ -142,3 +148,7 @@ alter table restaurant_order_items_list
     add constraint FKi78wa9ko3mf3aky4rjkscfd8q foreign key (items_list_id) references menu_item (id);
 alter table restaurant_order_items_list
     add constraint FKpyyrsve3a70hkikj9mbau1pld foreign key (order_id) references restaurant_order (id);
+alter table warehouse_product_list
+    add constraint FK3hbxqmsxd1bjxdhjh9l51daf4 foreign key (product_list_id) references product (id);
+alter table warehouse_product_list
+    add constraint FK20evdcyr4bq74wtqud7ittuof foreign key (warehouse_id) references warehouse (id)
