@@ -1,7 +1,7 @@
 package com.epam.smartkitchen.service.impl;
 
-import com.epam.smartkitchen.dto.MenuItemCreateDto;
-import com.epam.smartkitchen.dto.UpdateMenuItemDto;
+import com.epam.smartkitchen.dto.menuItem.MenuItemCreateDto;
+import com.epam.smartkitchen.dto.menuItem.UpdateMenuItemDto;
 import com.epam.smartkitchen.models.MenuItem;
 import com.epam.smartkitchen.repository.MenuRepository;
 import com.epam.smartkitchen.service.MenuService;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -22,7 +21,6 @@ import java.util.Optional;
 import static com.epam.smartkitchen.service.impl.TestHelper.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest

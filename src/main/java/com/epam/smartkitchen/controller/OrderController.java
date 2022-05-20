@@ -4,10 +4,13 @@ import com.epam.smartkitchen.dto.order.AddOrderDto;
 import com.epam.smartkitchen.dto.order.DeleteOrderDto;
 import com.epam.smartkitchen.dto.order.OrderDto;
 import com.epam.smartkitchen.dto.order.UpdateOrderDto;
+import com.epam.smartkitchen.dto.warehouse.OrderProductCount;
+import com.epam.smartkitchen.dto.warehouse.WarehouseDto;
 import com.epam.smartkitchen.enums.OrderState;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.OrderService;
+import com.epam.smartkitchen.service.WarehouseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -21,9 +24,11 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final WarehouseService warehouseService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, WarehouseService warehouseService) {
         this.orderService = orderService;
+        this.warehouseService = warehouseService;
     }
 
     @GetMapping("/")
@@ -89,5 +94,10 @@ public class OrderController {
     public ResponseEntity<Response<ErrorResponse, OrderDto>> cancel(@PathVariable(name = "id") String id) {
         Response<ErrorResponse, OrderDto> canceledOrderDto = orderService.cancelOrder(id);
         return ResponseEntity.ok(canceledOrderDto);
+    }
+    @PutMapping("/prod")
+    public ResponseEntity<Response<ErrorResponse, WarehouseDto>> mm(List<OrderProductCount> products){
+        Response<ErrorResponse, WarehouseDto> warehouseDtoResponse = warehouseService.decreaseProductCountInWarehouse(products);
+        return ResponseEntity.ok(warehouseDtoResponse);
     }
 }

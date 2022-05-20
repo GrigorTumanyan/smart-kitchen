@@ -1,8 +1,8 @@
 package com.epam.smartkitchen.controller;
 
 
-import com.epam.smartkitchen.dto.MenuItemCreateDto;
-import com.epam.smartkitchen.dto.UpdateMenuItemDto;
+import com.epam.smartkitchen.dto.menuItem.MenuItemCreateDto;
+import com.epam.smartkitchen.dto.menuItem.UpdateMenuItemDto;
 import com.epam.smartkitchen.models.MenuItem;
 import com.epam.smartkitchen.service.MenuService;
 import org.springframework.http.HttpStatus;
