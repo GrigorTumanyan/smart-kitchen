@@ -45,4 +45,10 @@ public class CategoryController {
         Response<ErrorResponse, Page<CategoryDto>> all = categoryService.getAll(pageable, deleted);
         return ResponseEntity.ok(all);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Response<ErrorResponse,CategoryDto>> findById(@PathVariable String id){
+        Response<ErrorResponse, CategoryDto> byId = categoryService.getById(id);
+        return ResponseEntity.ok(byId);
+    }
 }

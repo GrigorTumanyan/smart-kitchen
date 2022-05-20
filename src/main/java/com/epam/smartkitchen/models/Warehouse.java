@@ -13,7 +13,7 @@ public class Warehouse extends BaseEntity {
     @Column
     String description;
     @Column
-    Double count;
+    Integer count;
     @Column
     Double price;
     @Column
@@ -24,7 +24,7 @@ public class Warehouse extends BaseEntity {
     public Warehouse() {
     }
 
-    public Warehouse(String description, Double count, Double price, String measurement, Product product) {
+    public Warehouse(String description, Integer count, Double price, String measurement, Product product) {
         this.description = description;
         this.count = count;
         this.price = price;
@@ -40,11 +40,11 @@ public class Warehouse extends BaseEntity {
         this.description = description;
     }
 
-    public Double getCount() {
+    public Integer getCount() {
         return count;
     }
 
-    public void setCount(Double count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 
@@ -71,5 +71,4 @@ public class Warehouse extends BaseEntity {
     public void setProduct(Product product) {
         this.product = product;
     }
-
 }

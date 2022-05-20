@@ -6,40 +6,42 @@ import com.epam.smartkitchen.models.User;
 import java.util.Objects;
 
 public class UserDto {
-    String name;
-    String surname;
-    String email;
-    String image;
-    String phone;
-    String address;
-    UserType userType;
-    Boolean active;
+    private String name;
+    private String surname;
+    private String email;
+    private String image;
+    private String phone;
+    private String address;
+    private UserType userType;
+    private Boolean active;
 
-    public UserDto() {
-    }
-
-    public UserDto(User user) {
-        this.name = user.getName();
-        this.surname = user.getSurname();
-        this.email = user.getEmail();
-        this.image = user.getImage();
-        this.phone = user.getPhone();
-        this.address = user.getAddress();
-        this.userType = user.getUserType();
-        this.active = user.getActive();
+    public UserDto(String name, String surname, String email, String image, String phone, String address, UserType userType, Boolean active) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.image = image;
+        this.phone = phone;
+        this.address = address;
+        this.userType = userType;
+        this.active = active;
     }
 
     public static User toUser(UserDto userDto) {
         User user = new User();
-        user.setName(userDto.name);
-        user.setSurname(userDto.surname);
-        user.setEmail(userDto.email);
-        user.setImage(userDto.image);
-        user.setPhone(userDto.phone);
-        user.setAddress(userDto.address);
+        user.setName(userDto.getName());
+        user.setSurname(userDto.getSurname());
+        user.setEmail(userDto.getEmail());
+        user.setImage(userDto.getImage());
+        user.setPhone(userDto.getPhone());
+        user.setAddress(userDto.getAddress());
         user.setUserType(user.getUserType());
         user.setActive(userDto.getActive());
         return user;
+    }
+
+    public static UserDto toUserDto (User user){
+        return new UserDto(user.getName(), user.getSurname(), user.getEmail(), user.getImage(),
+                user.getPhone(), user.getAddress(), user.getUserType(), user.getActive());
     }
 
     public String getName() {

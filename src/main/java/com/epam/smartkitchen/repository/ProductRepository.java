@@ -7,10 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 
+import java.util.Optional;
+
 @Repository
 public interface ProductRepository extends JpaRepository<Product,String> {
 
 
     Page<Product> findAllByDeleted(Pageable pageable, boolean deleted);
 
+    Optional<Product> findByIdAndDeleted(String id,boolean deleted);
 }

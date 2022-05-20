@@ -18,4 +18,7 @@ public interface CategoryService {
     public Response<ErrorResponse, Page<CategoryDto>> getAll(Pageable pageable, boolean deleted);
 
 
+    public Response<ErrorResponse, CategoryDto> getById(String id);
+
+
 }

@@ -53,13 +53,21 @@ public class CategoryServiceImpl implements CategoryService {
     public  Response<ErrorResponse, Page<CategoryDto>> getAll(Pageable pageable, boolean deleted) {
         Page<Category> page = categoryRepository.findAllByDeleted(pageable,deleted);
         List<Category> categoryList = page.getContent();
-        List<CategoryDto> categoryDtos = new ArrayList();
+        List<CategoryDto> categoryDtos = new ArrayList<>();
         for (Category category:categoryList) {
             CategoryDto categoryDto = mapper.map(category, CategoryDto.class);
             categoryDtos.add(categoryDto);
         }
         PageImpl<CategoryDto> categoryDtos1 = new PageImpl<>(categoryDtos, pageable, page.getTotalElements());
         return new Response<>(null,categoryDtos1,CategoryDto.class.getSimpleName());
+    }
+
+    @Override
+    public Response<ErrorResponse, CategoryDto> getById(String id){
+        Category category = categoryRepository.findByIdAndDeleted(id, false)
+                .orElseThrow(() -> new RecordNotFoundException("category with " + id + " id is not found"));
+        CategoryDto map = mapper.map(category, CategoryDto.class);
+        return new Response<>(null,map,CategoryDto.class.getSimpleName());
     }
 
 }

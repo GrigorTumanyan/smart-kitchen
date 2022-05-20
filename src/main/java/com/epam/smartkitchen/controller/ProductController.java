@@ -40,7 +40,15 @@ public class ProductController {
             value = "deleted",
             required = false,
             defaultValue = "false") boolean deleted,Pageable pageable){
+
         Response<ErrorResponse, Page<ProductDto>> all = productService.getAll(pageable, deleted);
         return ResponseEntity.ok(all);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Response<ErrorResponse,ProductDto>> findById(@PathVariable String id){
+        Response<ErrorResponse, ProductDto> byId = productService.getById(id);
+        return ResponseEntity.ok(byId);
+    }
+
 }

@@ -1,7 +1,7 @@
 package com.epam.smartkitchen.controller;
 
 import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
-import com.epam.smartkitchen.dto.user.UpdateUserDto;
+import com.epam.smartkitchen.dto.user.UpdateUserDtoByManager;
 import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
@@ -17,19 +17,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/manager")
-public class ManagerRestController {
+public class ManagerController {
 
     private final UserService userService;
 
-    private final ExcelWriter excelWriter;
 
-    public ManagerRestController(UserService userService, ExcelWriter excelWriter) {
+    public ManagerController(UserService userService) {
         this.userService = userService;
-        this.excelWriter = excelWriter;
     }
 
     @GetMapping("/users")
-    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getUsersWithSort(@RequestParam(required = false) int pageSize,
+    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getWithSort(@RequestParam(required = false) int pageSize,
                                                                                    @RequestParam int pageNumber,
                                                                                    @RequestParam(required = false) String deleted,
                                                                                    @RequestParam(required = false) String sortedField,
@@ -39,7 +37,7 @@ public class ManagerRestController {
     }
 
     @GetMapping("/users/{userType}")
-    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getUserByType(@PathVariable UserType userType,
+    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getByType(@PathVariable UserType userType,
                                                                                 @RequestParam(required = false) int pageSize,
                                                                                 @RequestParam int pageNumber,
                                                                                 @RequestParam(required = false) String deleted,
@@ -50,40 +48,39 @@ public class ManagerRestController {
     }
 
     @PostMapping("/download")
-    public ResponseEntity<Response<ErrorResponse, ?>> exportSheet(HttpServletResponse httpResponse,
+    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> exportSheet(HttpServletResponse httpResponse,
                                                                   @RequestParam(required = false) int pageSize,
                                                                   @RequestParam int pageNumber,
                                                                   @RequestParam(required = false) String deleted,
                                                                   @RequestParam(required = false) String sortedField,
                                                                   @RequestParam(required = false) String direction,
                                                                   @RequestParam(required = false) UserType userType) {
-        Response<ErrorResponse, List<UserDto>> response = userService.exportExcel(userType, pageNumber, pageSize, sortedField, direction, deleted);
-
-        excelWriter.write(response.getSuccessObject(), httpResponse);
-        return ResponseEntity.ok().build();
+        Response<ErrorResponse, List<UserDto>> response = userService.exportExcel(httpResponse,userType, pageNumber,
+                pageSize, sortedField, direction, deleted);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<Response<ErrorResponse, UserDto>> getUserById(@PathVariable(name = "id") String id) {
-        Response<ErrorResponse, UserDto> userDto = userService.findById(id);
+    public ResponseEntity<Response<ErrorResponse, UserDto>> getById(@PathVariable(name = "id") String id) {
+        Response<ErrorResponse, UserDto> userDto = userService.getById(id);
         return ResponseEntity.ok(userDto);
     }
 
     @PostMapping("/user")
-    public ResponseEntity<Response<ErrorResponse, UserDto>> addUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<Response<ErrorResponse, UserDto>> add(@RequestBody UserDto userDto) {
         Response<ErrorResponse, UserDto> userDtoResponse = userService.add(userDto);
         return ResponseEntity.ok(userDtoResponse);
     }
 
     @PatchMapping("/user/{id}")
-    public ResponseEntity<Response<ErrorResponse, UserDto>> updateUser(@PathVariable(name = "id") String id,
-                                                                       @RequestBody UpdateUserDto updateUserDto) {
-        Response<ErrorResponse, UserDto> userDtoResponse = userService.update(id, updateUserDto);
+    public ResponseEntity<Response<ErrorResponse, UserDto>> update(@PathVariable(name = "id") String id,
+                                                                       @RequestBody UpdateUserDtoByManager updateUserDto) {
+        Response<ErrorResponse, UserDto> userDtoResponse = userService.updateByManager(id, updateUserDto);
         return ResponseEntity.ok(userDtoResponse);
     }
 
     @DeleteMapping("/user/{id}")
-    public ResponseEntity<Response<ErrorResponse, ResponseDeleteUserDto>> deleteUser(@PathVariable(name = "id") String id) {
+    public ResponseEntity<Response<ErrorResponse, ResponseDeleteUserDto>> delete(@PathVariable(name = "id") String id) {
         Response<ErrorResponse, ResponseDeleteUserDto> responseDeleteUserDto = userService.delete(id);
         return ResponseEntity.ok(responseDeleteUserDto);
     }

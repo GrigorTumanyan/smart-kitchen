@@ -54,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
     public Response<ErrorResponse, Page<ProductDto>> getAll(Pageable pageable, boolean deleted) {
         Page<Product> page = productRepository.findAllByDeleted(pageable, deleted);
         List<Product> productList = page.getContent();
-        List<ProductDto> productDtos = new ArrayList();
+        List<ProductDto> productDtos = new ArrayList<>();
         for (Product product : productList) {
             ProductDto productDto = mapper.map(product, ProductDto.class);
             productDtos.add(productDto);
@@ -65,4 +65,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
+
+    @Override
+    public Response<ErrorResponse,ProductDto> getById(String id){
+        Product product = productRepository.findByIdAndDeleted(id, false)
+                .orElseThrow(() -> new RecordNotFoundException("product with " + id + " id is not found"));
+        ProductDto map = mapper.map(product, ProductDto.class);
+        return new Response<>(null,map,ProductDto.class.getSimpleName());
+    }
 }

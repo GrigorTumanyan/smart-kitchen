@@ -42,7 +42,6 @@ class ProductServiceImplTest {
 
     @Test
     void addProduct() {
-
         ProductDto productDto = new ProductDto("pizza");
         Product product = new Product();
         when(mapper.map(productDto,Product.class)).thenReturn(product);
@@ -94,4 +93,16 @@ class ProductServiceImplTest {
     }
 
 
+
+    @Test
+    void getProductById() {
+        ProductDto productDto = new ProductDto();
+        Product product = new Product();
+        String productId = "test-id";
+        when(mapper.map(product, ProductDto.class)).thenReturn(productDto);
+        when(productRepository.findByIdAndDeleted(productId,false)).thenReturn(Optional.of(product));
+        Response<ErrorResponse, ProductDto> actual = productServiceTest.getById(productId);
+
+        assertEquals(productDto,actual.getSuccessObject());
+    }
 }

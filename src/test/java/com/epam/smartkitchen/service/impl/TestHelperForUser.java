@@ -2,6 +2,7 @@ package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
 import com.epam.smartkitchen.dto.user.UpdateUserDto;
+import com.epam.smartkitchen.dto.user.UpdateUserDtoByManager;
 import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
@@ -32,14 +33,14 @@ public class TestHelperForUser {
     protected static Page<UserDto> getUserDto(Page<User> users) {
         List<UserDto> userDtoList = new ArrayList<>();
         for (User user1 : users) {
-            userDtoList.add(new UserDto(user1));
+            userDtoList.add(UserDto.toUserDto(user1));
         }
         return new PageImpl<>(userDtoList);
     }
 
 
     protected static Optional<UserDto> toOptionalUserDto() {
-        UserDto userDto = new UserDto(toOptionalUser().get());
+        UserDto userDto = UserDto.toUserDto(toOptionalUser().get());
         return Optional.of(userDto);
     }
 
@@ -60,13 +61,21 @@ public class TestHelperForUser {
         return user;
     }
 
-    protected static UserDto toUserDtoFromOptionalUser() {
-        return new UserDto(toUser());
+    protected static UpdateUserDto toUpdateUserDto(){
+        return new UpdateUserDto("8", "8", "8", null, null, null);
     }
 
-    protected static UpdateUserDto managerEditUserDto(){
+    protected static UpdateUserDto toUpdateUserDtoForNegativeCase(){
+        return new UpdateUserDto("8", "8", "50", null, null, null);
+    }
+
+    protected static UserDto toUserDtoFromOptionalUser() {
+        return UserDto.toUserDto(toUser());
+    }
+
+    protected static UpdateUserDtoByManager managerEditUserDto(){
         User user = toOptionalUser().get();
-        return new UpdateUserDto(user.getUserType(),user.getDeleted(),user.getActive());
+        return new UpdateUserDtoByManager(user.getUserType(),user.getDeleted(),user.getActive());
     }
     protected static ResponseDeleteUserDto deleteUserDto(){
         User user = toUser();
