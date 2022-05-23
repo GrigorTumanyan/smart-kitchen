@@ -10,13 +10,15 @@ public class WarehouseDto {
     private Double price;
     private String measurement;
     private Product product;
+    private Boolean deleted = Boolean.FALSE;
 
-    public WarehouseDto(String description, Double count, Double price, String measurement, Product product) {
+    public WarehouseDto(String description, Double count, Double price, String measurement, Product product, Boolean deleted) {
         this.description = description;
         this.count = count;
         this.price = price;
         this.measurement = measurement;
         this.product = product;
+        this.deleted = deleted;
     }
 
     public WarehouseDto() {
@@ -62,17 +64,25 @@ public class WarehouseDto {
         this.product = product;
     }
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WarehouseDto that = (WarehouseDto) o;
-        return Objects.equals(description, that.description) && Objects.equals(count, that.count) && Objects.equals(price, that.price) && Objects.equals(measurement, that.measurement) && Objects.equals(product, that.product);
+        return Objects.equals(description, that.description) && Objects.equals(count, that.count) && Objects.equals(price, that.price) && Objects.equals(measurement, that.measurement) && Objects.equals(product, that.product) && Objects.equals(deleted, that.deleted);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(description, count, price, measurement, product);
+        return Objects.hash(description, count, price, measurement, product, deleted);
     }
 
     @Override
@@ -83,6 +93,7 @@ public class WarehouseDto {
                 ", price=" + price +
                 ", measurement='" + measurement + '\'' +
                 ", product=" + product +
+                ", deleted=" + deleted +
                 '}';
     }
 }

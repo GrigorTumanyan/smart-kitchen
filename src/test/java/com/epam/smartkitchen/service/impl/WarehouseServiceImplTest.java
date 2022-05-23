@@ -29,8 +29,11 @@ import static org.mockito.Mockito.when;
 public class WarehouseServiceImplTest {
 
     Warehouse warehouse = new Warehouse("halo",12.4,null,null,null);
-    WarehouseDto warehouseDto = new WarehouseDto();
+    WarehouseDto warehouseDto = new WarehouseDto("halo",12.4,null,null,null,false);
     private final WarehouseRepository warehouseRepository = Mockito.mock(WarehouseRepository.class);
+    Warehouse warehouseForDeletedCase;
+
+
 
 
     @Mock
@@ -43,7 +46,8 @@ public class WarehouseServiceImplTest {
 
     @BeforeEach
     void setUp() {
-
+        warehouseForDeletedCase = new Warehouse(null,null,null,null,null);
+        warehouseForDeletedCase.setDeleted(true);
     }
 
     @AfterEach
@@ -64,20 +68,29 @@ public class WarehouseServiceImplTest {
 
     @Test
     void updateItem() {
-        when(warehouseRepository.findById(any())).thenReturn();
+        when(warehouseRepository.findById(any())).thenReturn(optionalWarehouse());
 
         when(warehouseRepository.save(any())).thenReturn(warehouse);
 
         Response<ErrorResponse, WarehouseDto> warehouseDtoResponse = warehouseService.updateItem("8", new WarehouseDto());
 
-        assertEquals(warehouseDto, warehouseDtoResponse);
+         assertEquals(warehouseDto , warehouseDtoResponse.getSuccessObject());
     }
 
     @Test
     void deleteItemById() {
+        when(warehouseRepository.findById(any())).thenReturn(optionalWarehouse());
+
+        when(warehouseRepository.save(optionalWarehouse().get())).thenReturn(warehouseForDeletedCase);
+
+     Response<ErrorResponse, WarehouseDto> warehouseDto= warehouseService.deleteItemById("7");
+
+      assertEquals(true,warehouseDto.getSuccessObject().getDeleted());
     }
+
 
     @Test
     void decreaseProductCountInWarehouse() {
+
     }
 }

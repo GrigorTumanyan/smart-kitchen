@@ -58,24 +58,27 @@ public class TestHelper {
 
 
     }
-    protected static Optional<Warehouse> optionalWarehouse(){ ;
-        return Optional.of(warehouse);
+
 
 
     protected static UpdateMenuItemDto updateMenuItemDto(){
         return MenuItemMapper.menuItemToUpdateMenuDto(menuItem());
     }
 
-    protected Warehouse warehouse(){
+    protected static Warehouse toWarehouse(){
         Warehouse warehouse = new Warehouse();
 
         warehouse.setDescription("asdas");
         warehouse.setPrice(100.0);
         warehouse.setCount(15.0);
         warehouse.setMeasurement("piece");
-        warehouse.setDeleted(true);
+        warehouse.setDeleted(false);
         warehouse.setProduct(null);
         return  warehouse;
+    }
+    protected  static Optional<Warehouse> optionalWarehouse(){
+        Warehouse warehouse = toWarehouse();
+        return Optional.of(warehouse);
     }
 
 }

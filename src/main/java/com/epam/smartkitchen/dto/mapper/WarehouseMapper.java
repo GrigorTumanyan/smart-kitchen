@@ -15,6 +15,7 @@ public class WarehouseMapper {
         warehouse.setPrice(warehouseDto.getPrice());
         warehouse.setMeasurement(warehouseDto.getMeasurement());
         warehouse.setProduct(warehouseDto.getProduct());
+        warehouse.setDeleted(warehouseDto.getDeleted());
 
         return warehouse;
     }
@@ -26,6 +27,7 @@ public class WarehouseMapper {
         warehouseDto.setPrice(warehouse.getPrice());
         warehouseDto.setMeasurement(warehouse.getMeasurement());
         warehouseDto.setProduct(warehouse.getProduct());
+        warehouseDto.setDeleted(warehouse.getDeleted());
 
         return warehouseDto;
     }

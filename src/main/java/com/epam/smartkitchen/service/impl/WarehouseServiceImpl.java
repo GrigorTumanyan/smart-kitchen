@@ -24,9 +24,6 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public Response<ErrorResponse, WarehouseDto> addItem(WarehouseDto warehouseRequestDto) {
-        Warehouse warehouse = WarehouseMapper.warehouseDtoToWarehouse(warehouseRequestDto);
-        Warehouse save = warehouseRepository.save(warehouse);
-        WarehouseDto warehouseDto1 = WarehouseMapper.warehouseToWarehouseDto(save);
         WarehouseDto warehouseDto = WarehouseMapper.warehouseToWarehouseDto(warehouseRepository.save(WarehouseMapper.warehouseDtoToWarehouse(warehouseRequestDto)));
 
         return new Response<>(null, warehouseDto, WarehouseDto.class.getSimpleName());
