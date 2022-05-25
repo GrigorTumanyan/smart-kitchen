@@ -2,21 +2,27 @@ package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.mapper.WarehouseMapper;
 import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
+import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.dto.warehouse.OrderProductCount;
 import com.epam.smartkitchen.dto.warehouse.WarehouseDto;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.exceptions.RecordNotFoundException;
+import com.epam.smartkitchen.exceptions.RequestParamInvalidException;
+import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.models.Warehouse;
 import com.epam.smartkitchen.repository.WarehouseRepository;
 import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.WarehouseService;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseRepository warehouseRepository;
+
 
     public WarehouseServiceImpl(WarehouseRepository warehouseRepository) {
         this.warehouseRepository = warehouseRepository;
@@ -86,6 +92,35 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     }
 
+    @Override
+    public Response<ErrorResponse, List<WarehouseDto>> getAll(int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+        {
+            PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
+            Page<Warehouse> all;
+            if (deleted == null) {
+                all = warehouseRepository.findAllByDeletedFalse(pageable);
+            } else if (deleted.equals("all")) {
+                all = warehouseRepository.findAll(pageable);
+            } else if (deleted.equals("only")) {
+                all = warehouseRepository.findAllByDeletedTrue(pageable);
+            } else {
+                throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
+            }
+            if (all.getContent().size() < 1) {
+                throw new RecordNotFoundException("Warehouses are not found");
+            }
+            return new Response<>(null, WarehouseMapper.warehouseListToWarehouseDtoList(all), WarehouseDto.class.getSimpleName());
+        }
+    }
 
+    private PageRequest createPageable(int pageNumber, int pageSize, String field, String direction) {
+        if (field == null) {
+            return PageRequest.of(pageNumber, pageSize);
+        } else if (direction == null) {
+            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).ascending());
+        } else {
+            return PageRequest.of(pageNumber, pageSize).withSort(Sort.by(field).descending());
+        }
+    }
 }
 

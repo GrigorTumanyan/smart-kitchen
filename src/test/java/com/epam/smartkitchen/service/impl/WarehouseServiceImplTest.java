@@ -1,7 +1,6 @@
 package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.mapper.WarehouseMapper;
-import com.epam.smartkitchen.dto.menuItem.UpdateMenuItemDto;
 import com.epam.smartkitchen.dto.warehouse.WarehouseDto;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.models.Warehouse;
@@ -19,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xmlunit.util.Mapper;
 
-import static com.epam.smartkitchen.service.impl.TestHelper.*;
+import static com.epam.smartkitchen.service.impl.TestHelper.optionalWarehouse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -59,7 +58,6 @@ public class WarehouseServiceImplTest {
     void addItem() {
         when(warehouseRepository.save(any())).thenReturn(warehouse);
         Response<ErrorResponse, WarehouseDto> warehouseDtoResponse = warehouseService.addItem(warehouseDto);
-//        WarehouseDto warehouseDto = WarehouseMapper.warehouseToWarehouseDto(warehouse);
         Warehouse warehouse = WarehouseMapper.warehouseDtoToWarehouse(warehouseDtoResponse.getSuccessObject());
         assertEquals(this.warehouse,warehouse);
 
@@ -93,4 +91,12 @@ public class WarehouseServiceImplTest {
     void decreaseProductCountInWarehouse() {
 
     }
+
+    @Test
+    void getAll() {
+
+    }
+
+
+
 }
