@@ -31,16 +31,16 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().body(new Response<>(errorResponse, null, simpleName));
     }
 
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<Response<ErrorResponse, ?>> handleAllExceptions(Exception ex) {
-        List<String> errorList = new ArrayList<>();
-        errorList.add(ex.getLocalizedMessage());
-        errorList.add(ex.getCause().getMessage());
-        ErrorResponse error = new ErrorResponse("500", "ServerException", "Something wrong with server",
-                errorList);
-        Response<ErrorResponse, ?> response = new Response<>(error, null, ex.getClass().getSimpleName());
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public final ResponseEntity<Response<ErrorResponse, ?>> handleAllExceptions(Exception ex) {
+//        List<String> errorList = new ArrayList<>();
+//        errorList.add(ex.getLocalizedMessage());
+//        errorList.add(ex.getCause().getMessage());
+//        ErrorResponse error = new ErrorResponse("500", "ServerException", "Something wrong with server",
+//                errorList);
+//        Response<ErrorResponse, ?> response = new Response<>(error, null, ex.getClass().getSimpleName());
+//        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 
     @ExceptionHandler(RecordNotFoundException.class)
     public final ResponseEntity<Response<ErrorResponse, ?>> handleUserNotFoundException(RecordNotFoundException ex) {

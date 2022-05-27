@@ -2,7 +2,9 @@ package com.epam.smartkitchen.security.jwt;
 
 import antlr.MismatchedTokenException;
 import com.epam.smartkitchen.enums.UserType;
+import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.models.User;
+import com.epam.smartkitchen.repository.UserRepository;
 import com.epam.smartkitchen.service.UserService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -34,13 +36,13 @@ public class JwtTokenProvider {
     private Long validateMilliseconds;
 
     private final UserDetailsService userDetailsService;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
 
     @Autowired
-    public JwtTokenProvider(UserDetailsService userDetailsService, UserService userService) {
+    public JwtTokenProvider(UserDetailsService userDetailsService, UserRepository userRepository) {
         this.userDetailsService = userDetailsService;
-        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @Bean
@@ -119,7 +121,8 @@ public class JwtTokenProvider {
 
     private List<String> validateRefreshToken(String accessToken, String refreshToken) {
         String email = getEmailFromExpiredToken(accessToken);
-        User userByEmail = userService.findByEmail(email);
+        User userByEmail = userRepository.findByEmail(email).orElseThrow(() ->
+                new RecordNotFoundException("Email : " + email + "is not found"));
         if (userByEmail.getRefreshToken().equals(refreshToken)) {
             try {
                 Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(refreshToken);
@@ -158,34 +161,5 @@ public class JwtTokenProvider {
         return false;
 
     }
-//
-//    public List<String> resolveRefreshToken(HttpServletRequest request) {
-//        String bearerToken = request.getHeader("RefreshToken");
-//        if (bearerToken != null && bearerToken.startsWith("Bearer")) {
-//            return validateRefreshToken(bearerToken.substring(7));
-//        }
-//        throw new RuntimeException("RefreshToken has a problem");
-//    }
-//
-//    private List<String> validateRefreshToken(String refreshToken) {
-//        try {
-//            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(refreshToken);
-//            if (claims.getBody().getExpiration().before(new Date())) {
-//                return null;
-//            }
-//            return checkRefreshToken(refreshToken);
-//        } catch (ExpiredJwtException e) {
-//            throw new RuntimeException("Your tokens are expired");
-//        }
-//    }
-//
-//    public List<String> checkRefreshToken(String refreshToken) {
-//        String email = getEmail(refreshToken);
-//        User user = userService.findByEmail(email);
-//        if (refreshToken.equals(user.getRefreshToken())) {
-//            return createTokens(email, user.getUserType());
-//        } else {
-//            throw new RuntimeException("RefreshToken is not correct");
-//        }
-//    }
+
 }
