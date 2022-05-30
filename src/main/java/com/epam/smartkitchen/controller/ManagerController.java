@@ -66,12 +66,6 @@ public class ManagerController {
         return ResponseEntity.ok(userDto);
     }
 
-    @PostMapping("/user")
-    public ResponseEntity<Response<ErrorResponse, UserDto>> add(@RequestBody UserDto userDto) {
-        Response<ErrorResponse, UserDto> userDtoResponse = userService.add(userDto);
-        return ResponseEntity.ok(userDtoResponse);
-    }
-
     @PatchMapping("/user/{id}")
     public ResponseEntity<Response<ErrorResponse, UserDto>> update(@PathVariable(name = "id") String id,
                                                                        @RequestBody UpdateUserDtoByManager updateUserDto) {

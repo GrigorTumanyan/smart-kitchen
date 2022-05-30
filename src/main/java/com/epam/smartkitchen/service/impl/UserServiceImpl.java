@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Response<ErrorResponse, List<UserDto>> getAll(int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+        Response<ErrorResponse, List<UserDto>> byType = getByType(UserType.COOK, pageNumber, pageSize, sortedField, direction, deleted);
         PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
         Page<User> allUser;
         if (deleted == null) {
@@ -55,6 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Response<ErrorResponse, List<UserDto>> getByType(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
         PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
         Page<User> allUser;

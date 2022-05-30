@@ -14,11 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping(value = "/api/v1/auth/")
-public class AuthenticationRestController {
+public class AuthenticationController {
 
     private final AuthService authService;
 
-    public AuthenticationRestController(AuthService authService) {
+    public AuthenticationController(AuthService authService) {
         this.authService = authService;
     }
 

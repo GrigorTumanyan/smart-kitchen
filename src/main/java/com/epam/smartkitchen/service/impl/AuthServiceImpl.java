@@ -50,7 +50,9 @@ public class AuthServiceImpl implements AuthService {
             throw new ConflictException("Email : " + userDto.getEmail() + " already exists");
         }
         User user = UserDto.toUser(userDto);
-        user.setPassword(bCryptPasswordEncoder.encode(generateRandomPassword()));
+        String s = generateRandomPassword();
+        user.setPassword(bCryptPasswordEncoder.encode(s));
+        System.out.println(s);
         User savedUser = userRepository.save(user);
         UserDto savedUserDto = UserDto.toUserDto(savedUser);
 //        todo send mailing
@@ -62,11 +64,9 @@ public class AuthServiceImpl implements AuthService {
     public Response<ErrorResponse, UserDto> login(AuthenticationRequestDto requestDto, HttpServletResponse response) {
 
         String email = requestDto.getEmail();
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
-        } catch (AuthenticationException e){
-            throw new RuntimeException(e);
-        }
+
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
+
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RecordNotFoundException("Email : " + email + " is not found"));
         generateTokens(response, email, user);
         UserDto userDto = UserDto.toUserDto(user);

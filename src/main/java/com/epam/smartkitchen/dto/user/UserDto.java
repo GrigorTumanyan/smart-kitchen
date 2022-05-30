@@ -34,7 +34,7 @@ public class UserDto {
         user.setImage(userDto.getImage());
         user.setPhone(userDto.getPhone());
         user.setAddress(userDto.getAddress());
-        user.setUserType(user.getUserType());
+        user.setUserType(userDto.getUserType());
         user.setActive(userDto.getActive());
         return user;
     }
