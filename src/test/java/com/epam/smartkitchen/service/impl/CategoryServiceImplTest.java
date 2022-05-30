@@ -6,6 +6,7 @@ import com.epam.smartkitchen.models.Category;
 import com.epam.smartkitchen.repository.CategoryRepository;
 import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.CategoryService;
+import com.epam.smartkitchen.service.ExcelWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -28,12 +29,15 @@ class CategoryServiceImplTest {
     private CategoryRepository categoryRepository;
     private ModelMapper mapper;
     private CategoryService categoryServiceTest;
+    private ExcelWriter excelWriter;
+
 
     @BeforeEach
     public void setUp(){
         categoryRepository = mock(CategoryRepository.class);
         mapper = mock(ModelMapper.class);
-        categoryServiceTest = new CategoryServiceImpl(categoryRepository,mapper);
+        excelWriter = mock(ExcelWriter.class);
+        categoryServiceTest = new CategoryServiceImpl(categoryRepository,mapper, excelWriter);
 
     }
 
