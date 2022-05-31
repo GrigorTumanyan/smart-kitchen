@@ -11,11 +11,10 @@ import com.epam.smartkitchen.repository.UserRepository;
 import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.security.jwt.JwtTokenProvider;
 import com.epam.smartkitchen.service.AuthService;
+import com.epam.smartkitchen.service.MailService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +27,8 @@ import java.util.stream.Collectors;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+    private final MailService mailService;
+
     private final JwtTokenProvider jwtTokenProvider;
 
     private final AuthenticationManager authenticationManager;
@@ -36,8 +37,9 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
 
-    public AuthServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
+    public AuthServiceImpl(MailService mailService, UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
                            AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
+        this.mailService = mailService;
         this.authenticationManager = authenticationManager;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -50,12 +52,11 @@ public class AuthServiceImpl implements AuthService {
             throw new ConflictException("Email : " + userDto.getEmail() + " already exists");
         }
         User user = UserDto.toUser(userDto);
-        String s = generateRandomPassword();
-        user.setPassword(bCryptPasswordEncoder.encode(s));
-        System.out.println(s);
+        String password = generateRandomPassword();
+        user.setPassword(bCryptPasswordEncoder.encode(password));
         User savedUser = userRepository.save(user);
         UserDto savedUserDto = UserDto.toUserDto(savedUser);
-//        todo send mailing
+        mailService.sendMail(user.getEmail(), "Activation code", generateActivationLink(password, savedUser.getId()));
         return new Response<>(null, savedUserDto, UserDto.class.getSimpleName());
     }
 
@@ -68,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDto.getPassword()));
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RecordNotFoundException("Email : " + email + " is not found"));
-        generateTokens(response, email, user);
+        getTokens(response, email, user);
         UserDto userDto = UserDto.toUserDto(user);
         return new Response<>(null, userDto, null);
 
@@ -86,12 +87,18 @@ public class AuthServiceImpl implements AuthService {
         throw new RuntimeException("Refresh Token is not correct ");
     }
 
-    private void generateTokens(HttpServletResponse response, String email, User user) {
+    private void getTokens(HttpServletResponse response, String email, User user) {
         List<String> tokens = jwtTokenProvider.createTokens(email, user.getUserType());
         user.setRefreshToken(tokens.get(1));
         userRepository.save(user);
         response.setHeader("access_token", tokens.get(0));
         response.setHeader("refresh_token", tokens.get(1));
+    }
+
+    private String generateActivationLink(String password, String id){
+        String link = "http://localhost:8080/api/v1/auth/activation/" + id;
+        return "Please click on this link \n" + link + "\n" + "This your password : " + password +
+                "\n" + "Please change your password";
     }
 
     private String generateRandomPassword() {

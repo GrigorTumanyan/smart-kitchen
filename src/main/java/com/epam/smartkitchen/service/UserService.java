@@ -31,4 +31,6 @@ public interface UserService {
     Response<ErrorResponse, List<UserDto>> exportExcel(HttpServletResponse httpResponse, UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
     Response<ErrorResponse,UserDto> changePassword(String id, ChangePasswordUserDto userDto);
+
+    Response<ErrorResponse, String> activateAccount(String email);
 }

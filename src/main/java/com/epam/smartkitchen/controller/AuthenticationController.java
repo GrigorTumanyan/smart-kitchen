@@ -5,6 +5,7 @@ import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.AuthService;
+import com.epam.smartkitchen.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,11 @@ public class AuthenticationController {
 
     private final AuthService authService;
 
-    public AuthenticationController(AuthService authService) {
+    private final UserService userService;
+
+    public AuthenticationController(AuthService authService, UserService userService) {
         this.authService = authService;
+        this.userService = userService;
     }
 
 
@@ -41,5 +45,9 @@ public class AuthenticationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
+    @GetMapping("activation/{id}")
+    public ResponseEntity<Response<ErrorResponse, String>> activation(@PathVariable String id){
+        Response<ErrorResponse, String> activateAccount = userService.activateAccount(id);
+        return ResponseEntity.ok(activateAccount);
+    }
 }

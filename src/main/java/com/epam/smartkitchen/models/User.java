@@ -28,7 +28,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     UserType userType;
     @Column
-    Boolean active;
+    Boolean active = Boolean.FALSE;
     @Column(name = "refresh_token")
     String refreshToken;
 

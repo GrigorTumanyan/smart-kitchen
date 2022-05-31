@@ -71,4 +71,14 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         Response<ErrorResponse, ?> response = new Response<>(errorResponse, null, ex.getClass().getSimpleName());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(JwtExpiredException.class)
+    public final ResponseEntity<Response<ErrorResponse, ?>> handleJwtExpiredException(JwtExpiredException ex){
+        ArrayList<String> errorList = new ArrayList<>();
+        errorList.add(ex.getLocalizedMessage());
+        ErrorResponse errorResponse = new ErrorResponse("403", "FORBIDDEN",
+                "You have problem with your jwt", errorList);
+        Response<ErrorResponse, ?> response = new Response<>(errorResponse, null, ex.getClass().getSimpleName());
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
 }

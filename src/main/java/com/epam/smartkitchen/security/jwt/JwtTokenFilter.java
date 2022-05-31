@@ -27,16 +27,28 @@ public class JwtTokenFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        List<String> tokens = jwtTokenProvider.resolveToken((HttpServletRequest) servletRequest);
-        if (tokens != null && jwtTokenProvider.validateToken(tokens)) {
-            Authentication authentication = jwtTokenProvider.getAuthentication(tokens.get(0));
-            if (authentication != null) {
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtTokenProvider.resolveToken((HttpServletRequest) servletRequest);
+        List<String> updateTokens = null;
+        boolean isValidToken = false;
+        if (token != null) {
+            try {
+                isValidToken = jwtTokenProvider.validateToken(token);
+            } catch (ExpiredJwtException e) {
+                updateTokens = jwtTokenProvider.resolveRefreshToken();
+                if (updateTokens != null){
+                    isValidToken = true;
+                    token = updateTokens.get(0);
+                }
             }
-            if (tokens.size() == 2) {
-                HttpServletResponse response = (HttpServletResponse) servletResponse;
-                response.setHeader("accessToken", tokens.get(0));
-                response.setHeader("refreshToken", tokens.get(1));
+            if (isValidToken) {
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                if (authentication != null) {
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+            if (updateTokens != null && updateTokens.size() == 2) {
+                HttpServletResponse response = jwtTokenProvider.setResponse(updateTokens,
+                        (HttpServletResponse) servletResponse);
                 filterChain.doFilter(servletRequest, response);
             }
         }

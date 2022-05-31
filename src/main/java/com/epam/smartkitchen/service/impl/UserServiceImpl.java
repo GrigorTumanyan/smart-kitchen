@@ -14,10 +14,13 @@ import com.epam.smartkitchen.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.CredentialExpiredException;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,6 +150,18 @@ public class UserServiceImpl implements UserService {
         User save = userRepository.save(user);
         UserDto savedUserDto = UserDto.toUserDto(save);
         return new Response<>(null, savedUserDto, UserDto.class.getSimpleName());
+    }
+
+    @Override
+    public Response<ErrorResponse, String> activateAccount(String id) {
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new RecordNotFoundException("User not found"));
+        if (user.getCreatedOn().getMinute() + 15 > LocalDateTime.now().getMinute()){
+            throw new RuntimeException("Link is expired");
+        }
+        user.setActive(true);
+         userRepository.save(user);
+         return new Response<>(null,  "Your account has activated", UserDto.class.getSimpleName());
     }
 
     private List<UserDto> toUserDtoList(Page<User> userList) {
