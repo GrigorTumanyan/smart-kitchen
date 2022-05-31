@@ -31,20 +31,20 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().body(new Response<>(errorResponse, null, simpleName));
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public final ResponseEntity<Response<ErrorResponse, ?>> handleAllExceptions(Exception ex) {
-//        List<String> errorList = new ArrayList<>();
-//        errorList.add(ex.getLocalizedMessage());
-//        errorList.add(ex.getCause().getMessage());
-//        ErrorResponse error = new ErrorResponse("500", "ServerException", "Something wrong with server",
-//                errorList);
-//        Response<ErrorResponse, ?> response = new Response<>(error, null, ex.getClass().getSimpleName());
-//        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler(Exception.class)
+    public final ResponseEntity<Response<ErrorResponse, ?>> handleAllExceptions(Exception ex) {
+        List<String> errorList = new LinkedList<>();
+        errorList.add(ex.getLocalizedMessage());
+        errorList.add(ex.getCause().getMessage());
+        ErrorResponse error = new ErrorResponse("500", "ServerException", "Something wrong with server",
+                errorList);
+        Response<ErrorResponse, ?> response = new Response<>(error, null, ex.getClass().getSimpleName());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(RecordNotFoundException.class)
     public final ResponseEntity<Response<ErrorResponse, ?>> handleUserNotFoundException(RecordNotFoundException ex) {
-        List<String> errorList = new ArrayList<>();
+        List<String> errorList = new LinkedList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse error = new ErrorResponse("404", "NOT_FOUND", "Record not found",
                 errorList);
@@ -54,7 +54,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(RequestParamInvalidException.class)
     public final ResponseEntity<Response<ErrorResponse, ?>> handleParameterInvalidException(RequestParamInvalidException ex) {
-        List<String> errorList = new ArrayList<>();
+        List<String> errorList = new LinkedList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse("400", "BAD_REQUEST", "Parameter is not correct",
                 errorList);
@@ -64,7 +64,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ConflictException.class)
     public final ResponseEntity<Response<ErrorResponse, ?>> handleConflictException(ConflictException ex){
-        List<String> errorList = new ArrayList<>();
+        List<String> errorList = new LinkedList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse("409", "CONFLICT", "There is conflict this request",
                 errorList);
@@ -74,11 +74,21 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(JwtExpiredException.class)
     public final ResponseEntity<Response<ErrorResponse, ?>> handleJwtExpiredException(JwtExpiredException ex){
-        ArrayList<String> errorList = new ArrayList<>();
+        List<String> errorList = new LinkedList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse("403", "FORBIDDEN",
                 "You have problem with your jwt", errorList);
         Response<ErrorResponse, ?> response = new Response<>(errorResponse, null, ex.getClass().getSimpleName());
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(ExpiredException.class)
+    public final ResponseEntity<Response<ErrorResponse, ?>> handleExpiredException(ExpiredException ex){
+        List<String> errorList = new LinkedList<>();
+        errorList.add(ex.getLocalizedMessage());
+        ErrorResponse errorResponse = new ErrorResponse("410", "GONE",
+                "expired time passed", errorList);
+        Response<ErrorResponse, ?> response = new Response<>(errorResponse,null,ex.getClass().getSimpleName());
+        return new ResponseEntity<>(response,HttpStatus.GONE);
     }
 }

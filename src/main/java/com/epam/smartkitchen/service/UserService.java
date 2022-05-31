@@ -32,5 +32,5 @@ public interface UserService {
 
     Response<ErrorResponse,UserDto> changePassword(String id, ChangePasswordUserDto userDto);
 
-    Response<ErrorResponse, String> activateAccount(String email);
+    Response<ErrorResponse, String> expiredLink(String id);
 }

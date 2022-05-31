@@ -2,10 +2,7 @@ package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.user.*;
 import com.epam.smartkitchen.enums.UserType;
-import com.epam.smartkitchen.exceptions.ConflictException;
-import com.epam.smartkitchen.exceptions.ErrorResponse;
-import com.epam.smartkitchen.exceptions.RequestParamInvalidException;
-import com.epam.smartkitchen.exceptions.RecordNotFoundException;
+import com.epam.smartkitchen.exceptions.*;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
 import com.epam.smartkitchen.response.Response;
@@ -153,16 +150,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response<ErrorResponse, String> activateAccount(String id) {
-        User user = userRepository.findById(id).orElseThrow(() ->
-                new RecordNotFoundException("User not found"));
-        if (user.getCreatedOn().getMinute() + 15 > LocalDateTime.now().getMinute()){
-            throw new RuntimeException("Link is expired");
+    public Response<ErrorResponse, String> expiredLink(String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User not found"));
+        if (user.getModifiedOn().plusMinutes(15).isBefore(LocalDateTime.now())){
+            throw new ExpiredException("The link is expired");
         }
-        user.setActive(true);
-         userRepository.save(user);
-         return new Response<>(null,  "Your account has activated", UserDto.class.getSimpleName());
+        return new Response<>(null, "OK", null);
     }
+
 
     private List<UserDto> toUserDtoList(Page<User> userList) {
         List<UserDto> allUserDto = new ArrayList<>();

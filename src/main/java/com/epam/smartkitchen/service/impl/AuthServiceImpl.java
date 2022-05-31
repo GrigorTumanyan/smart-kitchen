@@ -4,6 +4,7 @@ import com.epam.smartkitchen.dto.AuthenticationRequestDto;
 import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.exceptions.ConflictException;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
+import com.epam.smartkitchen.exceptions.ExpiredException;
 import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.models.User;
 
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,15 +78,26 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void updateRefreshToken(HttpServletRequest request, HttpServletResponse response) {
-        if (response != null) {
-            String email = jwtTokenProvider.getEmail(response.getHeader("accessToken"));
-            User user = userRepository.findByEmail(email).orElseThrow(() -> new RecordNotFoundException("Email : " + email + "is not found"));
-            String refreshToken = response.getHeader("refreshToken");
-            user.setRefreshToken(refreshToken);
-            userRepository.save(user);
+    public void forgottenPassword(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new RecordNotFoundException("Email : " + email + " not found"));
+        String password = generateRandomPassword();
+        String message = generateForgottenLink(password, user.getId());
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        userRepository.save(user);
+        mailService.sendMail(email, "Your new password", message);
+    }
+
+    @Override
+    public Response<ErrorResponse, String> activateAccount(String id) {
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new RecordNotFoundException("User not found"));
+        if (user.getCreatedOn().plusMinutes(15).isBefore(LocalDateTime.now())){
+            throw new ExpiredException("Link is expired");
         }
-        throw new RuntimeException("Refresh Token is not correct ");
+        user.setActive(true);
+        userRepository.save(user);
+        return new Response<>(null,  "Your account has activated", UserDto.class.getSimpleName());
     }
 
     private void getTokens(HttpServletResponse response, String email, User user) {
@@ -97,8 +110,13 @@ public class AuthServiceImpl implements AuthService {
 
     private String generateActivationLink(String password, String id){
         String link = "http://localhost:8080/api/v1/auth/activation/" + id;
-        return "Please click on this link \n" + link + "\n" + "This your password : " + password +
+        return "Please click on this link \n" + link + "\n" + "This is your password : " + password +
                 "\n" + "Please change your password";
+    }
+
+    private String generateForgottenLink(String password, String id){
+        String link = "http://localhost:8080api/v1/user/password" + id;
+        return "Please click on this link  and change your password\n" + link + "\n" + "This is your new password  : " + password;
     }
 
     private String generateRandomPassword() {

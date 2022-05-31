@@ -14,7 +14,9 @@ public interface AuthService {
 
     public Response<ErrorResponse, UserDto> login(AuthenticationRequestDto requestDto, HttpServletResponse response);
 
-    public void updateRefreshToken(HttpServletRequest request, HttpServletResponse response);
-
     public Response<ErrorResponse, UserDto> register(UserDto userDto);
+
+    Response<ErrorResponse, String> activateAccount(String email);
+
+    void forgottenPassword(String email);
     }

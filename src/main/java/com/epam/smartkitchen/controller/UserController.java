@@ -37,5 +37,10 @@ public class UserController {
         return ResponseEntity.ok(userDtoResponse);
     }
 
+    @GetMapping("password/{id}")
+    public ResponseEntity<Response<ErrorResponse, String>> expiredLink(@PathVariable String id){
+        Response<ErrorResponse, String> response = userService.expiredLink(id);
+        return ResponseEntity.ok(response);
+    }
 
 }

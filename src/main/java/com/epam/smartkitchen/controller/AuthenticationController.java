@@ -19,11 +19,8 @@ public class AuthenticationController {
 
     private final AuthService authService;
 
-    private final UserService userService;
-
-    public AuthenticationController(AuthService authService, UserService userService) {
+    public AuthenticationController(AuthService authService) {
         this.authService = authService;
-        this.userService = userService;
     }
 
 
@@ -39,15 +36,16 @@ public class AuthenticationController {
         return ResponseEntity.ok(register);
     }
 
-    @PostMapping("refresh")
-    public ResponseEntity<HttpStatus> updateRefreshToken(HttpServletRequest request, HttpServletResponse response) {
-        authService.updateRefreshToken(request, response);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
     @GetMapping("activation/{id}")
     public ResponseEntity<Response<ErrorResponse, String>> activation(@PathVariable String id){
-        Response<ErrorResponse, String> activateAccount = userService.activateAccount(id);
+        Response<ErrorResponse, String> activateAccount = authService.activateAccount(id);
         return ResponseEntity.ok(activateAccount);
+    }
+
+    @PostMapping("forgotten")
+    public ResponseEntity<Response<ErrorResponse, String>> forgottenPassword(@RequestBody String email){
+        authService.forgottenPassword(email);
+        Response<ErrorResponse, String> response = new Response<>(null, "Check your mail", null);
+        return ResponseEntity.ok(response);
     }
 }
