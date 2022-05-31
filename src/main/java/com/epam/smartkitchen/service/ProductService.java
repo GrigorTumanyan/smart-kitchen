@@ -7,6 +7,8 @@ import com.epam.smartkitchen.response.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import javax.servlet.http.HttpServletResponse;
+
 public interface ProductService {
 
     public Response<ErrorResponse,ProductDto> add(ProductDto productDto);
@@ -20,6 +22,10 @@ public interface ProductService {
 
 
     public Response<ErrorResponse,ProductDto> getById(String id);
+
+
+    Response<ErrorResponse, Page<ProductDto>> exportExcel(HttpServletResponse httpResponse, Pageable pageable, boolean deleted);
+
 
 
 }

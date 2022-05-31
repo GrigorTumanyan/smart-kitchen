@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/product")
 public class ProductController {
@@ -51,4 +53,9 @@ public class ProductController {
         return ResponseEntity.ok(byId);
     }
 
+    @PostMapping("/download")
+    public ResponseEntity<Response<ErrorResponse,Page<ProductDto>>> exportExcel(HttpServletResponse httpServletResponse,Pageable pageable,boolean deleted){
+        Response<ErrorResponse, Page<ProductDto>> response = productService.exportExcel(httpServletResponse, pageable, deleted);
+        return ResponseEntity.ok(response);
+    }
 }

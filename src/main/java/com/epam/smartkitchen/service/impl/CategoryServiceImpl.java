@@ -7,13 +7,16 @@ import com.epam.smartkitchen.models.Category;
 import com.epam.smartkitchen.repository.CategoryRepository;
 import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.CategoryService;
+import com.epam.smartkitchen.service.ExcelWriter;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -21,10 +24,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final ModelMapper mapper;
+    private final ExcelWriter excelWriter;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper mapper) {
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper mapper, ExcelWriter excelWriter) {
         this.categoryRepository = categoryRepository;
         this.mapper = mapper;
+        this.excelWriter = excelWriter;
     }
 
     @Override
@@ -68,6 +74,18 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new RecordNotFoundException("category with " + id + " id is not found"));
         CategoryDto map = mapper.map(category, CategoryDto.class);
         return new Response<>(null,map,CategoryDto.class.getSimpleName());
+    }
+
+    @Override
+    public Response<ErrorResponse, Page<CategoryDto>> exportExcel(HttpServletResponse httpResponse, Pageable pageable, boolean deleted) {
+        Response<ErrorResponse, Page<CategoryDto>> response = getAll(pageable,deleted);
+        List<CategoryDto> categoryDtoList = new LinkedList<>();
+        for (CategoryDto categoryDto : response.getSuccessObject()) {
+            categoryDtoList.add(categoryDto);
+        }
+
+        excelWriter.write(categoryDtoList, httpResponse);
+        return response;
     }
 
 }

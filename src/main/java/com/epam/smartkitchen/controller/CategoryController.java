@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
@@ -50,5 +52,11 @@ public class CategoryController {
     public ResponseEntity<Response<ErrorResponse,CategoryDto>> findById(@PathVariable String id){
         Response<ErrorResponse, CategoryDto> byId = categoryService.getById(id);
         return ResponseEntity.ok(byId);
+    }
+
+    @PostMapping("/download")
+    public ResponseEntity<Response<ErrorResponse,Page<CategoryDto>>> exportExcel(HttpServletResponse httpServletResponse, Pageable pageable, boolean deleted){
+        Response<ErrorResponse, Page<CategoryDto>> response = categoryService.exportExcel(httpServletResponse, pageable, deleted);
+        return ResponseEntity.ok(response);
     }
 }
