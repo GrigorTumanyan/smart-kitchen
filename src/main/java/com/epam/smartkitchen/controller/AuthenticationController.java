@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 
 @RestController
@@ -42,9 +43,16 @@ public class AuthenticationController {
         return ResponseEntity.ok(activateAccount);
     }
 
-    @PostMapping("forgotten")
-    public ResponseEntity<Response<ErrorResponse, String>> forgottenPassword(@RequestBody String email){
-        authService.forgottenPassword(email);
+    @PostMapping("check")
+    public ResponseEntity<Response<ErrorResponse, String>> checkForgottenPassword(@RequestBody Map<String, String> body){
+        Response<ErrorResponse, String> response = authService.checkForgottenPassword(body.get("email"));
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("forgotten/{id}/{checkMessage}")
+    public ResponseEntity<Response<ErrorResponse, String>> forgottenPassword(@PathVariable String id,
+                                                                             @PathVariable String checkMessage ){
+        authService.forgottenPassword(id, checkMessage);
         Response<ErrorResponse, String> response = new Response<>(null, "Check your mail", null);
         return ResponseEntity.ok(response);
     }

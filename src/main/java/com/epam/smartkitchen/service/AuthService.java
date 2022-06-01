@@ -12,11 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface AuthService {
 
-    public Response<ErrorResponse, UserDto> login(AuthenticationRequestDto requestDto, HttpServletResponse response);
+    Response<ErrorResponse, UserDto> login(AuthenticationRequestDto requestDto, HttpServletResponse response);
 
-    public Response<ErrorResponse, UserDto> register(UserDto userDto);
+    Response<ErrorResponse, UserDto> register(UserDto userDto);
 
     Response<ErrorResponse, String> activateAccount(String email);
 
-    void forgottenPassword(String email);
-    }
+    Response<ErrorResponse, String> forgottenPassword(String id, String checkMessage);
+
+    Response<ErrorResponse, String> checkForgottenPassword(String email);
+}

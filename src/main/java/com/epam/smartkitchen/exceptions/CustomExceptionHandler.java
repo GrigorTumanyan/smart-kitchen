@@ -1,7 +1,6 @@
 package com.epam.smartkitchen.exceptions;
 
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import com.epam.smartkitchen.response.Response;
@@ -52,8 +51,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(RequestParamInvalidException.class)
-    public final ResponseEntity<Response<ErrorResponse, ?>> handleParameterInvalidException(RequestParamInvalidException ex) {
+    @ExceptionHandler(ParamInvalidException.class)
+    public final ResponseEntity<Response<ErrorResponse, ?>> handleParameterInvalidException(ParamInvalidException ex) {
         List<String> errorList = new LinkedList<>();
         errorList.add(ex.getLocalizedMessage());
         ErrorResponse errorResponse = new ErrorResponse("400", "BAD_REQUEST", "Parameter is not correct",

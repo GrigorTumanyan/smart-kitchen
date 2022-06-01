@@ -8,13 +8,12 @@ import com.epam.smartkitchen.repository.UserRepository;
 import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.ExcelWriter;
 import com.epam.smartkitchen.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.CredentialExpiredException;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -29,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
     private final ExcelWriter excelWriter;
 
+    @Value("${link.active.time}")
+    private int expiredTime;
+
 
     public UserServiceImpl(UserRepository userRepository, ExcelWriter excelWriter) {
         this.userRepository = userRepository;
@@ -39,7 +41,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Response<ErrorResponse, List<UserDto>> getAll(int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
-        Response<ErrorResponse, List<UserDto>> byType = getByType(UserType.COOK, pageNumber, pageSize, sortedField, direction, deleted);
         PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
         Page<User> allUser;
         if (deleted == null) {
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
         } else if (deleted.equals("only")) {
             allUser = userRepository.findAllByDeletedTrue(pageable);
         } else {
-            throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
+            throw new ParamInvalidException("Parameter deleted is not correct: " + deleted);
         }
         if (allUser.getContent().size() < 1) {
             throw new RecordNotFoundException("Users are not found");
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
         } else if (deleted.equals("only")) {
             allUser = userRepository.findByUserTypeAndDeletedTrue(userType, pageable);
         } else {
-            throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
+            throw new ParamInvalidException("Parameter deleted is not correct: " + deleted);
         }
         if (allUser.getContent().size() < 1) {
             throw new RecordNotFoundException("Users are not found by type : " + userType);
@@ -152,12 +153,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response<ErrorResponse, String> expiredLink(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User not found"));
-        if (user.getModifiedOn().plusMinutes(15).isBefore(LocalDateTime.now())){
+        if (user.getModifiedOn().plusHours(expiredTime).isBefore(LocalDateTime.now())){
             throw new ExpiredException("The link is expired");
         }
         return new Response<>(null, "OK", null);
     }
-
 
     private List<UserDto> toUserDtoList(Page<User> userList) {
         List<UserDto> allUserDto = new ArrayList<>();
