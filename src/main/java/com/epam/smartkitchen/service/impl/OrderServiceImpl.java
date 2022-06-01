@@ -9,7 +9,7 @@ import com.epam.smartkitchen.enums.OrderState;
 import com.epam.smartkitchen.exceptions.ConflictException;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.exceptions.RecordNotFoundException;
-import com.epam.smartkitchen.exceptions.RequestParamInvalidException;
+import com.epam.smartkitchen.exceptions.ParamInvalidException;
 import com.epam.smartkitchen.models.MenuItem;
 import com.epam.smartkitchen.models.Order;
 import com.epam.smartkitchen.repository.OrderRepository;
@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
         } else if (deleted.equals("all")) {
             orderRepository.findAll(pageable);
         } else {
-            throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
+            throw new ParamInvalidException("Parameter deleted is not correct: " + deleted);
         }
         if (allOrders.getContent().size() < 1) {
             throw new RecordNotFoundException("Orders are not found");
@@ -72,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
         } else if (deleted.equals("all")) {
             orderRepository.findOrderByState(orderState, pageable);
         } else {
-            throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
+            throw new ParamInvalidException("Parameter deleted is not correct: " + deleted);
         }
         if (allOrders.getContent().size() < 1) {
             throw new RecordNotFoundException("Orders type are not found" + deleted);

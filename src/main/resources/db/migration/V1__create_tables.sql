@@ -104,6 +104,7 @@ create table user
     surname     varchar(255),
     user_type   varchar(255),
     deleted     bit default false,
+    refresh_token varchar(255),
     primary key (id)
 ) engine = InnoDB
   DEFAULT CHARSET = utf8

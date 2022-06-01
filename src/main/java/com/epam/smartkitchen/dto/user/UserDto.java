@@ -13,9 +13,8 @@ public class UserDto {
     private String phone;
     private String address;
     private UserType userType;
-    private Boolean active;
 
-    public UserDto(String name, String surname, String email, String image, String phone, String address, UserType userType, Boolean active) {
+    public UserDto(String name, String surname, String email, String image, String phone, String address, UserType userType) {
         this.name = name;
         this.surname = surname;
         this.email = email;
@@ -23,7 +22,6 @@ public class UserDto {
         this.phone = phone;
         this.address = address;
         this.userType = userType;
-        this.active = active;
     }
 
     public static User toUser(UserDto userDto) {
@@ -34,14 +32,13 @@ public class UserDto {
         user.setImage(userDto.getImage());
         user.setPhone(userDto.getPhone());
         user.setAddress(userDto.getAddress());
-        user.setUserType(user.getUserType());
-        user.setActive(userDto.getActive());
+        user.setUserType(userDto.getUserType());
         return user;
     }
 
     public static UserDto toUserDto (User user){
         return new UserDto(user.getName(), user.getSurname(), user.getEmail(), user.getImage(),
-                user.getPhone(), user.getAddress(), user.getUserType(), user.getActive());
+                user.getPhone(), user.getAddress(), user.getUserType() );
     }
 
     public String getName() {
@@ -100,25 +97,17 @@ public class UserDto {
         this.userType = userType;
     }
 
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserDto userDto = (UserDto) o;
-        return Objects.equals(name, userDto.name) && Objects.equals(surname, userDto.surname) && Objects.equals(email, userDto.email) && Objects.equals(image, userDto.image) && Objects.equals(phone, userDto.phone) && Objects.equals(address, userDto.address) && userType == userDto.userType && Objects.equals(active, userDto.active);
+        return Objects.equals(name, userDto.name) && Objects.equals(surname, userDto.surname) && Objects.equals(email, userDto.email) && Objects.equals(image, userDto.image) && Objects.equals(phone, userDto.phone) && Objects.equals(address, userDto.address) && userType == userDto.userType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, surname, email, image, phone, address, userType, active);
+        return Objects.hash(name, surname, email, image, phone, address, userType);
     }
 
     @Override
@@ -131,7 +120,6 @@ public class UserDto {
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +
                 ", userType=" + userType +
-                ", active=" + active +
                 '}';
     }
 }

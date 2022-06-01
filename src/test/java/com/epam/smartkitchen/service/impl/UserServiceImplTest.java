@@ -2,13 +2,12 @@ package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.user.ChangePasswordUserDto;
 import com.epam.smartkitchen.dto.user.ResponseDeleteUserDto;
-import com.epam.smartkitchen.dto.user.UpdateUserDto;
 import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.exceptions.ConflictException;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.exceptions.RecordNotFoundException;
-import com.epam.smartkitchen.exceptions.RequestParamInvalidException;
+import com.epam.smartkitchen.exceptions.ParamInvalidException;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
 import com.epam.smartkitchen.response.Response;
@@ -25,7 +24,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,9 +75,9 @@ public class UserServiceImplTest {
 
     @Test
     void GetAllRequestParamInvalidExceptionCase() {
-        when(userRepository.findAll(pageRequest)).thenThrow(new RequestParamInvalidException("Parameter deleted is not correct: null"));
+        when(userRepository.findAll(pageRequest)).thenThrow(new ParamInvalidException("Parameter deleted is not correct: null"));
 
-        assertThrows(RequestParamInvalidException.class, () -> userService.getAll(0, 10, null, null, "null"));
+        assertThrows(ParamInvalidException.class, () -> userService.getAll(0, 10, null, null, "null"));
     }
 
     @Test
@@ -103,9 +101,9 @@ public class UserServiceImplTest {
 
     @Test
     void getByTypeRequestParamInvalidExceptionCase() {
-        when(userRepository.findByUserTypeAndDeletedTrue(UserType.WAITER, pageRequest)).thenThrow(new RequestParamInvalidException("Parameter deleted is not correct: null"));
+        when(userRepository.findByUserTypeAndDeletedTrue(UserType.WAITER, pageRequest)).thenThrow(new ParamInvalidException("Parameter deleted is not correct: null"));
 
-        assertThrows(RequestParamInvalidException.class, () -> userService.getByType(UserType.WAITER,0, 10, null, null, "only"));
+        assertThrows(ParamInvalidException.class, () -> userService.getByType(UserType.WAITER,0, 10, null, null, "only"));
     }
 
     @Test

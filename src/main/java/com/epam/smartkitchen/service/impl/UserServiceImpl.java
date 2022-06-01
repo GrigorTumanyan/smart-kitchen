@@ -2,21 +2,21 @@ package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.user.*;
 import com.epam.smartkitchen.enums.UserType;
-import com.epam.smartkitchen.exceptions.ConflictException;
-import com.epam.smartkitchen.exceptions.ErrorResponse;
-import com.epam.smartkitchen.exceptions.RequestParamInvalidException;
-import com.epam.smartkitchen.exceptions.RecordNotFoundException;
+import com.epam.smartkitchen.exceptions.*;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
 import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.ExcelWriter;
 import com.epam.smartkitchen.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
     private final ExcelWriter excelWriter;
 
+    @Value("${link.active.time}")
+    private int expiredTime;
+
 
     public UserServiceImpl(UserRepository userRepository, ExcelWriter excelWriter) {
         this.userRepository = userRepository;
@@ -36,6 +39,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Response<ErrorResponse, List<UserDto>> getAll(int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
         PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
         Page<User> allUser;
@@ -46,7 +50,7 @@ public class UserServiceImpl implements UserService {
         } else if (deleted.equals("only")) {
             allUser = userRepository.findAllByDeletedTrue(pageable);
         } else {
-            throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
+            throw new ParamInvalidException("Parameter deleted is not correct: " + deleted);
         }
         if (allUser.getContent().size() < 1) {
             throw new RecordNotFoundException("Users are not found");
@@ -55,6 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Response<ErrorResponse, List<UserDto>> getByType(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
         PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
         Page<User> allUser;
@@ -65,7 +70,7 @@ public class UserServiceImpl implements UserService {
         } else if (deleted.equals("only")) {
             allUser = userRepository.findByUserTypeAndDeletedTrue(userType, pageable);
         } else {
-            throw new RequestParamInvalidException("Parameter deleted is not correct: " + deleted);
+            throw new ParamInvalidException("Parameter deleted is not correct: " + deleted);
         }
         if (allUser.getContent().size() < 1) {
             throw new RecordNotFoundException("Users are not found by type : " + userType);
@@ -143,6 +148,15 @@ public class UserServiceImpl implements UserService {
         User save = userRepository.save(user);
         UserDto savedUserDto = UserDto.toUserDto(save);
         return new Response<>(null, savedUserDto, UserDto.class.getSimpleName());
+    }
+
+    @Override
+    public Response<ErrorResponse, String> expiredLink(String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User not found"));
+        if (user.getModifiedOn().plusHours(expiredTime).isBefore(LocalDateTime.now())){
+            throw new ExpiredException("The link is expired");
+        }
+        return new Response<>(null, "OK", null);
     }
 
     private List<UserDto> toUserDtoList(Page<User> userList) {
