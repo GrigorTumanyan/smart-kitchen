@@ -2,6 +2,7 @@ package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.ProductDto;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
+import com.epam.smartkitchen.models.Category;
 import com.epam.smartkitchen.models.Product;
 import com.epam.smartkitchen.repository.ProductRepository;
 import com.epam.smartkitchen.response.Response;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +48,8 @@ class ProductServiceImplTest {
 
     @Test
     void addProduct() {
-        ProductDto productDto = new ProductDto("pizza");
+        List<Category> categoryList = new ArrayList<>();
+        ProductDto productDto = new ProductDto("pizza",categoryList);
         Product product = new Product();
         when(mapper.map(productDto, Product.class)).thenReturn(product);
 
@@ -71,7 +74,8 @@ class ProductServiceImplTest {
 
     @Test
     void updateProduct() {
-        ProductDto productDto = new ProductDto("pizza");
+        List<Category> categoryList = new ArrayList<>();
+        ProductDto productDto = new ProductDto("pizza",categoryList);
         Product product = new Product();
         when(productRepository.findById("1")).thenReturn(Optional.of(product));
         Response<ErrorResponse, ProductDto> actualResult = productServiceTest.update(productDto, "1");
