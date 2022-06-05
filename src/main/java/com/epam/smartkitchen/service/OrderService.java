@@ -1,6 +1,5 @@
 package com.epam.smartkitchen.service;
 
-import com.epam.smartkitchen.dto.order.AddOrderDto;
 import com.epam.smartkitchen.dto.order.DeleteOrderDto;
 import com.epam.smartkitchen.dto.order.OrderDto;
 import com.epam.smartkitchen.dto.order.UpdateOrderDto;
@@ -18,11 +17,13 @@ public interface OrderService {
 
     Response<ErrorResponse, List<OrderDto>> getOrdersByState(OrderState orderState, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
-    Response<ErrorResponse, OrderDto> addOrder(AddOrderDto addOrderDto);
+    Response<ErrorResponse, OrderDto> addOrder(OrderDto orderDto);
 
     Response<ErrorResponse, OrderDto> updateOrder(String id, UpdateOrderDto orderUpdate);
 
     Response<ErrorResponse, DeleteOrderDto> deleteOrder(String id);
 
     Response<ErrorResponse, OrderDto> cancelOrder(String id);
+
+    Response<ErrorResponse, OrderDto> sumOrderPrice(String id);
 }

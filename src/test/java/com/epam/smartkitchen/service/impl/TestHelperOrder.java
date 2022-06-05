@@ -6,6 +6,7 @@ import com.epam.smartkitchen.dto.order.OrderDto;
 import com.epam.smartkitchen.enums.OrderState;
 import com.epam.smartkitchen.models.MenuItem;
 import com.epam.smartkitchen.models.Order;
+import com.epam.smartkitchen.models.OrderMenuItem;
 import com.epam.smartkitchen.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,13 +18,13 @@ import java.util.Optional;
 public class TestHelperOrder {
 
     protected static Optional<Order> toOptionalOrder() {
-        List<MenuItem> menuItemList = new ArrayList<>();
+        List<OrderMenuItem> menuItemList = new ArrayList<>();
         Order order = new Order();
         order.setWaiter(new User());
         order.setCook(new User());
         order.setState(OrderState.ACCEPTED);
         order.setTotalPrice(1000D);
-        order.setItemsList(menuItemList);
+        order.setOrderMenuItems(menuItemList);
         order.setDeleted(true);
         return Optional.of(order);
     }
@@ -40,7 +41,7 @@ public class TestHelperOrder {
     }
 
     protected static Page<Order> orderPageable() {
-        List<MenuItem> menuItemList = new ArrayList<>();
+        List<OrderMenuItem> menuItemList = new ArrayList<>();
         List<Order> orderList = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
@@ -49,7 +50,7 @@ public class TestHelperOrder {
             order.setCook(new User());
             order.setTotalPrice(i + 1000.0);
             order.setState(OrderState.ACCEPTED);
-            order.setItemsList(menuItemList);
+            order.setOrderMenuItems(menuItemList);
             orderList.add(order);
         }
         return new PageImpl<>(orderList);

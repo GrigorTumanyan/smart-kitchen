@@ -6,6 +6,7 @@ import com.epam.smartkitchen.enums.OrderState;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.models.Order;
+import com.epam.smartkitchen.repository.MenuRepository;
 import com.epam.smartkitchen.repository.OrderRepository;
 import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.OrderService;
@@ -35,8 +36,9 @@ import static org.mockito.Mockito.when;
 class OrderServiceImplTest {
 
     private final OrderRepository orderRepository = Mockito.mock(OrderRepository.class);
+    private final MenuRepository menuRepository = Mockito.mock(MenuRepository.class);
     @InjectMocks
-    private final OrderService orderService = Mockito.spy(new OrderServiceImpl(orderRepository));
+    private final OrderService orderService = Mockito.spy(new OrderServiceImpl(orderRepository, menuRepository));
 
     private String id;
 
