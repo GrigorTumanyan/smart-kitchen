@@ -6,6 +6,7 @@ import com.epam.smartkitchen.dto.order.UpdateOrderDto;
 import com.epam.smartkitchen.models.Order;
 import com.epam.smartkitchen.models.OrderMenuItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderMapper {
@@ -16,7 +17,9 @@ public class OrderMapper {
         order.setCook(orderDto.getCook());
         order.setTotalPrice(orderDto.getTotalPrice());
         order.setState(orderDto.getOrderState());
-        List<OrderMenuItemDto> orderMenuItemDto = orderDto.getOrderMenuItemDto();
+        List<OrderMenuItem> orderMenuItem = new ArrayList<>();
+        order.setOrderMenuItems(orderMenuItem);
+
         return order;
     }
 
@@ -26,14 +29,17 @@ public class OrderMapper {
         orderDto.setCook(order.getCook());
         orderDto.setTotalPrice(order.getTotalPrice());
         orderDto.setOrderState(order.getState());
-        List<OrderMenuItem> orderMenuItems = order.getOrderMenuItems();
+        List<OrderMenuItemDto> orderMenuItemDtoList = new ArrayList<>();
+        orderDto.setOrderMenuItemDto(orderMenuItemDtoList);
+
         return orderDto;
     }
 
     public static Order updateOrderDtoToOrder(UpdateOrderDto updateOrderDto) {
         Order order = new Order();
         order.setState(updateOrderDto.getOrderState());
-        List<OrderMenuItemDto> itemList = updateOrderDto.getItemList();
+        List<OrderMenuItem> itemList = new ArrayList<>();
+        order.setOrderMenuItems(itemList);
 
         return order;
     }
