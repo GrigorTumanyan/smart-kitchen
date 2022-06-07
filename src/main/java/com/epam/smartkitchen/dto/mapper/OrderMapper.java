@@ -6,7 +6,7 @@ import com.epam.smartkitchen.dto.order.UpdateOrderDto;
 import com.epam.smartkitchen.models.Order;
 import com.epam.smartkitchen.models.OrderMenuItem;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class OrderMapper {
@@ -17,8 +17,11 @@ public class OrderMapper {
         order.setCook(orderDto.getCook());
         order.setTotalPrice(orderDto.getTotalPrice());
         order.setState(orderDto.getOrderState());
-        List<OrderMenuItem> orderMenuItem = new ArrayList<>();
-        order.setOrderMenuItems(orderMenuItem);
+        List<OrderMenuItem> orderMenuItemList = new LinkedList<>();
+        for (OrderMenuItemDto orderMenuItemDto : orderDto.getOrderMenuItemDto()) {
+            orderMenuItemList.add(orderMenuItemDtoToOrderMenuItem(orderMenuItemDto));
+        }
+        order.setOrderMenuItems(orderMenuItemList);
 
         return order;
     }
@@ -29,7 +32,10 @@ public class OrderMapper {
         orderDto.setCook(order.getCook());
         orderDto.setTotalPrice(order.getTotalPrice());
         orderDto.setOrderState(order.getState());
-        List<OrderMenuItemDto> orderMenuItemDtoList = new ArrayList<>();
+        List<OrderMenuItemDto> orderMenuItemDtoList = new LinkedList<>();
+        for (OrderMenuItem orderMenuItem : order.getOrderMenuItems()) {
+            orderMenuItemDtoList.add(orderMenuItemToOrderMenuItemDto(orderMenuItem));
+        }
         orderDto.setOrderMenuItemDto(orderMenuItemDtoList);
 
         return orderDto;
@@ -38,7 +44,10 @@ public class OrderMapper {
     public static Order updateOrderDtoToOrder(UpdateOrderDto updateOrderDto) {
         Order order = new Order();
         order.setState(updateOrderDto.getOrderState());
-        List<OrderMenuItem> itemList = new ArrayList<>();
+        List<OrderMenuItem> itemList = new LinkedList<>();
+        for (OrderMenuItemDto orderMenuItemDto : updateOrderDto.getItemList()) {
+            itemList.add(orderMenuItemDtoToOrderMenuItem(orderMenuItemDto));
+        }
         order.setOrderMenuItems(itemList);
 
         return order;

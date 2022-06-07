@@ -64,10 +64,4 @@ public class OrderController {
         Response<ErrorResponse, OrderDto> canceledOrderDto = orderService.cancelOrder(id);
         return ResponseEntity.ok(canceledOrderDto);
     }
-
-    @GetMapping("/price/{id}")
-    public ResponseEntity<Response<ErrorResponse, OrderDto>> totalPrice(@PathVariable(name = "id") String id) {
-        Response<ErrorResponse, OrderDto> sumOrderDto = orderService.sumOrderPrice(id);
-        return ResponseEntity.ok(sumOrderDto);
-    }
 }

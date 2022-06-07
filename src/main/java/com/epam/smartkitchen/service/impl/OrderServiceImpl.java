@@ -108,23 +108,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Response<ErrorResponse, OrderDto> sumOrderPrice(String id) {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("Order is not found" + id));
-        List<OrderMenuItem> itemList = order.getOrderMenuItems();
-        double price = 0;
-        for (OrderMenuItem orderMenuItem : itemList) {
-            MenuItem menuItem = menuRepository.findById(orderMenuItem.getMenuItemId())
-                    .orElseThrow(() -> new RecordNotFoundException("Menu items id is not found"));
-            price += menuItem.getPrice();
-        }
-        order.setTotalPrice(price);
-        Order savedOrder = orderRepository.save(order);
-
-        return new Response<>(null, new OrderDto(savedOrder), OrderDto.class.getSimpleName());
-    }
-
-    @Override
     public Response<ErrorResponse, OrderDto> updateOrder(String id, UpdateOrderDto orderUpdate) {
         Optional<Order> order = orderRepository.findById(id);
         if (order.isEmpty()) {

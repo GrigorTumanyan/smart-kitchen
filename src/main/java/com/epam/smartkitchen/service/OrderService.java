@@ -24,6 +24,4 @@ public interface OrderService {
     Response<ErrorResponse, DeleteOrderDto> deleteOrder(String id);
 
     Response<ErrorResponse, OrderDto> cancelOrder(String id);
-
-    Response<ErrorResponse, OrderDto> sumOrderPrice(String id);
 }
