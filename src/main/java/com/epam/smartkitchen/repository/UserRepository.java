@@ -2,6 +2,7 @@ package com.epam.smartkitchen.repository;
 
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.models.User;
+import com.epam.smartkitchen.models.Warehouse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +20,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     Page<User> findByUserTypeAndDeletedTrue(UserType userType, Pageable pageable);
 
     Page<User> findByUserTypeAndDeletedFalse(UserType userType, Pageable pageable);
+
 
     boolean existsByEmail(String email);
 

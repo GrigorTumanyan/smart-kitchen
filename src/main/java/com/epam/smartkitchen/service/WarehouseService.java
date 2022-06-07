@@ -16,4 +16,5 @@ public interface WarehouseService {
     Response<ErrorResponse,WarehouseDto> deleteItemById(String id);
     Response<ErrorResponse,WarehouseDto> decreaseProductCountInWarehouse(List<OrderProductCount> orderProductCounts);
     Response<ErrorResponse,List<WarehouseDto>> getAll(int pageNumber,int pageSize,String sortedField,String direction,String deleted);
+    Response<ErrorResponse,List<WarehouseDto>> getProductByName(int pageNumber,int pageSize,String sortedField,String direction,String name);
 }

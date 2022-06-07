@@ -1,6 +1,8 @@
 package com.epam.smartkitchen.dto.mapper;
 
+import com.epam.smartkitchen.dto.ProductDto;
 import com.epam.smartkitchen.dto.warehouse.WarehouseDto;
+import com.epam.smartkitchen.models.Product;
 import com.epam.smartkitchen.models.Warehouse;
 import org.springframework.data.domain.Page;
 
@@ -18,7 +20,8 @@ public class WarehouseMapper {
         warehouse.setCount(warehouseDto.getCount());
         warehouse.setPrice(warehouseDto.getPrice());
         warehouse.setMeasurement(warehouseDto.getMeasurement());
-        warehouse.setProduct(warehouseDto.getProduct());
+        ProductDto productDto = warehouseDto.getProductDto();
+        new Product(productDto.getName(),)
         warehouse.setDeleted(warehouseDto.getDeleted());
 
         return warehouse;

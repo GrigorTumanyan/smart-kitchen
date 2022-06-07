@@ -30,8 +30,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public Response<ErrorResponse, WarehouseDto> addItem(WarehouseDto warehouseRequestDto) {
-        WarehouseDto warehouseDto = WarehouseMapper.warehouseToWarehouseDto(warehouseRepository.save(WarehouseMapper.warehouseDtoToWarehouse(warehouseRequestDto)));
-
+        Warehouse warehouse = WarehouseMapper.warehouseDtoToWarehouse(warehouseRequestDto);
         return new Response<>(null, warehouseDto, WarehouseDto.class.getSimpleName());
     }
 
@@ -112,6 +111,26 @@ public class WarehouseServiceImpl implements WarehouseService {
             return new Response<>(null, WarehouseMapper.warehouseListToWarehouseDtoList(all), WarehouseDto.class.getSimpleName());
         }
     }
+
+
+
+
+
+    @Override
+    public Response<ErrorResponse, List<WarehouseDto>> getProductByName(int pageNumber, int pageSize, String sortedField, String direction,String name) {
+        PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
+        Page<Warehouse> byProductName = warehouseRepository.findByProductNameAndDeletedFalse(name,pageable);
+        if (byProductName == null){
+            throw new RecordNotFoundException("There is no product by this name.");
+        }
+        return new  Response<>(null,WarehouseMapper.warehouseListToWarehouseDtoList(byProductName), WarehouseDto.class.getSimpleName());
+
+    }
+
+
+
+
+
 
     private PageRequest createPageable(int pageNumber, int pageSize, String field, String direction) {
         if (field == null) {

@@ -1,7 +1,5 @@
 package com.epam.smartkitchen.repository;
 
-import com.epam.smartkitchen.models.Product;
-import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.models.Warehouse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,4 +11,5 @@ public interface WarehouseRepository extends JpaRepository<Warehouse,String> {
     Page<Warehouse> findAllByDeletedFalse(Pageable pageable);
     Page<Warehouse> findAllByDeletedTrue(Pageable pageable);
     Page<Warehouse> findAll(Pageable pageable);
+    Page<Warehouse> findByProductNameAndDeletedFalse(String name,Pageable pageable);
 }

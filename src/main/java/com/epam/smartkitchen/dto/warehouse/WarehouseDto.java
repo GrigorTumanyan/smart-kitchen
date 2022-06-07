@@ -1,5 +1,6 @@
 package com.epam.smartkitchen.dto.warehouse;
 
+import com.epam.smartkitchen.dto.ProductDto;
 import com.epam.smartkitchen.models.Product;
 
 import java.util.Objects;
@@ -9,15 +10,15 @@ public class WarehouseDto {
     private Double count;
     private Double price;
     private String measurement;
-    private Product product;
+    private ProductDto productDto;
     private Boolean deleted = Boolean.FALSE;
 
-    public WarehouseDto(String description, Double count, Double price, String measurement, Product product, Boolean deleted) {
+    public WarehouseDto(String description, Double count, Double price, String measurement, ProductDto productDto, Boolean deleted) {
         this.description = description;
         this.count = count;
         this.price = price;
         this.measurement = measurement;
-        this.product = product;
+        this.productDto = productDto;
         this.deleted = deleted;
     }
 
@@ -56,12 +57,12 @@ public class WarehouseDto {
         this.measurement = measurement;
     }
 
-    public Product getProduct() {
-        return product;
+    public ProductDto getProductDto() {
+        return productDto;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductDto(ProductDto productDto) {
+        this.productDto = productDto;
     }
 
     public Boolean getDeleted() {
@@ -77,12 +78,12 @@ public class WarehouseDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WarehouseDto that = (WarehouseDto) o;
-        return Objects.equals(description, that.description) && Objects.equals(count, that.count) && Objects.equals(price, that.price) && Objects.equals(measurement, that.measurement) && Objects.equals(product, that.product) && Objects.equals(deleted, that.deleted);
+        return Objects.equals(description, that.description) && Objects.equals(count, that.count) && Objects.equals(price, that.price) && Objects.equals(measurement, that.measurement) && Objects.equals(productDto, that.productDto) && Objects.equals(deleted, that.deleted);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(description, count, price, measurement, product, deleted);
+        return Objects.hash(description, count, price, measurement, productDto, deleted);
     }
 
     @Override
@@ -92,7 +93,7 @@ public class WarehouseDto {
                 ", count=" + count +
                 ", price=" + price +
                 ", measurement='" + measurement + '\'' +
-                ", product=" + product +
+                ", productDto=" + productDto +
                 ", deleted=" + deleted +
                 '}';
     }

@@ -50,4 +50,16 @@ public class WarehouseController {
         return ResponseEntity.ok(response);
     }
 
-}
+//    @GetMapping("/warehouses")
+//    public ResponseEntity<Response<ErrorResponse,List<WarehouseDto>>> getProductByName(@RequestParam(required = false) int pageSize,
+//                                                                                       @RequestParam int pageNumber,
+//                                                                                       @RequestParam(required = false) String deleted,
+//                                                                                       @RequestParam(required = false) String sortedField,
+//                                                                                       @RequestParam(required = false) String direction){
+//
+//        Response<ErrorResponse, List<WarehouseDto>> response = warehouseService.getProductByName(pageNumber, pageSize, sortedField, direction, deleted);
+//        return ResponseEntity.ok(response);
+
+    }
+
+
