@@ -28,9 +28,14 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     UserType userType;
     @Column
-    Boolean active;
+    Boolean active = Boolean.FALSE;
+    @Column(name = "refresh_token")
+    String refreshToken;
+    @Column(name = "activation_forgotten_password")
+    String activationForgottenPassword;
 
-    public User(String name, String surname, String email, String password, String image, String phone, String address, UserType userType, Boolean active) {
+    public User(String name, String surname, String email, String password, String image, String phone,
+                String address, UserType userType, Boolean active, String refreshToken,String activationForgottenPassword) {
         this.name = name;
         this.surname = surname;
         this.email = email;
@@ -40,6 +45,8 @@ public class User extends BaseEntity {
         this.address = address;
         this.userType = userType;
         this.active = active;
+        this.refreshToken = refreshToken;
+        this.activationForgottenPassword = activationForgottenPassword;
     }
 
     public User() {
@@ -117,6 +124,21 @@ public class User extends BaseEntity {
         this.active = active;
     }
 
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getActivationForgottenPassword() {
+        return activationForgottenPassword;
+    }
+
+    public void setActivationForgottenPassword(String activationForgottenPassword) {
+        this.activationForgottenPassword = activationForgottenPassword;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -124,12 +146,12 @@ public class User extends BaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         User user = (User) o;
-        return Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(image, user.image) && Objects.equals(phone, user.phone) && Objects.equals(address, user.address) && userType == user.userType && Objects.equals(active, user.active);
+        return Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(image, user.image) && Objects.equals(phone, user.phone) && Objects.equals(address, user.address) && userType == user.userType && Objects.equals(active, user.active) && Objects.equals(refreshToken, user.refreshToken) && Objects.equals(activationForgottenPassword, user.activationForgottenPassword);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, surname, email, password, image, phone, address, userType, active);
+        return Objects.hash(super.hashCode(), name, surname, email, password, image, phone, address, userType, active, refreshToken, activationForgottenPassword);
     }
 
     @Override
@@ -144,6 +166,8 @@ public class User extends BaseEntity {
                 ", address='" + address + '\'' +
                 ", userType=" + userType +
                 ", active=" + active +
+                ", refreshToken='" + refreshToken + '\'' +
+                ", activationForgottenPassword='" + activationForgottenPassword + '\'' +
                 '}';
     }
 }

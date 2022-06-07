@@ -1,5 +1,7 @@
 package com.epam.smartkitchen.service;
 
+
+
 import com.epam.smartkitchen.dto.user.*;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
@@ -29,4 +31,6 @@ public interface UserService {
     Response<ErrorResponse, List<UserDto>> exportExcel(HttpServletResponse httpResponse, UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted);
 
     Response<ErrorResponse,UserDto> changePassword(String id, ChangePasswordUserDto userDto);
+
+    Response<ErrorResponse, String> expiredLink(String id);
 }
