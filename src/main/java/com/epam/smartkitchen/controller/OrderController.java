@@ -4,7 +4,7 @@ import com.epam.smartkitchen.dto.order.AddOrderDto;
 import com.epam.smartkitchen.dto.order.DeleteOrderDto;
 import com.epam.smartkitchen.dto.order.OrderDto;
 import com.epam.smartkitchen.dto.order.UpdateOrderDto;
-import com.epam.smartkitchen.dto.warehouse.OrderProductCount;
+import com.epam.smartkitchen.dto.warehouse.OrderProductCountDto;
 import com.epam.smartkitchen.dto.warehouse.WarehouseDto;
 import com.epam.smartkitchen.enums.OrderState;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
@@ -96,7 +96,7 @@ public class OrderController {
         return ResponseEntity.ok(canceledOrderDto);
     }
     @PutMapping("/prod")
-    public ResponseEntity<Response<ErrorResponse, WarehouseDto>> mm(List<OrderProductCount> products){
+    public ResponseEntity<Response<ErrorResponse, WarehouseDto>> mm(List<OrderProductCountDto> products){
         Response<ErrorResponse, WarehouseDto> warehouseDtoResponse = warehouseService.decreaseProductCountInWarehouse(products);
         return ResponseEntity.ok(warehouseDtoResponse);
     }

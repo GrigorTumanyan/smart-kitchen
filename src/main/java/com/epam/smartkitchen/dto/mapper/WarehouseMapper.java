@@ -21,7 +21,8 @@ public class WarehouseMapper {
         warehouse.setPrice(warehouseDto.getPrice());
         warehouse.setMeasurement(warehouseDto.getMeasurement());
         ProductDto productDto = warehouseDto.getProductDto();
-        new Product(productDto.getName(),)
+        Product product = new Product(productDto.getName(), productDto.getCategoryList());
+        warehouse.setProduct(product);
         warehouse.setDeleted(warehouseDto.getDeleted());
 
         return warehouse;
@@ -33,7 +34,9 @@ public class WarehouseMapper {
         warehouseDto.setCount(warehouse.getCount());
         warehouseDto.setPrice(warehouse.getPrice());
         warehouseDto.setMeasurement(warehouse.getMeasurement());
-        warehouseDto.setProduct(warehouse.getProduct());
+        Product product = warehouse.getProduct();
+        ProductDto productDto = new ProductDto(product.getName(), product.getCategory());
+        warehouseDto.setProductDto(productDto);
         warehouseDto.setDeleted(warehouse.getDeleted());
 
         return warehouseDto;

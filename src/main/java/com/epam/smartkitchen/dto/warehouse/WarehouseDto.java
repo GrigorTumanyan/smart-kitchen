@@ -6,6 +6,7 @@ import com.epam.smartkitchen.models.Product;
 import java.util.Objects;
 
 public class WarehouseDto {
+    private String id;
     private String description;
     private Double count;
     private Double price;
@@ -13,13 +14,15 @@ public class WarehouseDto {
     private ProductDto productDto;
     private Boolean deleted = Boolean.FALSE;
 
-    public WarehouseDto(String description, Double count, Double price, String measurement, ProductDto productDto, Boolean deleted) {
+    public WarehouseDto(String id,String description, Double count, Double price, String measurement, ProductDto productDto, Boolean deleted) {
+        this.id = id;
         this.description = description;
         this.count = count;
         this.price = price;
         this.measurement = measurement;
         this.productDto = productDto;
         this.deleted = deleted;
+
     }
 
     public WarehouseDto() {
@@ -73,17 +76,25 @@ public class WarehouseDto {
         this.deleted = deleted;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WarehouseDto that = (WarehouseDto) o;
-        return Objects.equals(description, that.description) && Objects.equals(count, that.count) && Objects.equals(price, that.price) && Objects.equals(measurement, that.measurement) && Objects.equals(productDto, that.productDto) && Objects.equals(deleted, that.deleted);
+        return Objects.equals(id, that.id) && Objects.equals(description, that.description) && Objects.equals(count, that.count) && Objects.equals(price, that.price) && Objects.equals(measurement, that.measurement) && Objects.equals(productDto, that.productDto) && Objects.equals(deleted, that.deleted);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(description, count, price, measurement, productDto, deleted);
+        return Objects.hash(id, description, count, price, measurement, productDto, deleted);
     }
 
     @Override

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 public class WarehouseServiceImplTest {
 
     Warehouse warehouse = new Warehouse("halo",12.4,null,null,null);
-    WarehouseDto warehouseDto = new WarehouseDto("halo",12.4,null,null,null,false);
+    WarehouseDto warehouseDto = new WarehouseDto("1","halo",12.4,null,null,null,false);
     private final WarehouseRepository warehouseRepository = Mockito.mock(WarehouseRepository.class);
     Warehouse warehouseForDeletedCase;
 
