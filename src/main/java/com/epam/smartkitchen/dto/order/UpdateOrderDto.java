@@ -1,7 +1,7 @@
 package com.epam.smartkitchen.dto.order;
 
 import com.epam.smartkitchen.enums.OrderState;
-import com.epam.smartkitchen.models.MenuItem;
+import com.epam.smartkitchen.models.OrderMenuItem;
 
 import java.util.List;
 import java.util.Objects;
@@ -10,9 +10,9 @@ public class UpdateOrderDto {
 
     private OrderState orderState;
 
-    private List<MenuItem> itemList;
+    private List<OrderMenuItemDto> itemList;
 
-    public UpdateOrderDto(OrderState orderState, List<MenuItem> itemList) {
+    public UpdateOrderDto(OrderState orderState, List<OrderMenuItemDto> itemList) {
         this.orderState = orderState;
         this.itemList = itemList;
     }
@@ -25,11 +25,11 @@ public class UpdateOrderDto {
         this.orderState = orderState;
     }
 
-    public List<MenuItem> getItemList() {
+    public List<OrderMenuItemDto> getItemList() {
         return itemList;
     }
 
-    public void setItemList(List<MenuItem> itemList) {
+    public void setItemList(List<OrderMenuItemDto> itemList) {
         this.itemList = itemList;
     }
 
