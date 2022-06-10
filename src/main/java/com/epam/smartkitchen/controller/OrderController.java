@@ -11,6 +11,7 @@ import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.OrderService;
 import com.epam.smartkitchen.service.WarehouseService;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -96,7 +97,7 @@ public class OrderController {
         return ResponseEntity.ok(canceledOrderDto);
     }
     @PutMapping("/prod")
-    public ResponseEntity<Response<ErrorResponse, WarehouseDto>> mm(List<OrderProductCountDto> products){
+    public ResponseEntity<Response<ErrorResponse, WarehouseDto>> mm(@RequestBody List<OrderProductCountDto> products){
         Response<ErrorResponse, WarehouseDto> warehouseDtoResponse = warehouseService.decreaseProductCountInWarehouse(products);
         return ResponseEntity.ok(warehouseDtoResponse);
     }

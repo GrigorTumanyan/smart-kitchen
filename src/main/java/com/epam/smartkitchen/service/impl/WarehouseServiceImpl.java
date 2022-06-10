@@ -86,34 +86,39 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public Response<ErrorResponse, WarehouseDto> decreaseProductCountInWarehouse(List<OrderProductCountDto> orderProductCountDtos) {
         WarehouseDto warehouseDto = null;
-        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by("createdOn"));
         for (OrderProductCountDto orderProductCountDto : orderProductCountDtos) {
-            Page<Warehouse> byProductId = warehouseRepository.findByProductId(orderProductCountDto.getProductId(), pageRequest);
+            List<Warehouse> byProductId = warehouseRepository.findByProductIdAndDeletedFalse(orderProductCountDto.getProductId(), Sort.by("createdOn"));
             if (byProductId == null) {
                 throw new RecordNotFoundException("Product not found");
             }
             for (Warehouse warehouse : byProductId) {
+                if (warehouse.getCount() == 0.0){
+                    continue;
+                }
                 double count = warehouse.getCount() - orderProductCountDto.getCount();
-               while (count < 0){
-                   continue;
-               }
                 if (count < 0){
-
+                    warehouse.setCount(0.0);
+                    orderProductCountDto.setCount(count * -1.0);
+                    warehouseRepository.save(warehouse);
+                }else {
+                    warehouse.setCount(count);
+                    warehouseRepository.save(warehouse);
+                    break;
                 }
             }
 
 
-
-            Product product = productRepository.findById(orderProductCountDto.getProductId()).orElseThrow(() -> new RecordNotFoundException("Product not found."));
-            Warehouse warehouse = warehouseRepository.findById(orderProductCountDto.getProductId()).orElseThrow(() -> new RecordNotFoundException("Product not found."));
-            warehouse.setCount(warehouse.getCount() - orderProductCountDto.getCount());
-            if (warehouse.getCount() - orderProductCountDto.getCount() < 0) {
-                throw new RuntimeException("We don't have that many products");
-            }
-            Warehouse save = warehouseRepository.save(warehouse);
-            warehouseDto = WarehouseMapper.warehouseToWarehouseDto(save);
-
         }
+//            Product product = productRepository.findById(orderProductCountDto.getProductId()).orElseThrow(() -> new RecordNotFoundException("Product not found."));
+//            Warehouse warehouse = warehouseRepository.findById(orderProductCountDto.getProductId()).orElseThrow(() -> new RecordNotFoundException("Product not found."));
+//            warehouse.setCount(warehouse.getCount() - orderProductCountDto.getCount());
+//            if (warehouse.getCount() - orderProductCountDto.getCount() < 0) {
+//                throw new RuntimeException("We don't have that many products");
+//            }
+//            Warehouse save = warehouseRepository.save(warehouse);
+//            warehouseDto = WarehouseMapper.warehouseToWarehouseDto(save);
+//
+//        }
         return new Response<>(null, warehouseDto, WarehouseDto.class.getSimpleName());
 
     }
