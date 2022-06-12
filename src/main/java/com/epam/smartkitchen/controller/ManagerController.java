@@ -27,7 +27,7 @@ public class ManagerController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getWithSort(@RequestParam(required = false) int pageSize,
+    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getByField(@RequestParam(required = false) int pageSize,
                                                                                    @RequestParam int pageNumber,
                                                                                    @RequestParam(required = false) String deleted,
                                                                                    @RequestParam(required = false) String sortedField,
@@ -37,7 +37,7 @@ public class ManagerController {
     }
 
     @GetMapping("/users/{userType}")
-    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getByType(@PathVariable UserType userType,
+    public ResponseEntity<Response<ErrorResponse, List<UserDto>>> getByTypeAndField(@PathVariable UserType userType,
                                                                                 @RequestParam(required = false) int pageSize,
                                                                                 @RequestParam int pageNumber,
                                                                                 @RequestParam(required = false) String deleted,

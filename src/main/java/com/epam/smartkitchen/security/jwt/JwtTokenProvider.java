@@ -1,12 +1,10 @@
 package com.epam.smartkitchen.security.jwt;
 
-import antlr.MismatchedTokenException;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.exceptions.JwtExpiredException;
 import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.models.User;
 import com.epam.smartkitchen.repository.UserRepository;
-import com.epam.smartkitchen.service.UserService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -26,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
@@ -108,7 +105,6 @@ public class JwtTokenProvider {
         }
         return null;
     }
-
 
     public boolean validateToken(String token) {
         if (token != null) {

@@ -39,7 +39,6 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Response<ErrorResponse, List<UserDto>> getAll(int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
         PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
         Page<User> allUser;
@@ -59,7 +58,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Response<ErrorResponse, List<UserDto>> getByType(UserType userType, int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
         PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
         Page<User> allUser;
