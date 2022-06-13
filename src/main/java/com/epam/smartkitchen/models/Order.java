@@ -4,6 +4,7 @@ import com.epam.smartkitchen.enums.OrderState;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "restaurant_order")
@@ -16,18 +17,18 @@ public class Order extends BaseEntity {
     Double totalPrice;
     @Column
     OrderState state;
-    @ManyToMany
-    List<MenuItem> ItemsList;
+    @OneToMany(mappedBy = "menuItemId")
+    List<OrderMenuItem> orderMenuItems;
 
-    public Order(User waiter, User cook, Double totalPrice, OrderState state, List<MenuItem> itemsList) {
+    public Order() {
+    }
+
+    public Order(User waiter, User cook, Double totalPrice, OrderState state, List<OrderMenuItem> orderMenuItems) {
         this.waiter = waiter;
         this.cook = cook;
         this.totalPrice = totalPrice;
         this.state = state;
-        ItemsList = itemsList;
-    }
-
-    public Order() {
+        this.orderMenuItems = orderMenuItems;
     }
 
     public User getWaiter() {
@@ -62,11 +63,30 @@ public class Order extends BaseEntity {
         this.state = state;
     }
 
-    public List<MenuItem> getItemsList() {
-        return ItemsList;
+    public List<OrderMenuItem> getOrderMenuItems() {
+        return orderMenuItems;
     }
 
-    public void setItemsList(List<MenuItem> itemsList) {
-        ItemsList = itemsList;
+    public void setOrderMenuItems(List<OrderMenuItem> orderMenuItems) {
+        this.orderMenuItems = orderMenuItems;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Order order = (Order) o;
+        return Objects.equals(waiter, order.waiter) && Objects.equals(cook, order.cook) && Objects.equals(totalPrice, order.totalPrice) && state == order.state && Objects.equals(orderMenuItems, order.orderMenuItems);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), waiter, cook, totalPrice, state, orderMenuItems);
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" + "waiter=" + waiter + ", cook=" + cook + ", totalPrice=" + totalPrice + ", state=" + state + ", orderMenuItems=" + orderMenuItems + '}';
     }
 }

@@ -1,7 +1,6 @@
 package com.epam.smartkitchen.dto.order;
 
 import com.epam.smartkitchen.enums.OrderState;
-import com.epam.smartkitchen.models.MenuItem;
 import com.epam.smartkitchen.models.Order;
 import com.epam.smartkitchen.models.User;
 
@@ -18,9 +17,17 @@ public class OrderDto {
 
     private Double totalPrice;
 
-    private List<MenuItem> itemList;
+    List<OrderMenuItemDto> orderMenuItemDto;
 
     public OrderDto(Order order) {
+    }
+
+    public OrderDto(User waiter, User cook, OrderState orderState, Double totalPrice, List<OrderMenuItemDto> orderMenuItemDto) {
+        this.waiter = waiter;
+        this.cook = cook;
+        this.orderState = orderState;
+        this.totalPrice = totalPrice;
+        this.orderMenuItemDto = orderMenuItemDto;
     }
 
     public User getWaiter() {
@@ -55,12 +62,12 @@ public class OrderDto {
         this.totalPrice = totalPrice;
     }
 
-    public List<MenuItem> getItemList() {
-        return itemList;
+    public List<OrderMenuItemDto> getOrderMenuItemDto() {
+        return orderMenuItemDto;
     }
 
-    public void setItemList(List<MenuItem> itemList) {
-        this.itemList = itemList;
+    public void setOrderMenuItemDto(List<OrderMenuItemDto> orderMenuItemDto) {
+        this.orderMenuItemDto = orderMenuItemDto;
     }
 
     @Override
@@ -68,16 +75,22 @@ public class OrderDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrderDto orderDto = (OrderDto) o;
-        return Objects.equals(waiter, orderDto.waiter) && Objects.equals(cook, orderDto.cook) && orderState == orderDto.orderState && Objects.equals(totalPrice, orderDto.totalPrice) && Objects.equals(itemList, orderDto.itemList);
+        return Objects.equals(waiter, orderDto.waiter) && Objects.equals(cook, orderDto.cook) && orderState == orderDto.orderState && Objects.equals(totalPrice, orderDto.totalPrice) && Objects.equals(orderMenuItemDto, orderDto.orderMenuItemDto);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(waiter, cook, orderState, totalPrice, itemList);
+        return Objects.hash(waiter, cook, orderState, totalPrice, orderMenuItemDto);
     }
 
     @Override
     public String toString() {
-        return "OrderDto{" + "waiter=" + waiter + ", cook=" + cook + ", orderState=" + orderState + ", totalPrice=" + totalPrice + ", itemList=" + itemList + '}';
+        return "OrderDto{" +
+                "waiter=" + waiter +
+                ", cook=" + cook +
+                ", orderState=" + orderState +
+                ", totalPrice=" + totalPrice +
+                ", orderMenuItemDto=" + orderMenuItemDto +
+                '}';
     }
 }

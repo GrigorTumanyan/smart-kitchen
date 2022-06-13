@@ -1,17 +1,18 @@
 package com.epam.smartkitchen.service.impl;
 
 import com.epam.smartkitchen.dto.mapper.OrderMapper;
-import com.epam.smartkitchen.dto.order.AddOrderDto;
 import com.epam.smartkitchen.dto.order.DeleteOrderDto;
 import com.epam.smartkitchen.dto.order.OrderDto;
 import com.epam.smartkitchen.dto.order.UpdateOrderDto;
 import com.epam.smartkitchen.enums.OrderState;
 import com.epam.smartkitchen.exceptions.ConflictException;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
-import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.exceptions.ParamInvalidException;
+import com.epam.smartkitchen.exceptions.RecordNotFoundException;
 import com.epam.smartkitchen.models.MenuItem;
 import com.epam.smartkitchen.models.Order;
+import com.epam.smartkitchen.models.OrderMenuItem;
+import com.epam.smartkitchen.repository.MenuRepository;
 import com.epam.smartkitchen.repository.OrderRepository;
 import com.epam.smartkitchen.response.Response;
 import com.epam.smartkitchen.service.OrderService;
@@ -29,12 +30,16 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository) {
+    private final MenuRepository menuRepository;
+
+    public OrderServiceImpl(OrderRepository orderRepository, MenuRepository menuRepository) {
         this.orderRepository = orderRepository;
+        this.menuRepository = menuRepository;
     }
 
     @Override
-    public Response<ErrorResponse, List<OrderDto>> getAllOrder(int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+    public Response<ErrorResponse, List<OrderDto>> getAllOrder(int pageNumber, int pageSize,
+                                                               String sortedField, String direction, String deleted) {
         PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
         Page<Order> allOrders = null;
 
@@ -62,7 +67,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Response<ErrorResponse, List<OrderDto>> getOrdersByState(OrderState orderState, int pageNumber, int pageSize, String sortedField, String direction, String deleted) {
+    public Response<ErrorResponse, List<OrderDto>> getOrdersByState(OrderState orderState, int pageNumber, int pageSize,
+                                                                    String sortedField, String direction, String deleted) {
         PageRequest pageable = createPageable(pageNumber, pageSize, sortedField, direction);
         Page<Order> allOrders = null;
         if (deleted == null) {
@@ -81,13 +87,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Response<ErrorResponse, OrderDto> addOrder(AddOrderDto addOrderDto) {
-        Order order = OrderMapper.addOrderDtoToOrder(addOrderDto);
-        List<MenuItem> itemList = order.getItemsList();
+    public Response<ErrorResponse, OrderDto> addOrder(OrderDto orderDto) {
+        Order order = OrderMapper.dtoToOrder(orderDto);
+        List<OrderMenuItem> itemList = order.getOrderMenuItems();
         double price = 0;
-        for (MenuItem menuItem : itemList) {
+        for (OrderMenuItem orderMenuItem : itemList) {
+            MenuItem menuItem = menuRepository.findById(orderMenuItem.getMenuItemId())
+                    .orElseThrow(() -> new RecordNotFoundException("Menu items id is not found"));
             decreaseMenuItem(menuItem.getName(), menuItem.getWeight(), menuItem.getmeasurement());
-            price = +menuItem.getPrice();
+            price += menuItem.getPrice();
         }
         order.setTotalPrice(price);
         Order savedOrder = orderRepository.save(order);
@@ -107,17 +115,6 @@ public class OrderServiceImpl implements OrderService {
         }
         Optional<?> mapOrder = order.map(orders -> {
             orders.setState(orderUpdate.getOrderState());
-            orders.setItemsList(orderUpdate.getItemList());
-
-            List<MenuItem> itemsList = orders.getItemsList();
-            Double price = null;
-            for (MenuItem menuItem : itemsList) {
-                price = +menuItem.getPrice();
-            }
-            Double percent = price / 10;
-            Double totalAmount = price + percent;
-
-            orders.setTotalPrice(totalAmount);
 
             return orderUpdate;
         });
@@ -128,7 +125,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Response<ErrorResponse, DeleteOrderDto> deleteOrder(String id) {
-        Order order = orderRepository.findById(id)
+        Order order = orderRepository
+                .findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Order is not found" + id));
         order.setDeleted(true);
         Order saveOrder = orderRepository.save(order);
@@ -137,7 +135,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Response<ErrorResponse, OrderDto> cancelOrder(String id) {
-        Order order = orderRepository.findById(id)
+        Order order = orderRepository
+                .findById(id)
                 .orElseThrow(() -> new RecordNotFoundException("Order is not found" + id));
         if (order.getState().equals(OrderState.PENDING)) {
             throw new ConflictException("We cannot cancel this order, as it is pending state");
