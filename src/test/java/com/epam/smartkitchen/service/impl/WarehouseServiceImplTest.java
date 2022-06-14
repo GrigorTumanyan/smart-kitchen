@@ -54,37 +54,37 @@ public class WarehouseServiceImplTest {
     }
 
 
-    @Test
-    void addItem() {
-        when(warehouseRepository.save(any())).thenReturn(warehouse);
-        Response<ErrorResponse, WarehouseDto> warehouseDtoResponse = warehouseService.addItem(warehouseDto);
-        Warehouse warehouse = WarehouseMapper.warehouseDtoToWarehouse(warehouseDtoResponse.getSuccessObject());
-        assertEquals(this.warehouse,warehouse);
-
-
-    }
-
-    @Test
-    void updateItem() {
-        when(warehouseRepository.findById(any())).thenReturn(optionalWarehouse());
-
-        when(warehouseRepository.save(any())).thenReturn(warehouse);
-
-        Response<ErrorResponse, WarehouseDto> warehouseDtoResponse = warehouseService.updateItem("8", new WarehouseDto());
-
-         assertEquals(warehouseDto , warehouseDtoResponse.getSuccessObject());
-    }
-
-    @Test
-    void deleteItemById() {
-        when(warehouseRepository.findById(any())).thenReturn(optionalWarehouse());
-
-        when(warehouseRepository.save(optionalWarehouse().get())).thenReturn(warehouseForDeletedCase);
-
-     Response<ErrorResponse, WarehouseDto> warehouseDto= warehouseService.deleteItemById("7");
-
-      assertEquals(true,warehouseDto.getSuccessObject().getDeleted());
-    }
+//    @Test
+//    void addItem() {
+//        when(warehouseRepository.save(any())).thenReturn(warehouse);
+//        Response<ErrorResponse, WarehouseDto> warehouseDtoResponse = warehouseService.addItem(warehouseDto);
+//        Warehouse warehouse = WarehouseMapper.warehouseDtoToWarehouse(warehouseDtoResponse.getSuccessObject());
+//        assertEquals(this.warehouse,warehouse);
+//
+//
+//    }
+//
+//    @Test
+//    void updateItem() {
+//        when(warehouseRepository.findById(any())).thenReturn(optionalWarehouse());
+//
+//        when(warehouseRepository.save(any())).thenReturn(warehouse);
+//
+//        Response<ErrorResponse, WarehouseDto> warehouseDtoResponse = warehouseService.updateItem("8", new WarehouseDto());
+//
+//         assertEquals(warehouseDto , warehouseDtoResponse.getSuccessObject());
+//    }
+//
+//    @Test
+//    void deleteItemById() {
+//        when(warehouseRepository.findById(any())).thenReturn(optionalWarehouse());
+//
+//        when(warehouseRepository.save(optionalWarehouse().get())).thenReturn(warehouseForDeletedCase);
+//
+//     Response<ErrorResponse, WarehouseDto> warehouseDto= warehouseService.deleteItemById("7");
+//
+//      assertEquals(true,warehouseDto.getSuccessObject().getDeleted());
+//    }
 
 
     @Test
