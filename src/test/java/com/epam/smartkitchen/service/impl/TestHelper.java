@@ -1,11 +1,12 @@
 package com.epam.smartkitchen.service.impl;
 
-import com.epam.smartkitchen.dto.MenuItemCreateDto;
-import com.epam.smartkitchen.dto.UpdateMenuItemDto;
+import com.epam.smartkitchen.dto.menuItem.MenuItemCreateDto;
+import com.epam.smartkitchen.dto.menuItem.UpdateMenuItemDto;
 import com.epam.smartkitchen.dto.mapper.MenuItemMapper;
 import com.epam.smartkitchen.models.Category;
 import com.epam.smartkitchen.models.MenuItem;
 import com.epam.smartkitchen.models.Product;
+import com.epam.smartkitchen.models.Warehouse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +58,27 @@ public class TestHelper {
 
 
     }
+
+
+
     protected static UpdateMenuItemDto updateMenuItemDto(){
         return MenuItemMapper.menuItemToUpdateMenuDto(menuItem());
+    }
+
+    protected static Warehouse toWarehouse(){
+        Warehouse warehouse = new Warehouse();
+
+        warehouse.setDescription("asdas");
+        warehouse.setPrice(100.0);
+        warehouse.setCount(15.0);
+        warehouse.setMeasurement("piece");
+        warehouse.setDeleted(false);
+        warehouse.setProduct(null);
+        return  warehouse;
+    }
+    protected  static Optional<Warehouse> optionalWarehouse(){
+        Warehouse warehouse = toWarehouse();
+        return Optional.of(warehouse);
     }
 
 }

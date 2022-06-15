@@ -1,7 +1,7 @@
 package com.epam.smartkitchen.dto.mapper;
 
-import com.epam.smartkitchen.dto.MenuItemCreateDto;
-import com.epam.smartkitchen.dto.UpdateMenuItemDto;
+import com.epam.smartkitchen.dto.menuItem.MenuItemCreateDto;
+import com.epam.smartkitchen.dto.menuItem.UpdateMenuItemDto;
 import com.epam.smartkitchen.models.MenuItem;
 
 public class MenuItemMapper {
@@ -9,6 +9,7 @@ public class MenuItemMapper {
     private MenuItemMapper() {
         throw new IllegalStateException("Can not create an object of utility class.");
     }
+
 
 
     public static MenuItem dtoToMenuItem(MenuItemCreateDto menuItemCreateDto) {

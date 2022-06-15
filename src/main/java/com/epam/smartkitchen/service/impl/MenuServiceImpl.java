@@ -1,7 +1,7 @@
 package com.epam.smartkitchen.service.impl;
 
-import com.epam.smartkitchen.dto.MenuItemCreateDto;
-import com.epam.smartkitchen.dto.UpdateMenuItemDto;
+import com.epam.smartkitchen.dto.menuItem.MenuItemCreateDto;
+import com.epam.smartkitchen.dto.menuItem.UpdateMenuItemDto;
 import com.epam.smartkitchen.dto.mapper.MenuItemMapper;
 import com.epam.smartkitchen.models.MenuItem;
 import com.epam.smartkitchen.repository.MenuRepository;

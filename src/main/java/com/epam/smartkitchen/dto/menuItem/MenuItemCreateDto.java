@@ -1,31 +1,34 @@
-package com.epam.smartkitchen.dto;
+package com.epam.smartkitchen.dto.menuItem;
+
 
 import com.epam.smartkitchen.models.Product;
 
 import java.util.List;
 import java.util.Objects;
 
-public class UpdateMenuItemDto {
+public class MenuItemCreateDto {
+
+
     private String name;
     private String image;
     private Double weight;
     private Double price;
     private String measurement;
     private List<Product> products;
-    private Boolean deleted = Boolean.FALSE;
 
-    public UpdateMenuItemDto() {
-    }
+    public MenuItemCreateDto(String name, String image, Double weight, Double price, String measurement, List<Product> products) {
 
-    public UpdateMenuItemDto(String name, String image, Double weight, Double price, String measurement, List<Product> products, Boolean deleted) {
         this.name = name;
         this.image = image;
         this.weight = weight;
         this.price = price;
         this.measurement = measurement;
         this.products = products;
-        this.deleted = deleted;
     }
+
+    public MenuItemCreateDto() {
+    }
+
 
     public String getName() {
         return name;
@@ -75,38 +78,28 @@ public class UpdateMenuItemDto {
         this.products = products;
     }
 
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UpdateMenuItemDto that = (UpdateMenuItemDto) o;
-        return Objects.equals(name, that.name) && Objects.equals(image, that.image) && Objects.equals(weight, that.weight) && Objects.equals(price, that.price) && Objects.equals(measurement, that.measurement) && Objects.equals(products, that.products) && Objects.equals(deleted, that.deleted);
+        MenuItemCreateDto that = (MenuItemCreateDto) o;
+        return Objects.equals(name, that.name) && Objects.equals(image, that.image) && Objects.equals(weight, that.weight) && Objects.equals(price, that.price) && Objects.equals(measurement, that.measurement) && Objects.equals(products, that.products);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, image, weight, price, measurement, products, deleted);
+        return Objects.hash(name, image, weight, price, measurement, products);
     }
 
     @Override
     public String toString() {
-        return "UpdateMenuItemDto{" +
-                "name='" + name + '\'' +
+        return "MenuItemCreateDto{" +
+                ", name='" + name + '\'' +
                 ", image='" + image + '\'' +
                 ", weight=" + weight +
                 ", price=" + price +
                 ", measurement='" + measurement + '\'' +
                 ", products=" + products +
-                ", deleted=" + deleted +
                 '}';
     }
 }
-
