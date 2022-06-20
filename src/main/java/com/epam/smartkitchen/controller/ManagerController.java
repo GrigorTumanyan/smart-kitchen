@@ -6,7 +6,7 @@ import com.epam.smartkitchen.dto.user.UserDto;
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.exceptions.ErrorResponse;
 import com.epam.smartkitchen.response.Response;
-import com.epam.smartkitchen.service.ExcelWriter;
+import com.epam.smartkitchen.service.AuthService;
 import com.epam.smartkitchen.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +21,12 @@ public class ManagerController {
 
     private final UserService userService;
 
+    private final AuthService authService;
 
-    public ManagerController(UserService userService) {
+
+    public ManagerController(UserService userService, AuthService authService) {
         this.userService = userService;
+        this.authService = authService;
     }
 
     @GetMapping("/users")
@@ -45,6 +48,12 @@ public class ManagerController {
                                                                                 @RequestParam(required = false) String direction) {
         Response<ErrorResponse, List<UserDto>> usersByType = userService.getByType(userType, pageNumber, pageSize, sortedField, direction, deleted);
         return ResponseEntity.ok(usersByType);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<Response<ErrorResponse, UserDto>> register(@RequestBody UserDto userDto) {
+        Response<ErrorResponse, UserDto> register = authService.register(userDto);
+        return ResponseEntity.ok(register);
     }
 
     @PostMapping("/download")

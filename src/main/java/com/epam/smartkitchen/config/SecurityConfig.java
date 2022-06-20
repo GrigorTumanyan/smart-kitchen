@@ -2,7 +2,6 @@ package com.epam.smartkitchen.config;
 
 import com.epam.smartkitchen.enums.UserType;
 import com.epam.smartkitchen.security.jwt.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,9 +37,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll()
-//                .antMatchers(LOGIN_ENDPOINT).permitAll()
-//                .antMatchers(MANAGER_ENDPOINT).hasAuthority(UserType.MANAGER.name())
+                .antMatchers(LOGIN_ENDPOINT).permitAll()
+                .antMatchers(MANAGER_ENDPOINT).hasAuthority(UserType.MANAGER.name())
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

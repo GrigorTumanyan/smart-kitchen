@@ -14,6 +14,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -51,12 +52,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Response<ErrorResponse, UserDto> register(UserDto userDto) {
+        String managerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new ConflictException("Email : " + userDto.getEmail() + " already exists");
         }
         User user = UserDto.toUser(userDto);
         String password = generateRandomPassword();
         user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setCreatedBy(managerEmail);
         User savedUser = userRepository.save(user);
         UserDto savedUserDto = UserDto.toUserDto(savedUser);
         mailService.sendMail(user.getEmail(), "Activation code", generateActivationLink(password, savedUser.getId()));
