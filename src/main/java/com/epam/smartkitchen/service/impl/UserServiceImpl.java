@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +28,16 @@ public class UserServiceImpl implements UserService {
 
     private final ExcelWriter excelWriter;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Value("${link.active.time}")
     private int expiredTime;
 
 
-    public UserServiceImpl(UserRepository userRepository, ExcelWriter excelWriter) {
+    public UserServiceImpl(UserRepository userRepository, ExcelWriter excelWriter, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.excelWriter = excelWriter;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
 
@@ -139,10 +142,10 @@ public class UserServiceImpl implements UserService {
         if (!userDto.getNewPassword().equals(userDto.getConfirmPassword())) {
             throw new ConflictException("password and confirm is different");
         }
-        if (!user.getPassword().equals(userDto.getOldPassword())) {
+        if (!bCryptPasswordEncoder.matches(userDto.getOldPassword(), user.getPassword())) {
             throw new ConflictException("Old password is not correct");
         }
-        user.setPassword(userDto.getNewPassword());
+        user.setPassword(bCryptPasswordEncoder.encode(userDto.getNewPassword()));
         User save = userRepository.save(user);
         UserDto savedUserDto = UserDto.toUserDto(save);
         return new Response<>(null, savedUserDto, UserDto.class.getSimpleName());

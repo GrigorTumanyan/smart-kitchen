@@ -6,6 +6,7 @@ import com.epam.smartkitchen.models.User;
 import java.util.Objects;
 
 public class UserDto {
+    private String id;
     private String name;
     private String surname;
     private String email;
@@ -14,7 +15,8 @@ public class UserDto {
     private String address;
     private UserType userType;
 
-    public UserDto(String name, String surname, String email, String image, String phone, String address, UserType userType) {
+    public UserDto(String id, String name, String surname, String email, String image, String phone, String address, UserType userType) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
@@ -37,8 +39,16 @@ public class UserDto {
     }
 
     public static UserDto toUserDto (User user){
-        return new UserDto(user.getName(), user.getSurname(), user.getEmail(), user.getImage(),
+        return new UserDto(user.getId(), user.getName(), user.getSurname(), user.getEmail(), user.getImage(),
                 user.getPhone(), user.getAddress(), user.getUserType() );
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -102,18 +112,19 @@ public class UserDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserDto userDto = (UserDto) o;
-        return Objects.equals(name, userDto.name) && Objects.equals(surname, userDto.surname) && Objects.equals(email, userDto.email) && Objects.equals(image, userDto.image) && Objects.equals(phone, userDto.phone) && Objects.equals(address, userDto.address) && userType == userDto.userType;
+        return Objects.equals(id, userDto.id) && Objects.equals(name, userDto.name) && Objects.equals(surname, userDto.surname) && Objects.equals(email, userDto.email) && Objects.equals(image, userDto.image) && Objects.equals(phone, userDto.phone) && Objects.equals(address, userDto.address) && userType == userDto.userType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, surname, email, image, phone, address, userType);
+        return Objects.hash(id, name, surname, email, image, phone, address, userType);
     }
 
     @Override
     public String toString() {
         return "UserDto{" +
-                "name='" + name + '\'' +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", email='" + email + '\'' +
                 ", image='" + image + '\'' +

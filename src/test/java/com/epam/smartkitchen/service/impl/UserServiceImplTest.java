@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
@@ -40,8 +41,10 @@ public class UserServiceImplTest {
 
     private final ExcelWriter excelWriter = Mockito.mock(ExcelWriter.class);
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = Mockito.mock(BCryptPasswordEncoder.class);
+
     @InjectMocks
-    private final UserService userService = Mockito.spy(new UserServiceImpl(userRepository, excelWriter));
+    private final UserService userService = Mockito.spy(new UserServiceImpl(userRepository, excelWriter, bCryptPasswordEncoder));
 
     private String id;
     private PageRequest pageRequest;
