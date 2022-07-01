@@ -8,6 +8,7 @@
         <version>2.6.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+    <packaging>jar</packaging>
     <groupId>com.epam</groupId>
     <artifactId>SmartKitchen</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -147,6 +148,11 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.6</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <version>2.8.2</version>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -155,7 +161,6 @@
             <properties>
                 <spring.profiles.active>dev</spring.profiles.active>
             </properties>
-
         </profile>
         <profile>
             <id>prod</id>
@@ -177,6 +182,7 @@
     <build>
         <plugins>
             <plugin>
+
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
